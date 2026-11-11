@@ -153,9 +153,36 @@ Ultimo aggiornamento: 11 novembre 2026.
 - **Decisione:** nessun file di licenza, e `"license": "UNLICENSED"` in `package.json`.
 - **Perché:** scegliere se e come far riutilizzare il codice è una decisione del proprietario. Senza licenza, il codice pubblico si può leggere ma non riutilizzare. Se vuoi permetterlo, aggiungi un file `LICENSE` (per esempio MIT). Il font incluso ha la sua licenza OFL in `assets/fonts/OFL.txt`.
 
+## Lezioni dalla revisione di sicurezza (11 novembre 2026)
+
+### Un dato valido per la validazione può comunque rompere la build
+- **Lezione:** un settore chiamato `constructor` trovava le proprietà ereditate degli oggetti JavaScript; un anno «0100» produceva una data ISO a 3 cifre; un carattere U+FFFF faceva fallire il disegno dell'immagine. Erano dati accettati dall'aggiornamento e salvati nel repository, che poi bloccavano ogni build per tutta la durata della conservazione (fino a mesi).
+- **Decisione:**
+  - cercare chiavi che vengono dalla fonte solo con `Object.hasOwn`;
+  - limitare gli anni al periodo 2000-2100;
+  - togliere i caratteri non ammessi in XML;
+  - soprattutto, **provare la costruzione in memoria prima di salvare** (`scripts/lib/prova-costruzione.mjs`) con gli stessi moduli della build: se un dato non diventa una pagina, un calendario e un'anteprima, non entra nel repository.
+- **Perché:** la cosa peggiore per un sito che deve andare avanti da solo è un blocco che serve uno sviluppatore per sbloccarlo.
+
+### Limiti di crescita
+- **Decisione:**
+  - al massimo 500 elementi nel feed;
+  - rifiutato un aumento oltre 150 e oltre il triplo degli scioperi validi;
+  - al massimo 100 nuovi per aggiornamento e 1.500 in archivio.
+  - L'interruttore manuale `accetta_variazione` del workflow (prima `accetta_calo`) vale sia per i cali sia per gli aumenti.
+- **Perché:** un feed manipolato poteva aggiungere migliaia di scioperi finti, superare il limite di 20.000 file di Cloudflare e restare in archivio per mesi.
+
+### Analisi in tempo lineare
+- **Lezione:** espressioni regolari con gruppi pigri sull'intero feed (per gli `<item>`, le tabelle e il titolo) diventano lentissime su input costruiti apposta: un titolo da 7 KB richiedeva minuti.
+- **Decisione:** blocchi estratti con `indexOf` (`blocchi()` in `scripts/lib/feed.mjs`), tag tolti con un'espressione lineare, regex del titolo solo su titoli fino a 400 caratteri, limiti di 1 MB per il feed e 2 MB per la pagina. Le prove misurano i tempi.
+
+### Niente testo della fonte nelle segnalazioni
+- **Decisione:** i messaggi di validazione dicono campo e posizione, non il valore. `senzaIndirizzi()` toglie link ed email. Nella issue il messaggio va in un blocco di codice.
+- **Perché:** una segnalazione arriva al proprietario come email dal suo stesso repository: un link ingannevole lì sarebbe molto credibile.
+
 ## Lezioni tecniche
 
-- **Caratteri invisibili nei comandi.** Scrivendo file da riga di comando, le sequenze ` `, ` ` e `﻿` sono diventate caratteri veri e hanno rotto due espressioni regolari. Ora questi caratteri si costruiscono con `String.fromCharCode` o con escape generati dal codice.
+- **Caratteri speciali nei comandi.** Scrivendo file da riga di comando, alcune sequenze di escape per i separatori di riga Unicode sono diventate caratteri veri e hanno rotto due espressioni regolari. Anche una barra rovesciata si è persa: l'escape del punto e virgola nei calendari è diventato un semplice `;`, e il test era sbagliato allo stesso modo. Ora i caratteri delicati si costruiscono con `String.fromCharCode` (per esempio `BARRA` in `scripts/lib/ics.mjs`), e una prova controlla il risultato finale nei file generati.
 - **Siti con certificati incompleti.** `www.mit.gov.it`, `cgsse.it` e `trenitaliatper.it` non inviano il certificato intermedio. Non si disattiva mai la verifica TLS: si usano la Wayback Machine o l'intermedio scaricato dall'indirizzo AIA del certificato.
 - **Statistiche di Cloudflare e politica di sicurezza.** Lo script di Cloudflare Web Analytics viene da un altro dominio. Se si accendono le statistiche, la build aggiunge solo quei due indirizzi alla CSP e toglie Trusted Types (`intestazioniPerConfigurazione` in `scripts/build.mjs`).
 - **Cloudflare e `_headers`.** La documentazione non dice cosa succede se la stessa regola toglie e reimposta un'intestazione. Per questo il widget non lo fa, e una prova lo controlla.
@@ -163,8 +190,8 @@ Ultimo aggiornamento: 11 novembre 2026.
 
 ## Stato alla consegna (11 novembre 2026)
 
-- 278 prove superate.
+- 293 prove superate, comprese quelle nate dalla revisione di sicurezza indipendente.
 - Build: 349 file, 127 pagine nella sitemap.
-- Lighthouse mobile: 100 in tutte le categorie su home e pagina di sciopero.
+- Lighthouse mobile: 100 in tutte le categorie su home, pagina di sciopero e pagina di città.
 - Dati reali scaricati l'11/11/2026: 30 scioperi.
 - Prova con fonte guasta sui dati reali: i dati sono rimasti identici, stessa impronta prima e dopo.

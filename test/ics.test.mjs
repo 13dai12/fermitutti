@@ -17,6 +17,21 @@ function controllaFormato(testo, nome) {
   }
 }
 
+/** Nei valori TEXT ogni ';' e ',' deve essere preceduto da una barra rovesciata (RFC 5545 §3.3.11). */
+function controllaEscape(testo, nome) {
+  const B = String.fromCharCode(92);
+  const righe = testo.replace(/\r\n[ \t]/g, '').split('\r\n');
+  for (const riga of righe) {
+    const m = /^(SUMMARY|DESCRIPTION|LOCATION|CATEGORIES|X-WR-CALNAME|NAME|X-WR-CALDESC)(;[^:]*)?:(.*)$/.exec(riga);
+    if (!m) continue;
+    const senzaCoppie = m[3].split(B + B).join('');
+    for (let i = 0; i < senzaCoppie.length; i++) {
+      const c = senzaCoppie[i];
+      if ((c === ';' || c === ',') && senzaCoppie[i - 1] !== B) assert.fail(`${nome}: '${c}' senza escape in ${m[1]}: ${m[3].slice(0, 80)}`);
+    }
+  }
+}
+
 function eventi(testo) {
   const comp = new ICAL.Component(ICAL.parse(testo));
   return { comp, eventi: comp.getAllSubcomponents('vevent') };
@@ -30,6 +45,7 @@ test('tutti i calendari generati sono validi', async () => {
   for (const f of file) {
     const testo = readFileSync(join(cartella, f), 'utf8');
     controllaFormato(testo, f);
+    controllaEscape(testo, f);
     const { comp, eventi: ev } = eventi(testo);
     assert.equal(comp.getFirstPropertyValue('version'), '2.0');
     assert.ok(comp.getFirstPropertyValue('prodid'));
@@ -86,7 +102,8 @@ test('calendario di una città: locali, regionali e nazionali, ma non solo merci
 });
 
 test('testo malevolo: niente righe iniettate, escape corretto, UTF-8 non spezzato', () => {
-  assert.equal(escapaTesto('a;b,c\\d\r\ne\nf'), 'a\;b\\,c\\\\d\\ne\\nf');
+  const B = String.fromCharCode(92);
+  assert.equal(escapaTesto('a;b,c' + B + 'd\r\ne\nf'), 'a' + B + ';b' + B + ',c' + B + B + 'd' + B + 'ne' + B + 'nf');
   const s = { id: '1', slug: 'x', stato: 'confermato', sequence: 3, modificato_il: '2026-11-11T07:00:00Z', visto_prima: '2026-11-10T07:00:00Z', inizio: '2026-11-20', fine: '2026-11-20', orario: null };
   const cattivo = 'ATTACCO\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nUID:finto\r\nSUMMARY:finto;,\\ èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèè 🚌🚌🚌';
   const t = { titolo: cattivo, chi: cattivo, orari: cattivo, settore: 'Treni', luogo: cattivo, fasce: null, note: cattivo, sindacati: cattivo, url: 'https://fermitutti.it/sciopero/x/', dominio: 'fermitutti.it', avviso: cattivo };

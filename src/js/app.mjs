@@ -3,6 +3,7 @@
 import { oggiRoma, dataMedia, dataOraRoma } from './date.mjs';
 import { costruisciElenchi } from './elenchi.mjs';
 import { schedaModello } from './schede.mjs';
+import { hrefSicuro } from './filtri.mjs';
 
 const pagina = document.body.dataset.pagina || '';
 let datiScioperi = null;
@@ -15,13 +16,6 @@ function memoria(chiave, valore) {
     if (valore === undefined) return localStorage.getItem(chiave);
     if (valore === null) localStorage.removeItem(chiave); else localStorage.setItem(chiave, valore);
   } catch { /* memoria non disponibile (navigazione privata): si continua senza */ }
-  return null;
-}
-
-function hrefSicuro(url) {
-  const s = String(url || '');
-  if (/^\/[a-z0-9/#._-]*$/i.test(s)) return s;
-  if (/^https:\/\/[a-z0-9.-]+(\/[^\s"'<>]*)?$/i.test(s)) return s;
   return null;
 }
 

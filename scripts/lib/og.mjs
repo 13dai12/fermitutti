@@ -20,6 +20,23 @@ export function pngDaSvg(svg) {
   return Buffer.from(r.render().asPng());
 }
 
+/** Vero se il testo contiene solo caratteri ammessi in XML 1.0 (resvg rifiuta gli altri). */
+export function xmlValido(t) {
+  for (const ch of String(t)) {
+    const c = ch.codePointAt(0);
+    const ok = c === 0x9 || c === 0xa || c === 0xd || (c >= 0x20 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfffd) || (c >= 0x10000 && c <= 0x10ffff);
+    if (!ok) return false;
+  }
+  return true;
+}
+
+/** Toglie i caratteri non ammessi in XML (per esempio U+FFFF) prima di metterli in un'immagine. */
+export function soloXml(t) {
+  let out = '';
+  for (const ch of String(t ?? '')) if (xmlValido(ch)) out += ch;
+  return out;
+}
+
 /** Spezza un testo in righe di al massimo `max` caratteri (per parole), al massimo `righeMax` righe. */
 export function spezza(testo, max, righeMax) {
   const parole = String(testo ?? '').split(/\s+/).filter(Boolean);
@@ -54,6 +71,7 @@ const COLORI = {
  * @param {object} p - { stato, titolo, data, dettaglio, sito }
  */
 export function svgAnteprima(p) {
+  p = { ...p, titolo: soloXml(p.titolo), data: soloXml(p.data), dettaglio: soloXml(p.dettaglio) };
   const c = COLORI[p.stato] || COLORI.confermato;
   const righeTitolo = spezza(p.titolo, 26, 2);
   const righeDettaglio = spezza(p.dettaglio || '', 52, 2);

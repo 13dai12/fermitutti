@@ -15,8 +15,9 @@ export function slugify(testo) {
 }
 
 export function infoSettore(nome) {
-  const s = settori[nome];
-  if (s && !nome.startsWith('_')) return { ...s, mit: nome, noto: true };
+  // Object.hasOwn: un settore chiamato "constructor" o "toString" non deve trovare le proprietà ereditate.
+  const s = Object.hasOwn(settori, nome) ? settori[nome] : null;
+  if (s && !String(nome).startsWith('_')) return { ...s, mit: nome, noto: true };
   return { ...settori._altro, mit: nome, noto: false };
 }
 

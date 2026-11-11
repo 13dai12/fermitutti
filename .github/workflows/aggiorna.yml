@@ -14,8 +14,8 @@ on:
         description: 'Pubblica anche se i dati non sono cambiati'
         type: boolean
         default: false
-      accetta_calo:
-        description: 'Accetta un calo improvviso del numero di scioperi (solo dopo averlo controllato sul sito del Ministero)'
+      accetta_variazione:
+        description: 'Accetta un calo o un aumento improvviso del numero di scioperi (solo dopo averlo controllato sul sito del Ministero)'
         type: boolean
         default: false
 
@@ -54,7 +54,7 @@ jobs:
         id: aggiorna
         env:
           FORZA: ${{ inputs.forza }}
-          ACCETTA_CALO: ${{ inputs.accetta_calo && '1' || '0' }}
+          ACCETTA_VARIAZIONE: ${{ inputs.accetta_variazione && '1' || '0' }}
         run: |
           argomenti=""
           if [ "$FORZA" = "true" ]; then argomenti="--forza"; fi
@@ -81,6 +81,7 @@ jobs:
           fi
           git commit -m "Dati aggiornati: $MOTIVO"
           autorizzazione=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$autorizzazione"
           git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $autorizzazione" push origin "HEAD:$GITHUB_REF_NAME"
           echo "salvato=true" >> "$GITHUB_OUTPUT"
 
@@ -139,8 +140,9 @@ jobs:
             gh label create "$etichetta" --repo "$REPO" --color B60205 --description "Segnalazione automatica" --force >/dev/null
             aperta=$(gh issue list --repo "$REPO" --label "$etichetta" --state open --json number --jq '.[0].number // empty')
             if [ -n "$aperta" ]; then echo "Segnalazione già aperta: #$aperta"; return; fi
-            printf '%s\n\n%s\n\nDettagli tecnici: %s\n\n@%s ti avviso io: non serve fare nulla se il problema si risolve da solo. Quando la fonte torna a funzionare questa segnalazione si chiude in automatico. Se resta aperta per più di un giorno, leggi la sezione «Se il sito smette di aggiornarsi» in DEPLOY.md.\n' \
-              "$testo" "Ultimo messaggio: ${RIASSUNTO:-nessun dettaglio}" "$URL_ESECUZIONE" "$PROPRIETARIO" > corpo.md
+            # Il messaggio tecnico va in un blocco di codice: niente link cliccabili, anche se contenesse testo della fonte.
+            printf '%s\n\nUltimo messaggio:\n\n```\n%s\n```\n\nDettagli tecnici: %s\n\n@%s ti avviso io: non serve fare nulla se il problema si risolve da solo. Quando la fonte torna a funzionare questa segnalazione si chiude in automatico. Se resta aperta per più di un giorno, leggi la sezione «Se il sito smette di aggiornarsi» in DEPLOY.md.\n' \
+              "$testo" "${RIASSUNTO:-nessun dettaglio}" "$URL_ESECUZIONE" "$PROPRIETARIO" > corpo.md
             recente=$(gh issue list --repo "$REPO" --label "$etichetta" --state closed --limit 1 --json number,closedAt --jq '[.[] | select((now - (.closedAt | fromdateiso8601)) < 604800)][0].number // empty')
             if [ -n "$recente" ]; then
               gh issue reopen "$recente" --repo "$REPO"
@@ -151,7 +153,9 @@ jobs:
           }
           chiudi() {
             etichetta="$1"; messaggio="$2"
-            for n in $(gh issue list --repo "$REPO" --label "$etichetta" --state open --json number --jq '.[].number'); do
+            # Se l'etichetta non esiste ancora non c'è niente da chiudere: nessun errore.
+            numeri=$(gh issue list --repo "$REPO" --label "$etichetta" --state open --json number --jq '.[].number' 2>/dev/null || true)
+            for n in $numeri; do
               gh issue close "$n" --repo "$REPO" --comment "$messaggio"
             done
           }

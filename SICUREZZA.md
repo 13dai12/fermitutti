@@ -14,21 +14,29 @@ Nessun sito è invulnerabile. Questo è costruito in modo da eliminare per costr
 
 Il calendario del Ministero viene trattato come un dato che potrebbe essere manipolato.
 
-- **Lettura.** Il feed viene rifiutato se non è RSS, se supera i 5 MB o se contiene dichiarazioni `DOCTYPE` o `ENTITY`. Vengono tolti i tag, i caratteri di controllo e quelli invisibili o che cambiano la direzione del testo. Il download segue i reindirizzamenti solo verso lo stesso sito ed è interrotto oltre i 5 MB anche senza `Content-Length` (`scripts/lib/feed.mjs`, `scripts/aggiorna.mjs`).
+- **Lettura** (`scripts/lib/feed.mjs`, `scripts/aggiorna.mjs`).
+  - Il feed viene rifiutato se non è RSS, se supera 1 MB o se contiene dichiarazioni `DOCTYPE` o `ENTITY`. Il limite per la pagina HTML è 2 MB; i file reali pesano circa 25 KB e 315 KB.
+  - Il download segue i reindirizzamenti solo verso lo stesso sito ed è interrotto oltre il limite anche senza `Content-Length`.
+  - Vengono tolti i tag, i caratteri di controllo, quelli invisibili o che cambiano la direzione del testo e quelli vietati in XML (come U+FFFF).
+  - L'analisi ha tempo lineare: i blocchi si cercano con `indexOf` e non con espressioni regolari che possono diventare lentissime. Un titolo più lungo di 400 caratteri viene rifiutato prima di analizzarlo.
 - **Validazione rigorosa** (`scripts/lib/valida.mjs`).
   - Rifiuta l'aggiornamento se mancano campi obbligatori o se un codice non ha il formato del Ministero.
   - Rifiuta date impossibili o incoerenti, campi troppo lunghi e codici duplicati.
   - Rifiuta il feed se **un qualsiasi campo contiene markup o link `javascript:`**: il Ministero non li usa mai.
   - Rifiuta il feed se troppi settori sono sconosciuti, segno che il formato è cambiato.
-  - Rifiuta il feed se il numero di scioperi crolla a meno della metà rispetto a quelli ancora validi.
+  - Rifiuta il feed se il numero di scioperi crolla a meno della metà, se cresce in modo anomalo (oltre 150 e oltre il triplo di quelli validi), se supera 500 elementi o se in un solo aggiornamento arrivano più di 100 scioperi nuovi. L'archivio non può superare 1.500 scioperi. Chi gestisce il sito può accettare a mano un calo o un aumento reale.
+  - I settori si confrontano con `Object.hasOwn`: un settore chiamato `constructor` o `toString` diventa «altro settore» e non rompe nulla.
+  - Gli anni fuori dall'intervallo 2000-2100 non sono date valide; le date di proclamazione e ricezione strane vengono ignorate, con un avviso.
+  - I messaggi d'errore non riportano i valori della fonte, e indirizzi web ed email vengono tolti: un testo ostile non può arrivare come link cliccabile nelle segnalazioni inviate al proprietario.
+- **Prova di costruzione prima del salvataggio** (`scripts/lib/prova-costruzione.mjs`). Prima di salvare i dati nuovi, lo script di aggiornamento genera in memoria, per ogni sciopero, la pagina, il calendario e l'immagine di anteprima. Se qualcosa non riesce, non salva nulla. Così un singolo dato strano non può fermare la build per mesi.
 - **Se qualcosa non torna non si pubblica nulla.** Restano gli ultimi dati validi, il sito mostra un avviso onesto e su GitHub si apre una segnalazione che ti arriva per email.
 - **Escape per ogni contesto.**
   - HTML e attributi: `e()` in `scripts/lib/html.mjs`.
   - Link: `urlSicuro()` accetta solo percorsi interni, `https:`, `webcal:` e `mailto:`. I link non vengono **mai** presi dai dati del Ministero.
   - JSON nei dati strutturati: `jsonPerScript()` impedisce di chiudere il tag `</script>`.
-  - Testo dei calendari: escape RFC 5545, righe ripiegate a 75 byte, ritorni a capo neutralizzati.
+  - Testo dei calendari: escape RFC 5545 di barre rovesciate, punti e virgola, virgole e ritorni a capo, righe ripiegate a 75 byte. Una prova controlla che nei calendari generati non resti nessun `;` o `,` senza escape.
 - **Nel browser** il codice non usa mai `innerHTML`, `eval` o simili: solo `createElement` e `textContent`. Lo garantisce anche il browser stesso, grazie a **Trusted Types** nella politica di sicurezza: un'eventuale scrittura di HTML da testo verrebbe bloccata.
-- **Difesa in profondità alla build.** Anche se dati malevoli arrivassero nell'archivio, la build rifiuta campi con `<` o `>`, indirizzi di pagina non validi e stati sconosciuti (`validaArchivio` in `scripts/build.mjs`).
+- **Difesa in profondità alla build.** Anche se dati malevoli arrivassero nell'archivio, sia l'aggiornamento sia la build rifiutano campi con `<` o `>`, indirizzi di pagina, settori, date e orari non validi e stati sconosciuti (`scripts/lib/valida-archivio.mjs`). Un'immagine di anteprima che non si riesce a disegnare viene sostituita da quella generica.
 
 ## 3. Intestazioni HTTP (`src/_headers`)
 
@@ -40,13 +48,14 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
   - La pagina del widget porta la sua politica in un tag `<meta>`: `default-src 'none'`, nessuno script.
   - `frame-ancestors` non si può mettere in un `<meta>`, quindi l'incorporamento resta permesso.
   - Nessuna regola toglie e reimposta la stessa intestazione, un caso che la documentazione di Cloudflare non chiarisce.
+  - Anche la pagina 404 ha una politica di sicurezza nel `<meta>`: sotto `/widget/` Cloudflare potrebbe servirla con le intestazioni del widget.
 - **Nessun redirect aperto.** Il sito non ha pagine che reindirizzano verso indirizzi presi dalla richiesta. Il parametro `?d=` dell'assistente riempie solo il campo della domanda. L'unico reindirizzamento (`www` verso il dominio principale) è fisso e configurato in Cloudflare.
 
 ## 4. Catena di fornitura
 
 - Versioni esatte e lockfile (`package-lock.json`). Si installa con `npm ci --ignore-scripts`, così nessuna dipendenza esegue codice durante l'installazione. La build di Cloudflare installa solo la dipendenza che le serve (`--omit=dev`): un solo pacchetto, senza dipendenze a cascata. Il file `.npmrc` imposta `ignore-scripts=true` anche per chi usa `npm install`.
 - `npm audit`: 0 vulnerabilità alla consegna. Il workflow «Verifica» blocca se ce ne sono di gravità alta o critica.
-- **Dependabot** propone ogni settimana gli aggiornamenti di npm e delle azioni GitHub (`.github/dependabot.yml`).
+- **Dependabot** propone ogni settimana gli aggiornamenti di npm e delle azioni GitHub (`.github/dependabot.yml`). Propone una nuova versione solo 7 giorni dopo la sua uscita (`cooldown`): una versione compromessa di solito viene scoperta e ritirata prima. Gli aggiornamenti di sicurezza arrivano subito.
 
 ## 5. GitHub Actions
 
@@ -55,9 +64,10 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
 - **Il lavoro che può scrivere nel repository esegue solo `scripts/aggiorna.mjs`**, che usa Node.js e **nessuna** dipendenza esterna.
   - Le dipendenze npm girano solo nel lavoro di prova, che può solo leggere.
   - Le segnalazioni le apre un terzo lavoro che ha solo il permesso sulle issue.
-- `persist-credentials: false` in ogni checkout. Il token si usa una sola volta, per il push, passato in un'intestazione: non resta nella configurazione di git.
+- `persist-credentials: false` in ogni checkout. Il token si usa una sola volta, per il push, passato in un'intestazione: non resta nella configurazione di git. Anche la sua versione codificata viene mascherata nei registri (`::add-mask::`).
 - Nessun `pull_request_target` e nessun `workflow_run`. Timeout su ogni lavoro. `concurrency` per evitare esecuzioni sovrapposte.
-- **Nessuna espressione `${{ }}` dentro gli script**: tutti i valori passano da variabili d'ambiente, contro l'iniezione di comandi. Il testo dei messaggi d'errore, che può contenere frammenti della fonte, viene ripulito e limitato a 900 caratteri prima di finire in una segnalazione.
+- **Nessuna espressione `${{ }}` dentro gli script**: tutti i valori passano da variabili d'ambiente, contro l'iniezione di comandi. Il testo dei messaggi d'errore viene ripulito (niente indirizzi, solo caratteri sicuri, al massimo 900) e nella segnalazione finisce dentro un blocco di codice, dove non diventa un link.
+- In `DEPLOY.md` (passo 6) c'è anche come richiedere l'approvazione per i workflow proposti da sconosciuti e l'avvertenza di non unire mai le loro proposte.
 - Queste regole sono controllate automaticamente da `test/workflow.test.mjs`.
 - In `DEPLOY.md` (passo 6) ci sono le istruzioni per la protezione del ramo principale, il secret scanning, la push protection, Dependabot e CodeQL.
 
@@ -65,7 +75,7 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
 
 Istruzioni in `DEPLOY.md`, passi 3 e 7-13: DNSSEC, protezione contro il trasferimento presso il registrar, record CAA (solo le autorità di Cloudflare), nessun record orfano, SPF `v=spf1 -all`, DMARC `p=reject`, MX nullo, un solo reindirizzamento da `www` al dominio principale, solo HTTPS e TLS minimo 1.2.
 
-Il controllo automatico è `npm run verifica-online -- fermitutti.it`, oppure il workflow «Controllo online» su GitHub.
+Il controllo automatico è `npm run verifica-online -- fermitutti.it`, oppure il workflow «Controllo online» su GitHub. Controlla anche che Cloudflare non inserisca script nelle pagine (offuscamento delle email, Rocket Loader), che la politica di sicurezza bloccherebbe.
 
 ## 7. Account
 
@@ -79,26 +89,45 @@ La verifica in due passaggi su email, registrar, GitHub e Cloudflare è il **pri
 
 | Verifica | Risultato |
 |---|---|
-| `npm test`: 278 prove su parser, validazione, archivio, aggiornamento, calendari, sicurezza, build, workflow e assistente | 278 superate |
-| Dati malevoli nel feed: tag `<script>`, `<img onerror>`, link `javascript:`, markup nel titolo, `DOCTYPE`/`ENTITY`, CRLF, caratteri di direzione e invisibili, campi da 20.000 caratteri, reindirizzamento verso un altro sito | Rifiutati, oppure ripuliti nel caso di CRLF e unicode strano; i dati restano intatti |
+| `npm test`: 293 prove su parser, validazione, archivio, aggiornamento, calendari, sicurezza, build, workflow, assistente e casi trovati dalla revisione | 293 superate |
+| Dati malevoli nel feed: tag `<script>`, `<img onerror>`, link `javascript:`, markup nel titolo, `DOCTYPE`/`ENTITY`, CRLF, caratteri di direzione e invisibili, campi da 20.000 caratteri, reindirizzamento verso un altro sito, centinaia di scioperi finti | Rifiutati, oppure ripuliti nel caso di CRLF e unicode strano; i dati restano intatti |
+| Dati che superano la validazione ma rompevano la build: settore `constructor` o `toString`, anno 0100 o 0999, caratteri U+FFFF e U+FDD0 | Ripuliti; aggiornamento e build completa con le immagini riescono |
+| Input costruiti per rallentare l'analisi: titolo da 20 KB, 150.000 `<item>` non chiusi, 300.000 `<` | Analizzati in pochi millisecondi |
 | Fonte guasta (12 scenari, anche sui dati reali): errore 500, nessuna risposta, pagina HTML, feed vuoto, campi mancanti, date impossibili, calo improvviso | Nessuna pubblicazione di dati sbagliati; la prima segnalazione viene pubblicata, le successive no |
 | Calendari validati con la libreria `ical.js` e controlli puntuali (CRLF, righe di al massimo 75 byte, UTF-8 integro, una sola `VEVENT` anche con testo che prova a iniettarne un'altra) | Tutti validi |
 | Chromium senza finestra, a 360 px e a 1280 px, tema chiaro e scuro, con le intestazioni reali applicate da un server locale | Nessun errore in console, nessuna violazione della CSP o di Trusted Types, nessuno scorrimento orizzontale |
-| Lighthouse 13.6, modalità mobile, sulla home e su una pagina di sciopero | 100 in prestazioni, accessibilità, buone pratiche e SEO |
+| Lighthouse 13.6, modalità mobile, su home, pagina di sciopero e pagina di città | 100 in prestazioni, accessibilità, buone pratiche e SEO |
 | `npm audit` | 0 vulnerabilità |
 | Revisione di sicurezza indipendente (un secondo agente con contesto pulito) | Vedi la sezione qui sotto |
 
-## Revisione indipendente
+## Revisione indipendente: esito
 
-Esito e correzioni sono riportati in fondo a questo file, nella sezione «Revisione indipendente: esito».
+Un secondo agente, con contesto pulito, ha rivisto tutto il repository rispetto a questa lista e ha provato concretamente ogni sospetto. **Nessun problema di gravità alta**: nessun XSS, nessuna iniezione nei workflow, nessuna fuga del token, nessuna falla nella catena di fornitura. Tutti i problemi trovati sono stati corretti e coperti da prove (`test/revisione.test.mjs`).
+
+| Gravità | Problema trovato | Correzione |
+|---|---|---|
+| Media | Dati che superavano la validazione ma facevano fallire la build per mesi: settore `constructor`, anno 0100, carattere U+FFFF | `Object.hasOwn`, anni 2000-2100, caratteri non XML tolti, archivio validato e prova di costruzione **prima** del salvataggio, immagini con ripiego |
+| Media | Nessun limite alla crescita dell'archivio: un feed manipolato poteva superare i 20.000 file di Cloudflare | Massimo 500 elementi, crescita anomala rifiutata, massimo 100 nuovi per aggiornamento e 1.500 in archivio |
+| Bassa | Espressioni regolari lente su input ostili (fino a minuti) | Analisi con `indexOf`, titolo lungo rifiutato prima, limiti di 1 e 2 MB |
+| Bassa | Nei calendari il punto e virgola non veniva escapato | Corretto, con una prova su tutti i calendari generati |
+| Bassa | Testo della fonte poteva arrivare come link cliccabile nelle segnalazioni | Niente valori nei messaggi, indirizzi tolti, blocco di codice |
+| Bassa | Il filtro dei link nel browser accettava `//dominio` | Corretto e condiviso in `src/js/filtri.mjs`, con prove |
+| Bassa | Server di prova locale: richiesta malformata lo chiudeva, percorsi con `\` su Windows, nessun controllo dell'host | Corretti tutti, con prove |
+| Bassa | Pagina 404 sotto `/widget/` senza politica di sicurezza | Politica nel `<meta>` della 404 e controllo in `verifica-online` |
+| Bassa | Token codificato non mascherato nei registri | `::add-mask::` |
+| Bassa | Si poteva pubblicare con i segnaposto in `security.txt`; un vecchio `security.txt` inutilizzato | Su Cloudflare la build si ferma se restano segnaposto; file tolto |
+
+Dubbi sulla guida, tutti accolti in `DEPLOY.md`: spegnere le funzioni di Cloudflare che modificano le pagine, approvazione dei workflow proposti da sconosciuti, `gh auth logout` dopo il push, cosa fare se manca la protezione del trasferimento per il `.it`, reindirizzamento di `pages.dev`, controllo su hstspreload.org prima del preload, `cooldown` di Dependabot.
 
 ## Rischi che restano
 
 - **Account.** Il rischio più grande: chi entra nel tuo account GitHub, Cloudflare, OVHcloud o nella tua email può cambiare il sito o prendersi il dominio. La verifica in due passaggi e i codici di recupero su carta lo riducono molto.
 - **Fonte manipolata in modo «plausibile».** Se qualcuno alterasse il sito del Ministero con dati credibili (date e testi normali), il sito li pubblicherebbe, perché non c'è modo di distinguerli da quelli veri. Il danno resta comunque limitato a testo mostrato come testo: nessuno script e nessun link possono passare.
+- **Fonte manipolata per fermare il sito.** Chi controllasse il feed potrebbe mandare dati che il sito rifiuta. Il sito resterebbe allora fermo agli ultimi dati validi, con un avviso visibile e una segnalazione per te. Non può però far pubblicare dati che rompono il sito, né riempire l'archivio.
 - **Il Ministero non dichiara le revoche.** Uno sciopero che sparisce prima di iniziare viene mostrato come «revocato», ma potrebbe anche essere stato tolto per errore. La spiegazione è sempre visibile e invita a verificare con l'azienda.
 - **Workflow mai eseguiti su GitHub.** I workflow sono stati controllati con prove automatiche e a mano, ma non possono girare qui. `actionlint`, lo strumento di verifica dei workflow, non è stato eseguito: scaricarlo ed eseguirlo non era permesso in questa sessione. Al primo avvio (passo 14 di `DEPLOY.md`) controlla che sia tutto verde.
 - **Il comportamento di Cloudflare con `_headers`** è stato riprodotto in locale seguendo la documentazione. Dopo il lancio, il workflow «Controllo online» verifica le intestazioni reali, anche quelle del widget.
-- **Dipendenze di terzi.** Una dipendenza compromessa potrebbe alterare la build. Il rischio è ridotto da versioni bloccate, `--ignore-scripts`, nessuna dipendenza nel lavoro con permesso di scrittura e revisione delle proposte di Dependabot, ma non è nullo.
+- **Funzioni di Cloudflare che modificano le pagine** (offuscamento delle email, Rocket Loader, Bot Fight Mode): se restano accese, inseriscono script che la politica di sicurezza blocca. Non è un rischio per la sicurezza, ma alcune parti potrebbero non funzionare. `DEPLOY.md` dice di spegnerle e il controllo online lo verifica.
+- **Dipendenze di terzi.** Una dipendenza compromessa potrebbe alterare la build. Il rischio è ridotto da versioni bloccate, `--ignore-scripts`, un solo pacchetto nella build, nessuna dipendenza nel lavoro con permesso di scrittura, 7 giorni di attesa per le nuove versioni e revisione delle proposte di Dependabot. Ma non è nullo.
 - **Calendari iscritti.** Google Calendar può mostrare una revoca con molte ore di ritardo. Il sito lo dice chiaramente e invita a controllare il giorno prima.
 - **HSTS preload** non è attivo finché non lo attivi tu (passo 16).

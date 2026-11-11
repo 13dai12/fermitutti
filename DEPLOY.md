@@ -39,7 +39,7 @@ Cinque minuti, prima di pagare. Le istruzioni sono in `DOMINIO.md`, sezione «Po
 2. Aggiungilo al carrello. **Non aggiungere** hosting, email o altre opzioni: non servono.
 3. Completa l'acquisto. Ti chiederanno il codice fiscale: è una regola del Registro .it.
 4. Nel pannello di OVHcloud apri *Web Cloud › Domini › fermitutti.it*.
-5. Nella scheda *Informazioni generali* controlla che la **Protezione contro il trasferimento** sia **attiva** e che il **rinnovo automatico** sia acceso.
+5. Nella scheda *Informazioni generali* controlla che la **Protezione contro il trasferimento** sia **attiva** e che il **rinnovo automatico** sia acceso. Se per il `.it` la protezione non compare, va bene lo stesso: per trasferire un `.it` a un altro registrar serve un codice segreto (AuthInfo) che si ottiene solo dal tuo pannello, protetto dalla verifica in due passaggi.
 
 **Fatto bene se:** il dominio compare nel pannello con la protezione attiva.
 
@@ -69,7 +69,10 @@ Si apre il browser: incolla il codice che vedi nel terminale e conferma. Poi pub
 
 ```
 gh repo create fermitutti --public --source=. --push
+gh auth logout
 ```
+
+L'ultimo comando toglie dal computer l'accesso a GitHub, che non serve più: se qualcuno usasse il tuo computer non potrebbe modificare il repository.
 
 Il repository deve essere **pubblico**. Su GitHub i minuti di calcolo sono gratis e illimitati solo per i repository pubblici, e l'aggiornamento automatico ne usa parecchi.
 
@@ -109,10 +112,12 @@ Tutte gratuite per i repository pubblici. Apri il repository e vai in *Settings*
    - **Secret scanning** e **Push protection**, che bloccano password o chiavi finite per sbaglio nel codice;
    - **CodeQL analysis › Set up › Default**, che cerca errori di sicurezza nel codice.
 3. **Permessi delle Actions.** In *Actions › General*:
+   - in *Approval for running fork pull request workflows* scegli **Require approval for all external contributors**: il codice proposto da sconosciuti non gira finché non lo approvi tu;
    - in *Workflow permissions* scegli **Read repository contents and packages permissions**: i workflow chiedono da soli solo i permessi che servono;
    - togli la spunta da **Allow GitHub Actions to create and approve pull requests**;
    - premi *Save*.
-4. **Avvisi via email.** Dalla tua foto in alto a destra vai in *Settings › Notifications*. In *Watching*, *Participating* e *Actions* controlla che sia attiva l'email: così ti arrivano gli avvisi se l'aggiornamento si blocca.
+4. **Proposte di modifica da altre persone.** Il repository è pubblico, quindi chiunque può proporre modifiche (*Pull requests*). **Non unire mai proposte di persone che non conosci**, soprattutto se toccano la cartella `.github`, i file `package.json` e `package-lock.json` o la cartella `scripts`: potrebbero servire a prendere il controllo del sito. Le uniche proposte da unire, se il controllo è verde, sono quelle di Dependabot.
+5. **Avvisi via email.** Dalla tua foto in alto a destra vai in *Settings › Notifications*. In *Watching*, *Participating* e *Actions* controlla che sia attiva l'email: così ti arrivano gli avvisi se l'aggiornamento si blocca.
 
 ## Passo 7. Porta il dominio su Cloudflare
 
@@ -156,6 +161,8 @@ Tutte gratuite per i repository pubblici. Apri il repository e vai in *Settings*
 
 In alternativa, nel dominio puoi usare *Rules › Redirect Rules › Create rule* con il modello **Redirect from WWW to Root**: il risultato è lo stesso.
 
+Facoltativo: il sito resta raggiungibile anche all'indirizzo provvisorio `fermitutti.pages.dev`. Per mandare anche quello al dominio vero, aggiungi alla stessa lista di Bulk Redirects una riga con *Source URL* `fermitutti.pages.dev` e *Target URL* `https://fermitutti.it`, con le stesse spunte.
+
 **Fatto bene se:** aprendo `https://www.fermitutti.it/citta/` finisci su `https://fermitutti.it/citta/`.
 
 ## Passo 10. HTTPS e TLS
@@ -169,6 +176,12 @@ Nel dominio su Cloudflare vai in *SSL/TLS*.
    - **TLS 1.3**: attivo;
    - **Automatic HTTPS Rewrites**: attivo.
 3. **Non** attivare l'HSTS da questa pagina: il sito lo invia già da solo, con il file `_headers`. Attivarlo anche qui creerebbe un doppione.
+4. **Spegni le funzioni che modificano le pagine.** Cercale con la barra di ricerca del pannello di Cloudflare, dentro il dominio:
+   - **Email Address Obfuscation**: spenta. Altrimenti Cloudflare nasconde l'indirizzo email delle pagine Contatti e Privacy con uno script che la politica di sicurezza del sito blocca, e i visitatori vedrebbero «[email protected]».
+   - **Rocket Loader**: spento.
+   - **Bot Fight Mode**: lascialo spento. Inserisce script nelle pagine e per un sito statico non serve.
+
+   Il controllo del passo 15 verifica che nelle pagine non ci siano script aggiunti da Cloudflare.
 
 ## Passo 11. DNSSEC (protegge il dominio da deviazioni)
 
@@ -230,6 +243,8 @@ Se una riga ha ✘:
 - **SPF, DMARC, MX o CAA**: rivedi il passo 12.
 - **TLS minimo 1.2**: rivedi il passo 10.
 - **security.txt**: c'è ancora un segnaposto in `config/sito.mjs` (passo 5).
+- **Cloudflare non modifica le pagine**: rivedi il punto 4 del passo 10.
+- **Pagina inesistente sotto /widget/**: il sito non è aggiornato all'ultima versione; aspetta la ripubblicazione e riprova.
 
 Chi ha Node.js sul computer può fare lo stesso controllo con `npm run verifica-online -- fermitutti.it`.
 
@@ -240,7 +255,7 @@ Quando tutto funziona da almeno un mese, puoi chiedere ai browser di usare **sem
 È difficile da annullare: fallo solo se il sito funziona bene in HTTPS e non pensi di cambiare dominio.
 
 1. Su GitHub modifica `src/_headers`. Nella riga `Strict-Transport-Security` aggiungi `; preload` alla fine, così: `max-age=63072000; includeSubDomains; preload`.
-2. Aspetta che Cloudflare ripubblichi il sito, poi compila il modulo su https://hstspreload.org.
+2. Aspetta che Cloudflare ripubblichi il sito, poi su https://hstspreload.org scrivi `fermitutti.it` e premi *Check HSTS preload status and eligibility*. Invia la richiesta solo se il controllo non segnala errori.
 
 ---
 
@@ -278,7 +293,8 @@ Il sito non pubblica mai dati che sembrano sbagliati. In alto nelle pagine compa
 - **«La fonte ufficiale degli scioperi non funziona».**
   - Di solito si risolve da sola: il sito del Ministero è giù o lento. La segnalazione si chiude da sola quando la fonte torna.
   - Se dura più di un giorno, apri https://scioperi.mit.gov.it/mit2/public/scioperi nel browser. Se lì funziona, probabilmente il Ministero ha cambiato il formato dei dati e serve una modifica al codice. Chiedi a uno sviluppatore oppure a Claude Code, partendo da `NOTE_PROGETTO.md`.
-  - Se il messaggio dice **«numero di scioperi crollato»**, controlla a mano sul sito del Ministero. Se gli scioperi sono davvero diminuiti, vai in *Actions › Aggiorna gli scioperi › Run workflow*, spunta **Accetta un calo improvviso** e avvia.
+  - Se il messaggio dice **«numero di scioperi crollato»**, **«cresciuto in modo anomalo»** o **«troppi scioperi nuovi»**, controlla a mano sul sito del Ministero. Se il numero è davvero cambiato così, vai in *Actions › Aggiorna gli scioperi › Run workflow*, spunta **Accetta un calo o un aumento improvviso** e avvia.
+  - Se il messaggio dice **«i dati nuovi non si possono pubblicare»**, un dato del Ministero è scritto in un modo che il sito non sa ancora gestire. Il sito resta com'era. Serve una piccola modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, incollando il messaggio.
 - **«Il controllo automatico si è fermato».** Apri il link nella segnalazione e guarda il punto rosso. Se l'errore si ripete, serve uno sviluppatore.
 - **«La build del sito non funziona con i dati nuovi».** Cloudflare continua a mostrare l'ultima versione buona. Serve uno sviluppatore. Su Cloudflare, nel progetto, la scheda *Deployments* mostra il messaggio d'errore.
 - **Nessuna segnalazione, ma il sito dice che i dati sono vecchi.** Apri *Actions › Aggiorna gli scioperi*. Se vedi «This scheduled workflow is disabled», premi **Enable workflow**. Se GitHub ha problemi (https://www.githubstatus.com), aspetta.

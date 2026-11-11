@@ -1,11 +1,15 @@
 # Dependabot propone aggiornamenti per le dipendenze npm e per le azioni di GitHub.
-# Unisci le proposte solo se il controllo "Verifica" è verde e, se possibile, qualche giorno dopo l'uscita della versione.
+# Dependabot propone una nuova versione solo 7 giorni dopo la sua uscita (cooldown): se una versione è compromessa,
+# di solito viene scoperta e ritirata prima. Gli aggiornamenti di sicurezza arrivano subito.
+# Unisci le proposte solo se il controllo "Verifica" è verde.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     groups:
       dipendenze:
@@ -14,6 +18,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       azioni:
         patterns: ['*']

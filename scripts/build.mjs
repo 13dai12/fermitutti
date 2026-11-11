@@ -13,51 +13,24 @@ import { createHash } from 'node:crypto';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import configSito from '../config/sito.mjs';
 import configAffiliati from '../config/affiliati.mjs';
-import { oggiRoma, isoValida, dataMedia, dataLunga } from './lib/date.mjs';
-import { elencoSettori, infoSettore } from './lib/normalizza.mjs';
-import { REGIONI, CITTA, cittaDaProvincia } from './lib/luoghi.mjs';
-import { compatto, titoloScheda, leggibile, orarioTesto, luogoTesto } from './lib/presenta.mjs';
-import { validaFasce, fasceInUnaRiga, TUTTE as FASCE } from './lib/fasce.mjs';
+import { oggiRoma, dataLunga } from './lib/date.mjs';
+import { CITTA, REGIONI } from './lib/luoghi.mjs';
+import { titoloScheda } from './lib/presenta.mjs';
+import { validaFasce, TUTTE as FASCE } from './lib/fasce.mjs';
 import { preparaAffiliati } from './lib/affiliati.mjs';
 import { evento, calendario } from './lib/ics.mjs';
 import { toccaZona, toccaSettore, perPasseggeri } from '../src/js/filtri.mjs';
-import { STATI } from '../src/js/schede.mjs';
+import { validaArchivio } from './lib/valida-archivio.mjs';
+import { creaContesto, testiEvento, datiAnteprima } from './lib/contesto.mjs';
 import * as P from './lib/pagine.mjs';
 
-const RADICE = fileURLToPath(new URL('..', import.meta.url));
-const RE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const STATI_VALIDI = ['confermato', 'revocato', 'differito', 'rimosso'];
+export { validaArchivio };
 
+const RADICE = fileURLToPath(new URL('..', import.meta.url));
 function leggiJson(p) { return JSON.parse(readFileSync(p, 'utf8')); }
 function scrivi(percorso, contenuto) {
   mkdirSync(dirname(percorso), { recursive: true });
   writeFileSync(percorso, contenuto);
-}
-
-/** Controllo dell'archivio prima di pubblicare (difesa in profondità: i dati li produce il nostro script, ma si ricontrolla). */
-export function validaArchivio(archivio) {
-  const errori = [];
-  if (!archivio || !Array.isArray(archivio.scioperi)) throw new Error('data/scioperi.json: manca l\'elenco "scioperi"');
-  const slug = new Set(), id = new Set();
-  for (const s of archivio.scioperi) {
-    const dove = `sciopero ${s?.id}`;
-    if (!/^\d{1,9}$/.test(String(s.id))) errori.push(`${dove}: id non valido`);
-    if (id.has(s.id)) errori.push(`${dove}: id duplicato`);
-    id.add(s.id);
-    if (!RE_SLUG.test(s.slug || '') || s.slug.length > 120) errori.push(`${dove}: slug non valido`);
-    if (slug.has(s.slug)) errori.push(`${dove}: slug duplicato`);
-    slug.add(s.slug);
-    for (const k of ['inizio', 'fine', 'giorno_da', 'giorno_a']) if (!isoValida(s[k])) errori.push(`${dove}: ${k} non valida`);
-    if (!STATI_VALIDI.includes(s.stato)) errori.push(`${dove}: stato "${s.stato}" non valido`);
-    if (!Number.isInteger(s.sequence) || s.sequence < 0) errori.push(`${dove}: sequence non valida`);
-    for (const k of ['settore', 'rilevanza', 'regione', 'modalita', 'sindacati', 'categoria', 'note']) {
-      if (typeof s[k] !== 'string' || s[k].length > 800 || /[<>]/.test(s[k])) errori.push(`${dove}: campo ${k} non valido`);
-    }
-    if (!['nazionale', 'regione', 'provincia'].includes(s.zona_tipo)) errori.push(`${dove}: zona non valida`);
-    if (s.differito_a && !RE_SLUG.test(s.differito_a)) errori.push(`${dove}: differito_a non valido`);
-    if (s.differito_da && !RE_SLUG.test(s.differito_da)) errori.push(`${dove}: differito_da non valido`);
-  }
-  if (errori.length) throw new Error(`data/scioperi.json non valido:\n- ${errori.slice(0, 20).join('\n- ')}`);
 }
 
 function segnaposti(sito) {
@@ -84,8 +57,13 @@ export function intestazioniPerConfigurazione(testo, sito) {
     .replace("; require-trusted-types-for 'script'; trusted-types 'none'", '');
 }
 
-export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log } = {}) {
+export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log, pubblicazione = process.env.CF_PAGES === '1' } = {}) {
   const sito = { ...configSito, titolare: { ...configSito.titolare } };
+  // Su Cloudflare Pages (CF_PAGES=1) non si pubblica un sito con i segnaposto: email e nome del titolare devono essere veri.
+  const mancanti = segnaposti(sito);
+  if (pubblicazione && mancanti.length) {
+    throw new Error(`prima di pubblicare compila questi segnaposto in config/sito.mjs (vedi DEPLOY.md, passo 5):\n  - ${mancanti.join('\n  - ')}`);
+  }
   if (urlBase) sito.urlBase = urlBase.replace(/\/+$/, '');
   if (!/^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(sito.urlBase)) throw new Error(`urlBase non valido: ${sito.urlBase}`);
   if (!sito.urlBase.startsWith('https://') && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(sito.urlBase)) throw new Error('urlBase deve iniziare con https://');
@@ -96,7 +74,6 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   const stato = existsSync(join(dataDir, 'stato.json')) ? leggiJson(join(dataDir, 'stato.json')) : {};
   const kb = leggiJson(join(RADICE, 'data', 'assistente.json'));
   const luoghi = leggiJson(join(RADICE, 'data', 'luoghi.json'));
-  const settori = elencoSettori();
 
   // File statici e versione (per evitare che il browser usi CSS o JS vecchi dopo un aggiornamento).
   const fileJs = readdirSync(join(RADICE, 'src', 'js')).filter((f) => f.endsWith('.mjs'));
@@ -104,10 +81,8 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
     ...fileJs.map((f) => readFileSync(join(RADICE, 'src', 'js', f), 'utf8'))];
   const versione = hash(sorgenti.join('\n'));
 
-  const perSlug = new Map(archivio.scioperi.map((s) => [s.slug, s]));
-  const compatti = archivio.scioperi.map((s) => compatto(s, perSlug));
-  const compattiPerId = new Map(compatti.map((c) => [c.id, c]));
-  const ctx = { sito, versione, oggi, stato, aff, archivio, scioperi: archivio.scioperi, compatti, compattiPerId, perSlug, REGIONI, CITTA, settori };
+  const ctx = creaContesto({ archivio, stato, oggi, sito, aff, versione });
+  const { compatti, compattiPerId, settori } = ctx;
 
   rmSync(uscita, { recursive: true, force: true });
   mkdirSync(uscita, { recursive: true });
@@ -184,24 +159,7 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   }));
 
   // Calendari
-  const host = new URL(sito.urlBase).host;
-  const testiEvento = (s) => {
-    const c = compattiPerId.get(s.id);
-    const nuovo = s.differito_a ? perSlug.get(s.differito_a) : null;
-    let avviso = null;
-    if (s.stato === 'revocato') avviso = STATI.revocato.spiegazione;
-    else if (s.stato === 'rimosso') avviso = STATI.rimosso.spiegazione;
-    else if (nuovo) avviso = `sciopero rinviato a ${dataLunga(nuovo.inizio)}: ${sito.urlBase}/sciopero/${nuovo.slug}/`;
-    else if (s.stato === 'differito' && s.inizio_precedente) avviso = `sciopero rinviato: prima era previsto per ${dataLunga(s.inizio_precedente)}.`;
-    if (s.esclude_trasporti) avviso = 'secondo il Ministero questo sciopero generale esclude il settore dei trasporti.';
-    if (c.nota_anticipo && !avviso) avviso = c.nota_anticipo.replace(/^Attenzione: /, '');
-    return {
-      titolo: titoloScheda(s), chi: leggibile(s.categoria), orari: orarioTesto(s) || leggibile(s.modalita), settore: infoSettore(s.settore).nome,
-      luogo: luogoTesto(s), fasce: fasceInUnaRiga(s), note: s.note ? leggibile(s.note) : null, sindacati: s.sindacati,
-      url: `${sito.urlBase}/sciopero/${s.slug}/`, dominio: sito.dominio, avviso,
-    };
-  };
-  const eventiCache = new Map(archivio.scioperi.map((s) => [s.id, evento(s, testiEvento(s))]));
+  const eventiCache = new Map(archivio.scioperi.map((s) => [s.id, evento(s, testiEvento(ctx, s))]));
   const prodid = `-//${sito.nome}//Scioperi trasporti//IT`;
   const scriviIcs = (nome, titolo, descrizione, scelti) => {
     scrivi(join(uscita, 'ics', `${nome}.ics`), calendario({ nome: `${titolo} (${sito.nome})`, descrizione, prodid, eventi: scelti.map((s) => eventiCache.get(s.id)) }));
@@ -237,12 +195,15 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
     await og.preparaRenderer();
     scrivi(join(uscita, 'og', 'predefinita.png'), og.pngDaSvg(og.svgPredefinita(sito)));
     scrivi(join(uscita, 'icona-180.png'), og.pngDaSvg(og.svgIcona(180)));
+    const predefinita = readFileSync(join(uscita, 'og', 'predefinita.png'));
     for (const s of archivio.scioperi) {
-      const c = compattiPerId.get(s.id);
-      const st = c.stato === 'confermato' && c.a < oggi ? 'concluso' : c.stato;
-      const quando = s.inizio === s.fine ? dataLunga(s.inizio) : `${dataMedia(s.inizio)} - ${dataLunga(s.fine)}`;
-      const svg = og.svgAnteprima({ stato: st, titolo: c.titolo, data: quando[0].toUpperCase() + quando.slice(1), dettaglio: [c.orario, c.chi].filter(Boolean).join(' · '), sito });
-      scrivi(join(uscita, 'og', `${s.slug}.png`), og.pngDaSvg(svg));
+      try {
+        scrivi(join(uscita, 'og', `${s.slug}.png`), og.pngDaSvg(og.svgAnteprima(datiAnteprima(ctx, s))));
+      } catch (e) {
+        // Un'immagine che non si riesce a disegnare non deve fermare il sito: si usa quella generica.
+        log(`ATTENZIONE: anteprima di ${s.id} non generata (${e.message}): uso quella generica.`);
+        scrivi(join(uscita, 'og', `${s.slug}.png`), predefinita);
+      }
     }
   }
 

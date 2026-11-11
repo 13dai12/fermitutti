@@ -131,7 +131,8 @@ function htmlBriciole(voci) {
 
 function aggiornatoTesto(ctx) {
   const t = ctx.stato.ultima_verifica_riuscita;
-  return t ? `Ultimo controllo della fonte ufficiale: <time datetime="${e(t)}" data-relativo>${e(dataOraRoma(t))}</time>.` : '';
+  // Senza "X minuti fa" aggiunto da JavaScript: allungherebbe il paragrafo dopo il caricamento e sposterebbe la pagina.
+  return t ? `Ultimo controllo della fonte ufficiale: <time datetime="${e(t)}">${e(dataOraRoma(t))}</time>.` : '';
 }
 
 // ---------- Pagine ----------
@@ -651,6 +652,8 @@ ${st.ultimo_errore ? riga('Ultimo problema', `${e(st.ultimo_errore.messaggio)} (
 export function pagina404(ctx) {
   return pagina({
     sito: ctx.sito, versione: ctx.versione, percorso: '/404.html', tipoPagina: '404', noindex: true,
+    // La 404 può essere servita sotto /widget/, dove le intestazioni non portano la CSP: questa la sostituisce.
+    cspMeta: "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'",
     titolo: 'Pagina non trovata', descrizione: 'La pagina che cerchi non esiste o è stata tolta: torna agli scioperi di oggi e domani oppure cerca la tua città.',
     corpo: `<h1>Pagina non trovata</h1>
 <p>La pagina che cerchi non esiste o è stata tolta. Gli scioperi conclusi da più di due mesi vengono rimossi.</p>

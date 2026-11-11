@@ -78,6 +78,25 @@ await controlla('Il widget si può incorporare', async () => {
   else ko('Il widget si può incorporare', `stato ${r.status}; CSP: ${csp || 'nessuna'}; X-Frame-Options: ${r.headers.get('x-frame-options') || 'nessuno'}`);
 });
 
+await controlla('Una pagina inesistente sotto /widget/ ha comunque una politica di sicurezza', async () => {
+  const r = await richiesta(`https://${dominio}/widget/pagina-che-non-esiste/`);
+  const testo = await r.text();
+  const meta = /<meta http-equiv="Content-Security-Policy" content="[^"]*object-src 'none'/.test(testo);
+  if (r.status === 404 && (meta || (r.headers.get('content-security-policy') || '').includes("object-src 'none'"))) ok('Una pagina inesistente sotto /widget/ ha comunque una politica di sicurezza');
+  else ko('Una pagina inesistente sotto /widget/ ha comunque una politica di sicurezza', `stato ${r.status}`);
+});
+
+await controlla('Cloudflare non modifica le pagine', async () => {
+  const pagine = ['/', '/contatti/', '/privacy/'];
+  const trovati = [];
+  for (const p of pagine) {
+    const t = await (await richiesta(`https://${dominio}${p}`)).text();
+    if (/\/cdn-cgi\/|__cf_email__|data-cfemail|rocket-loader/i.test(t)) trovati.push(p);
+  }
+  if (!trovati.length) ok('Cloudflare non modifica le pagine (niente script aggiunti né email offuscate)');
+  else ko('Cloudflare non modifica le pagine', `script o email offuscate in: ${trovati.join(', ')} (spegni Email Address Obfuscation e Rocket Loader)`);
+});
+
 for (const percorso of ['/ics/italia.ics', '/ics/citta-roma.ics']) {
   await controlla(`Calendario ${percorso}`, async () => {
     const r = await richiesta(`https://${dominio}${percorso}`);

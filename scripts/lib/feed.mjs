@@ -35,19 +35,21 @@ export function decodificaEntita(testo) {
 // (usati negli attacchi "bidi"). Costruiti con codici numerici per non dipendere dalla codifica del sorgente.
 const INVISIBILI = [
   [0x00, 0x08], [0x0b, 0x0c], [0x0e, 0x1f], [0x7f, 0x9f], [0xad, 0xad],
-  [0x200b, 0x200f], [0x2028, 0x202e], [0x2060, 0x2064], [0x2066, 0x206f], [0xfeff, 0xfeff], [0xfff9, 0xfffb],
+  [0x200b, 0x200f], [0x2028, 0x202e], [0x2060, 0x2064], [0x2066, 0x206f], [0xfdd0, 0xfdef], [0xfeff, 0xfeff], [0xfff9, 0xfffb],
+  [0xfffe, 0xffff],
 ];
 const RE_INVISIBILI = new RegExp('[' + INVISIBILI.map(([a, b]) => {
   const h = (n) => '\\u' + n.toString(16).padStart(4, '0');
   return a === b ? h(a) : h(a) + '-' + h(b);
 }).join('') + ']', 'g');
 
-/** Toglie i tag, decodifica le entità, elimina i caratteri invisibili e normalizza gli spazi. */
+/** Toglie i tag, decodifica le entità, elimina i caratteri invisibili e normalizza gli spazi.
+ * La forma /<[^<>]*>/ ha tempo lineare anche con migliaia di '<' non chiusi. */
 export function pulisciTesto(testo) {
-  let t = String(testo ?? '').replace(/<[^>]*>/g, ' ');
+  let t = String(testo ?? '').replace(/<[^<>]*>/g, ' ');
   t = decodificaEntita(t);
   // Seconda passata: entità che nascondevano tag (es. &lt;script&gt;).
-  t = t.replace(/<[^>]*>/g, ' ');
+  t = t.replace(/<[^<>]*>/g, ' ');
   t = t.normalize('NFC').replace(RE_INVISIBILI, '');
   return t.replace(/\s+/g, ' ').trim();
 }
@@ -58,13 +60,35 @@ export function contieneMarkup(grezzo) {
   return /[<>]/.test(decodificato) || /javascript\s*:|vbscript\s*:|data\s*:\s*text\/html/i.test(decodificato);
 }
 
+/**
+ * Contenuti dei blocchi <tag ...>…</tag> (non annidati), cercati con indexOf: tempo lineare anche con input ostili.
+ * Si ferma al primo blocco senza chiusura.
+ */
+export function blocchi(testo, tag, massimo = Infinity) {
+  const basso = testo.toLowerCase();
+  const apre = `<${tag}`, chiude = `</${tag}>`;
+  const risultati = [];
+  let da = 0;
+  while (risultati.length < massimo) {
+    let i = basso.indexOf(apre, da);
+    // Deve essere proprio quel tag (non <items o <itemx): dopo il nome serve '>' o uno spazio.
+    while (i >= 0 && !/[\s>]/.test(basso[i + apre.length] || '')) i = basso.indexOf(apre, i + 1);
+    if (i < 0) break;
+    const fineApertura = basso.indexOf('>', i);
+    if (fineApertura < 0) break;
+    const j = basso.indexOf(chiude, fineApertura + 1);
+    if (j < 0) break;
+    risultati.push(testo.slice(fineApertura + 1, j));
+    da = j + chiude.length;
+  }
+  return risultati;
+}
+
 function estrai(blocco, tag) {
-  const re = new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`, 'i');
-  const m = re.exec(blocco);
-  if (!m) return null;
-  let v = m[1];
-  const cd = /^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/.exec(v);
-  if (cd) v = cd[1];
+  const [v] = blocchi(blocco, tag, 1);
+  if (v === undefined) return null;
+  const t = v.trim();
+  if (t.startsWith('<![CDATA[') && t.endsWith(']]>')) return t.slice(9, -3);
   return v;
 }
 
@@ -79,7 +103,9 @@ function chiaveCampo(s) {
   return MAPPA_CHIAVI[k] || null;
 }
 
-export const DIMENSIONE_MASSIMA = 5_000_000;
+// Il feed reale pesa circa 25 KB: un megabyte è un limite largo ma che tiene bassi i tempi nei casi ostili.
+export const DIMENSIONE_MASSIMA = 1_000_000;
+const LUNGHEZZA_MASSIMA_TITOLO = 400;
 
 /**
  * Analizza il testo XML del feed e restituisce { canale, elementi }.
@@ -94,11 +120,9 @@ export function analizzaFeed(testoXml) {
     throw new ErroreFeed('non-rss', 'la risposta non è un feed RSS');
   }
   if (/<!DOCTYPE|<!ENTITY/i.test(testoXml)) throw new ErroreFeed('dtd', 'il feed contiene dichiarazioni DOCTYPE o ENTITY non attese');
-  const blocchiItem = [];
-  const reItem = /<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi;
-  let it;
-  while ((it = reItem.exec(testoXml))) blocchiItem.push(it[1]);
-  const bloccoCanale = testoXml.split(/<item[\s>]/i)[0];
+  const blocchiItem = blocchi(testoXml, 'item', 5000);
+  const primoItem = testoXml.toLowerCase().search(/<item[\s>]/);
+  const bloccoCanale = primoItem >= 0 ? testoXml.slice(0, primoItem) : testoXml;
   const canale = {
     titolo: pulisciTesto(estrai(bloccoCanale, 'title') || ''),
     descrizione: pulisciTesto(estrai(bloccoCanale, 'description') || ''),
@@ -116,13 +140,15 @@ export function analizzaFeed(testoXml) {
     const guid = pulisciTesto(estrai(b, 'guid') || '');
     const pubDate = pulisciTesto(estrai(b, 'pubDate') || '');
     const campi = {};
-    const t = /^Data inizio:\s*(.*?)\s*-\s*Settore:\s*(.*?)\s*-\s*Rilevanza:\s*(.*?)\s*-\s*Regione:\s*(.*?)\s*-\s*Provincia:\s*(.*)$/i.exec(titolo);
+    // La regex del titolo si usa solo su titoli di lunghezza normale (quelli veri sono sotto i 200 caratteri).
+    if (titolo.length > LUNGHEZZA_MASSIMA_TITOLO) sospetti.push('titolo');
+    const t = titolo.length > LUNGHEZZA_MASSIMA_TITOLO ? null : /^Data inizio:\s*(.*?)\s*-\s*Settore:\s*(.*?)\s*-\s*Rilevanza:\s*(.*?)\s*-\s*Regione:\s*(.*?)\s*-\s*Provincia:\s*(.*)$/i.exec(titolo);
     if (t) {
       campi.inizio = t[1].trim(); campi.settore = t[2].trim(); campi.rilevanza = t[3].trim();
       campi.regione = t[4].trim(); campi.provincia = t[5].trim();
     }
     const descrizione = estrai(b, 'description') || '';
-    for (const riga of descrizione.split(/<br\s*\/?>/i)) {
+    for (const riga of descrizione.split(/<br\s{0,5}\/?>/i)) {
       const r = pulisciTesto(riga);
       if (!r) continue;
       const i = r.indexOf(':');

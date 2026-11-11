@@ -1,6 +1,14 @@
 // Logica condivisa (build e browser): quali scioperi toccano una zona, un settore, un giorno.
 // Nessun accesso al DOM né al file system: solo dati.
 
+/** Link ammessi nell'interfaccia: percorsi interni (mai "//dominio" o "/\\dominio") oppure https verso un host. */
+export function hrefSicuro(url) {
+  const s = String(url || '');
+  if (/^\/(?![\/\\])[a-z0-9/#._-]*$/i.test(s)) return s;
+  if (/^https:\/\/[a-z0-9.-]+(\/[^\s"'<>\\]*)?$/i.test(s)) return s;
+  return null;
+}
+
 /** Chiave di confronto per i luoghi: minuscolo, senza accenti e punteggiatura, senza articoli e preposizioni. */
 export function chiaveLuogo(testo) {
   return String(testo ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')

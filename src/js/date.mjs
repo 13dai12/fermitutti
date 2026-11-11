@@ -53,6 +53,8 @@ export function daItaliana(testo) {
   if (!m) return null;
   const g = +m[1], me = +m[2], a = +m[3];
   if (me < 1 || me > 12 || g < 1 || g > 31) return null;
+  // Anni fuori da questo intervallo sono di sicuro errori di battitura (e romperebbero le date ISO a 4 cifre).
+  if (a < 2000 || a > 2100) return null;
   const d = new Date(Date.UTC(a, me - 1, g));
   if (d.getUTCFullYear() !== a || d.getUTCMonth() !== me - 1 || d.getUTCDate() !== g) return null;
   return `${a}-${String(me).padStart(2, '0')}-${String(g).padStart(2, '0')}`;

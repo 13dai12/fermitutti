@@ -23,15 +23,19 @@ export const VTIMEZONE_ROMA = [
   'END:VTIMEZONE',
 ];
 
-/** Escape per i valori di tipo TEXT (RFC 5545 §3.3.11). Elimina anche i caratteri di controllo. */
+/** Escape per i valori di tipo TEXT (RFC 5545 §3.3.11). Elimina anche i caratteri di controllo.
+ * La barra rovesciata si costruisce con il suo codice: il sorgente resta leggibile e senza ambiguità. */
+const BARRA = String.fromCharCode(92);
+const RE_BARRA = new RegExp(BARRA + BARRA, 'g');
+const RE_CONTROLLO_ICS = new RegExp('[' + [[0x00, 0x08], [0x0b, 0x0c], [0x0e, 0x1f], [0x7f, 0x7f]].map(([a, b]) => String.fromCharCode(a) + '-' + String.fromCharCode(b)).join('') + ']', 'g');
 export function escapaTesto(valore) {
   return String(valore ?? '')
     .replace(/\r\n?/g, '\n')
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
-    .replace(/\\/g, '\\\\')
-    .replace(/;/g, '\;')
-    .replace(/,/g, '\\,')
-    .replace(/\n/g, '\\n');
+    .replace(RE_CONTROLLO_ICS, '')
+    .replace(RE_BARRA, BARRA + BARRA)
+    .replace(/;/g, BARRA + ';')
+    .replace(/,/g, BARRA + ',')
+    .replace(/\n/g, BARRA + 'n');
 }
 
 /** Ripiega una riga a 75 ottetti senza spezzare i caratteri UTF-8. */

@@ -11,7 +11,7 @@
 //   TIMEOUT_MS     timeout per ogni richiesta (predefinito 20000)
 //   TENTATIVI      tentativi per il feed (predefinito 4)
 //   ATTESA_MS      attesa base tra i tentativi (predefinita 30000)
-//   ACCETTA_CALO   "1" per accettare un calo improvviso del numero di scioperi (dopo averlo controllato a mano)
+//   ACCETTA_VARIAZIONE "1" per accettare un calo o un aumento improvviso del numero di scioperi (dopo un controllo a mano)
 //
 // Codici di uscita: 0 = tutto bene (dati cambiati o no), 3 = fonte guasta o dati anomali: i dati NON sono stati toccati.
 // Il risultato viene anche scritto in $GITHUB_OUTPUT (esito, pubblica, motivo, riassunto) per il workflow.
@@ -25,16 +25,34 @@ import { normalizza } from './lib/normalizza.mjs';
 import { unisci, archivioVuoto, attesiNelFeed } from './lib/archivio.mjs';
 import { estraiNoteDaHtml, applicaNote } from './lib/arricchisci.mjs';
 import { oggiRoma } from './lib/date.mjs';
+import { provaCostruzione } from './lib/prova-costruzione.mjs';
 
 export const FONTE_URL_UFFICIALE = 'https://scioperi.mit.gov.it/mit2/public/scioperi/rss';
 export const FONTE_HTML_UFFICIALE = 'https://scioperi.mit.gov.it/mit2/public/scioperi';
 // Ogni quante ore pubblicare comunque (così il sito mostra che il controllo è vivo).
 export const ORE_BATTITO = 6;
-const DIMENSIONE_MASSIMA = 5_000_000;
+// Limiti di dimensione: il feed reale pesa circa 25 KB, la pagina HTML circa 315 KB.
+const LIMITE_FEED = 1_000_000;
+const LIMITE_PAGINA = 2_000_000;
+// Difese contro una fonte che "inonda" il sito: in un aggiornamento normale arrivano pochi scioperi nuovi,
+// e con 60 giorni di conservazione l'archivio resta sotto i 300.
+export const MASSIMO_NUOVI = 100;
+export const MASSIMO_ARCHIVIO = 1500;
 const UA = 'FermiTutti/1.0 (sito statico di avvisi sugli scioperi; aggiornamento automatico)';
 
 class ErroreDati extends Error {
-  constructor(errori, avvisi) { super(errori.join('; ')); this.name = 'ErroreDati'; this.errori = errori; this.avvisi = avvisi; }
+  constructor(errori, avvisi = []) { super(errori.join('; ')); this.name = 'ErroreDati'; this.errori = errori; this.avvisi = avvisi; }
+}
+
+/**
+ * Toglie indirizzi web ed email dai messaggi: possono contenere testo della fonte e finiscono nelle segnalazioni
+ * via email e nei registri pubblici (un link ingannevole lì sembrerebbe arrivare dal tuo repository).
+ */
+export function senzaIndirizzi(testo) {
+  return String(testo ?? '')
+    .replace(/[a-z][a-z0-9+.-]*:\/\/\S*/gi, '[indirizzo tolto]')
+    .replace(/\bwww\.\S+/gi, '[indirizzo tolto]')
+    .replace(/\S+@\S+\.\S+/g, '[indirizzo tolto]');
 }
 
 /** Un reindirizzamento è ammesso solo verso lo stesso host (e in https, salvo i test in locale). */
@@ -44,7 +62,7 @@ function reindirizzamentoAmmesso(destinazione, origine) {
   return d.protocol === 'https:' && d.hostname === o.hostname;
 }
 
-export async function scarica(url, { timeoutMs = 20000, accept = '*/*' } = {}) {
+export async function scarica(url, { timeoutMs = 20000, accept = '*/*', limite = LIMITE_FEED } = {}) {
   const controllo = new AbortController();
   const timer = setTimeout(() => controllo.abort(), timeoutMs);
   try {
@@ -62,13 +80,13 @@ export async function scarica(url, { timeoutMs = 20000, accept = '*/*' } = {}) {
     }
     if (!risposta.ok) throw new Error(`HTTP ${risposta.status}`);
     const dichiarata = Number(risposta.headers.get('content-length') || 0);
-    if (dichiarata > DIMENSIONE_MASSIMA) throw new Error(`risposta troppo grande (${dichiarata} byte)`);
+    if (dichiarata > limite) throw new Error(`risposta troppo grande (${dichiarata} byte)`);
     // Lettura a pezzi, interrotta se supera il limite (anche senza content-length).
     const pezzi = [];
     let totale = 0;
     for await (const pezzo of risposta.body) {
       totale += pezzo.length;
-      if (totale > DIMENSIONE_MASSIMA) { controllo.abort(); throw new Error(`risposta troppo grande (oltre ${DIMENSIONE_MASSIMA} byte)`); }
+      if (totale > limite) { controllo.abort(); throw new Error(`risposta troppo grande (oltre ${limite} byte)`); }
       pezzi.push(pezzo);
     }
     return { testo: Buffer.concat(pezzi).toString('utf8'), tipo: risposta.headers.get('content-type') || '' };
@@ -103,7 +121,7 @@ function scriviJson(percorso, dati) {
 
 /** Testo sicuro per gli output del workflow: una riga, niente caratteri speciali, lunghezza limitata. */
 function perOutput(v) {
-  return String(v).replace(/[\r\n]+/g, ' ').replace(/[^\p{L}\p{N} .,;:()'"/%+=_-]/gu, '').slice(0, 900);
+  return senzaIndirizzi(String(v)).replace(/[\r\n]+/g, ' ').replace(/[^\p{L}\p{N} .,;:()'"/%+=_\[\]-]/gu, '').slice(0, 900);
 }
 
 function emettiOutput(valori) {
@@ -131,7 +149,7 @@ export function decidiPubblicazione({ cambiato, eraGuasta, guasta, forza, statoP
   return { pubblica: false, motivo: 'nessuna novità' };
 }
 
-export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false, accettaCalo = false, timeoutMs = 20000, tentativi = 4, attesaMs = 30000, adesso = new Date(), log = console.error } = {}) {
+export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false, accettaVariazione = false, timeoutMs = 20000, tentativi = 4, attesaMs = 30000, adesso = new Date(), log = console.error } = {}) {
   mkdirSync(dataDir, { recursive: true });
   const fileArchivio = join(dataDir, 'scioperi.json');
   const fileStato = join(dataDir, 'stato.json');
@@ -145,7 +163,7 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
     const { testo } = await conTentativi(() => scarica(fonteUrl, { timeoutMs, accept: 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.1' }), tentativi, attesaMs, log);
     const feed = analizzaFeed(testo);
     const attesi = attesiNelFeed(precedente, oggi);
-    const esito = validaElementi(feed.elementi, { oggi, attesiMinimi: attesi, accettaCalo });
+    const esito = validaElementi(feed.elementi, { oggi, attesiMinimi: attesi, accettaVariazione });
     if (!esito.ok) throw new ErroreDati(esito.errori, esito.avvisi);
     let record = esito.record;
     const avvisi = [...esito.avvisi];
@@ -156,7 +174,7 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
     let noteApplicate = false;
     if (fonteHtmlUrl && (impronta !== statoPrecedente.impronta_feed || forza)) {
       try {
-        const pagina = await scarica(fonteHtmlUrl, { timeoutMs, accept: 'text/html' });
+        const pagina = await scarica(fonteHtmlUrl, { timeoutMs, accept: 'text/html', limite: LIMITE_PAGINA });
         const note = estraiNoteDaHtml(pagina.testo);
         if (note) { record = applicaNote(record, note); noteApplicate = true; } else avvisi.push('pagina HTML del Ministero non riconosciuta: note non aggiornate');
       } catch (e) {
@@ -169,6 +187,14 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
     const { archivio, diff, urgente, cambiato } = unisci(precedente, nuovi, {
       adesso: istante, oggi, fonte: { url: fonteUrl, aggiornato_al: feed.canale.aggiornatoAl },
     });
+    if (!accettaVariazione && diff.aggiunti.length > MASSIMO_NUOVI) throw new ErroreDati([`troppi scioperi nuovi in un solo aggiornamento: ${diff.aggiunti.length}`]);
+    if (archivio.scioperi.length > MASSIMO_ARCHIVIO) throw new ErroreDati([`archivio troppo grande: ${archivio.scioperi.length} scioperi`]);
+    // Prima di salvare: i dati nuovi devono poter diventare pagine, calendari e anteprime. Se no, non si salva nulla.
+    try {
+      provaCostruzione(archivio, { oggi });
+    } catch (e) {
+      throw new ErroreDati([`i dati nuovi non si possono pubblicare (${e.message.split('\n').slice(0, 3).join('; ')})`]);
+    }
     const decisione = decidiPubblicazione({ cambiato, eraGuasta, guasta: false, forza, statoPrecedente, adesso });
     const stato = {
       ultima_verifica_riuscita: istante,
@@ -181,17 +207,17 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
       impronta_feed: impronta,
       scioperi_in_archivio: archivio.scioperi.length,
       scioperi_nel_feed: nuovi.length,
-      avvisi: avvisi.slice(0, 30),
+      avvisi: avvisi.slice(0, 30).map(senzaIndirizzi),
     };
     if (cambiato) scriviJson(fileArchivio, archivio);
     scriviJson(fileStato, stato);
     const riassunto = `feed: ${nuovi.length} scioperi; nuovi ${diff.aggiunti.length}, modificati ${diff.modificati.length}, revocati o tolti ${diff.rimossi.length}, rinviati ${diff.rinviati.length}, ripristinati ${diff.ripristinati.length}, conclusi ${diff.conclusi.length}${avvisi.length ? `; avvisi: ${avvisi.length}` : ''}${eraGuasta ? '; la fonte funziona di nuovo' : ''}`;
-    for (const a of avvisi) log(`avviso: ${a}`);
+    for (const a of avvisi) log(`avviso: ${senzaIndirizzi(a)}`);
     log(riassunto);
     emettiOutput({ esito: 'ok', pubblica: decisione.pubblica, motivo: decisione.motivo, dati_cambiati: cambiato, urgente, fonte_ripristinata: eraGuasta, riassunto });
     return { ok: true, ...decisione, cambiato, urgente, diff, avvisi, archivio, stato };
   } catch (e) {
-    const messaggio = e instanceof ErroreDati ? `dati anomali: ${e.message}` : (e instanceof ErroreFeed ? `feed non valido: ${e.message}` : `fonte non raggiungibile: ${e.message}`);
+    const messaggio = senzaIndirizzi(e instanceof ErroreDati ? `dati anomali: ${e.message}` : (e instanceof ErroreFeed ? `feed non valido: ${e.message}` : `fonte non raggiungibile: ${e.message}`));
     const decisione = decidiPubblicazione({ cambiato: false, eraGuasta, guasta: true, forza, statoPrecedente, adesso });
     const stato = {
       ...statoPrecedente,
@@ -216,7 +242,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     fonteHtmlUrl: fonteHtml,
     dataDir: process.env.DATA_DIR || new URL('../data', import.meta.url).pathname,
     forza: process.argv.includes('--forza'),
-    accettaCalo: process.env.ACCETTA_CALO === '1',
+    accettaVariazione: process.env.ACCETTA_VARIAZIONE === '1',
     timeoutMs: Number(process.env.TIMEOUT_MS || 20000),
     tentativi: Number(process.env.TENTATIVI || 4),
     attesaMs: Number(process.env.ATTESA_MS || 30000),

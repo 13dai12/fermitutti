@@ -70,7 +70,7 @@ test('dati anomali: vuoto, campi mancanti, date impossibili, campi enormi, dupli
   assert.match(val(FEED_REALE.replace('Data fine: 10/11/2026', 'Data fine: 01/11/2026')).errori[0], /precede/);
   assert.match(val(FEED_REALE.replace('Data fine: 10/11/2026', 'Data fine: 10/11/2027')).errori[0], /durata anomala/);
   assert.match(val(FEED_REALE, { attesiMinimi: 80 }).errori[0], /crollato/);
-  assert.equal(val(FEED_REALE, { attesiMinimi: 80, accettaCalo: true }).ok, true);
+  assert.equal(val(FEED_REALE, { attesiMinimi: 80, accettaVariazione: true }).ok, true);
   // Molti settori sconosciuti: il formato è cambiato.
   assert.match(val(FEED_REALE.replace(/Settore: (Aereo|Trasporto pubblico locale|Generale)/g, 'Settore: Sconosciuto')).errori.join(' '), /settori sconosciuti/);
 });

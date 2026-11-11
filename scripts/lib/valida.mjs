@@ -14,26 +14,40 @@ const OBBLIGATORI = ['inizio', 'fine', 'settore', 'rilevanza', 'regione', 'provi
 const DURATA_MASSIMA_GIORNI = 60;
 const ORIZZONTE_GIORNI = 400;
 export const MINIMO_PER_CONTROLLO_CALO = 6;
+// Il feed reale contiene 30-40 scioperi: oltre questi numeri il formato è cambiato o la fonte è manipolata.
+export const MASSIMO_ELEMENTI = 500;
+export const CRESCITA_MINIMA_SOSPETTA = 150;
 
 function taglia(s, n = 60) {
   s = String(s ?? '');
   return s.length > n ? `${s.slice(0, n)}…` : s;
 }
 
+const settoreNoto = (nome) => Object.hasOwn(settori, nome) && !String(nome).startsWith('_');
+
+/** Data accessoria (proclamazione, ricezione): valida solo se entro 2 anni da oggi, altrimenti si scarta. */
+function dataAccessoria(testo, oggi) {
+  const d = testo ? daItaliana(String(testo).slice(0, 10)) : null;
+  if (!d || !oggi) return d;
+  return Math.abs(differenzaGiorni(oggi, d)) <= 730 ? d : null;
+}
+
 /**
- * Valida gli elementi del feed.
+ * Valida gli elementi del feed. I messaggi d'errore non riportano i valori della fonte (solo campo e posizione),
+ * così un testo ostile non può finire nelle segnalazioni inviate al proprietario.
  * @param {Array} elementi - output di analizzaFeed().elementi
- * @param {object} opzioni - { oggi: 'YYYY-MM-DD', attesiMinimi: scioperi ancora validi nell'archivio, accettaCalo: true per saltare il controllo sul calo }
+ * @param {object} opzioni - { oggi: 'YYYY-MM-DD', attesiMinimi: scioperi ancora validi nell'archivio,
+ *   accettaVariazione: true per saltare i controlli su calo e crescita improvvisi (dopo un controllo a mano) }
  * @returns {{ ok: boolean, errori: string[], avvisi: string[], record: object[] }}
  */
 export function validaElementi(elementi, opzioni = {}) {
-  const { oggi = null, attesiMinimi = null, accettaCalo = false } = opzioni;
+  const { oggi = null, attesiMinimi = null, accettaVariazione = false } = opzioni;
   const errori = [], avvisi = [], record = [];
   if (!Array.isArray(elementi) || elementi.length === 0) {
     errori.push('il feed non contiene nessuno sciopero');
     return { ok: false, errori, avvisi, record };
   }
-  if (elementi.length > 2000) {
+  if (elementi.length > MASSIMO_ELEMENTI) {
     errori.push(`il feed contiene troppi elementi (${elementi.length})`);
     return { ok: false, errori, avvisi, record };
   }
@@ -43,7 +57,7 @@ export function validaElementi(elementi, opzioni = {}) {
     const dove = `elemento ${i + 1}`;
     const c = el.campi || {};
     const m = RE_GUID.exec(el.guid || '');
-    if (!m) { errori.push(`${dove}: guid non riconosciuto (${taglia(el.guid)})`); return; }
+    if (!m) { errori.push(`${dove}: guid non riconosciuto`); return; }
     const id = m[1];
     if (visti.has(id)) { errori.push(`${dove}: guid duplicato ${id}`); return; }
     visti.add(id);
@@ -59,19 +73,20 @@ export function validaElementi(elementi, opzioni = {}) {
       if (typeof v === 'string' && /[<>]/.test(v)) { errori.push(`${dove} (${id}): il campo ${k} contiene caratteri non ammessi`); return; }
     }
     const inizio = daItaliana(c.inizio), fine = daItaliana(c.fine);
-    if (!inizio) { errori.push(`${dove} (${id}): data di inizio non valida (${taglia(c.inizio)})`); return; }
-    if (!fine) { errori.push(`${dove} (${id}): data di fine non valida (${taglia(c.fine)})`); return; }
+    if (!inizio) { errori.push(`${dove} (${id}): data di inizio non valida`); return; }
+    if (!fine) { errori.push(`${dove} (${id}): data di fine non valida`); return; }
     if (fine < inizio) { errori.push(`${dove} (${id}): la fine (${fine}) precede l'inizio (${inizio})`); return; }
     if (differenzaGiorni(inizio, fine) > DURATA_MASSIMA_GIORNI) { errori.push(`${dove} (${id}): durata anomala (${differenzaGiorni(inizio, fine)} giorni)`); return; }
     if (oggi) {
       if (differenzaGiorni(oggi, inizio) > ORIZZONTE_GIORNI) { errori.push(`${dove} (${id}): inizio troppo lontano nel futuro (${inizio})`); return; }
       if (differenzaGiorni(fine, oggi) > ORIZZONTE_GIORNI) { errori.push(`${dove} (${id}): sciopero troppo vecchio (${fine})`); return; }
     }
-    const proclamazione = c.proclamazione ? daItaliana(c.proclamazione) : null;
-    const ricezione = c.ricezione ? daItaliana(String(c.ricezione).slice(0, 10)) : null;
-    if (c.proclamazione && !proclamazione) avvisi.push(`${dove} (${id}): data di proclamazione non leggibile (${taglia(c.proclamazione)})`);
-    if (!(c.settore in settori) || c.settore.startsWith('_')) { sconosciuti++; avvisi.push(`${dove} (${id}): settore sconosciuto "${taglia(c.settore)}"`); }
-    if (!RILEVANZE.includes(c.rilevanza)) avvisi.push(`${dove} (${id}): rilevanza sconosciuta "${taglia(c.rilevanza)}"`);
+    const proclamazione = dataAccessoria(c.proclamazione, oggi);
+    const ricezione = dataAccessoria(c.ricezione, oggi);
+    if (c.proclamazione && !proclamazione) avvisi.push(`${dove} (${id}): data di proclamazione non leggibile, ignorata`);
+    if (c.ricezione && !ricezione) avvisi.push(`${dove} (${id}): data di ricezione non leggibile, ignorata`);
+    if (!settoreNoto(c.settore)) { sconosciuti++; avvisi.push(`${dove} (${id}): settore sconosciuto "${taglia(c.settore, 40)}"`); }
+    if (!RILEVANZE.includes(c.rilevanza)) avvisi.push(`${dove} (${id}): rilevanza sconosciuta "${taglia(c.rilevanza, 40)}"`);
     if (!c.modalita) avvisi.push(`${dove} (${id}): modalità assente`);
     record.push({
       id, inizio, fine,
@@ -82,8 +97,11 @@ export function validaElementi(elementi, opzioni = {}) {
   });
   if (errori.length === 0) {
     if (sconosciuti > 0 && sconosciuti > record.length * 0.3) errori.push(`troppi settori sconosciuti (${sconosciuti} su ${record.length}): il formato è cambiato?`);
-    if (!accettaCalo && attesiMinimi != null && attesiMinimi >= MINIMO_PER_CONTROLLO_CALO && record.length < Math.ceil(attesiMinimi * 0.5)) {
+    if (!accettaVariazione && attesiMinimi != null && attesiMinimi >= MINIMO_PER_CONTROLLO_CALO && record.length < Math.ceil(attesiMinimi * 0.5)) {
       errori.push(`numero di scioperi crollato: ${record.length} nel feed contro ${attesiMinimi} ancora validi nell'archivio`);
+    }
+    if (!accettaVariazione && record.length > Math.max(CRESCITA_MINIMA_SOSPETTA, 3 * (attesiMinimi || 0))) {
+      errori.push(`numero di scioperi cresciuto in modo anomalo: ${record.length} nel feed contro ${attesiMinimi || 0} ancora validi nell'archivio`);
     }
   }
   return { ok: errori.length === 0, errori, avvisi, record };

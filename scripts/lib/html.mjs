@@ -67,7 +67,7 @@ export function pagina(p) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${e(titoloCompleto)}</title>
+${p.cspMeta ? `<meta http-equiv="Content-Security-Policy" content="${e(p.cspMeta).replace(/&#39;/g, "'")}">\n` : ''}<title>${e(titoloCompleto)}</title>
 <meta name="description" content="${e(p.descrizione)}">
 ${p.noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical" href="${e(canonical)}">
 <meta property="og:site_name" content="${e(sito.nome)}">

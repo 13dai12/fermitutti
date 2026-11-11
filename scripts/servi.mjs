@@ -4,7 +4,7 @@
 // Uso: node scripts/servi.mjs [porta] [cartella]
 import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync } from 'node:fs';
-import { join, normalize, extname } from 'node:path';
+import { join, normalize, extname, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const TIPI = {
@@ -54,18 +54,24 @@ export function intestazioniPer(regole, percorso) {
 export function avviaServer({ porta = 8080, cartella = 'public' } = {}) {
   const radice = normalize(cartella);
   const regole = existsSync(join(radice, '_headers')) ? leggiHeaders(readFileSync(join(radice, '_headers'), 'utf8')) : [];
+  const radiceAssoluta = resolve(radice);
   const server = createServer((req, res) => {
-    const url = new URL(req.url, 'http://localhost');
-    let percorso = decodeURIComponent(url.pathname);
-    if (percorso.includes('\0') || percorso.split('/').includes('..')) { res.writeHead(400); res.end(); return; }
-    let file = join(radice, percorso);
+    // Solo richieste per questo computer: blocca il "DNS rebinding" da pagine web malevole.
+    const host = String(req.headers.host || '').replace(/:\d+$/, '');
+    if (host !== '127.0.0.1' && host !== 'localhost') { res.writeHead(421); res.end(); return; }
+    let percorso;
+    try { percorso = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { res.writeHead(400); res.end(); return; }
+    if (/[\0\\]/.test(percorso) || percorso.split('/').includes('..')) { res.writeHead(400); res.end(); return; }
+    let file = resolve(radiceAssoluta, '.' + percorso);
+    if (file !== radiceAssoluta && !file.startsWith(radiceAssoluta + sep)) { res.writeHead(400); res.end(); return; }
     if (existsSync(file) && statSync(file).isDirectory()) {
-      if (!percorso.endsWith('/')) { res.writeHead(308, { location: `${percorso}/` }); res.end(); return; }
+      if (!percorso.endsWith('/')) { res.writeHead(308, { location: '/' + percorso.replace(/^\/+/, '') + '/' }); res.end(); return; }
       file = join(file, 'index.html');
     }
     let stato = 200;
-    if (!existsSync(file) || percorso.endsWith('/_headers')) { file = join(radice, '404.html'); stato = 404; percorso = '/404.html'; }
+    if (!existsSync(file) || percorso.endsWith('/_headers')) { file = join(radiceAssoluta, '404.html'); stato = 404; }
     const intestazioni = { 'content-type': TIPI[extname(file)] || 'application/octet-stream' };
+    // Come su Cloudflare: le intestazioni dipendono dall'indirizzo richiesto, anche quando si risponde con la 404.
     for (const [k, v] of Object.entries(intestazioniPer(regole, percorso))) intestazioni[k.toLowerCase()] = v;
     res.writeHead(stato, intestazioni);
     res.end(readFileSync(file));
