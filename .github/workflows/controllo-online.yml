@@ -1,5 +1,3 @@
-# Controllo del sito pubblicato, da lanciare a mano: Actions > Controllo online > Run workflow.
-# Controlla HTTPS, reindirizzamenti, intestazioni di sicurezza, DNSSEC, SPF, DMARC, MX, CAA e calendari.
 name: Controllo online
 
 on:
@@ -20,12 +18,18 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+
+      - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
+
+      # Decommenta le due righe qui sotto se lo script usa pacchetti esterni da package.json
+      # - name: Installa dipendenze
+      #   run: npm ci
+
       - name: Controlla il sito pubblicato
         env:
           DOMINIO: ${{ inputs.dominio }}
