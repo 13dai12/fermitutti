@@ -87,6 +87,16 @@ La verifica in due passaggi su email, GitHub e Cloudflare, che è anche il regis
 
 `/.well-known/security.txt` (RFC 9116) viene rigenerato a ogni build con una scadenza a 180 giorni. Siccome il sito si ricostruisce ogni giorno, la scadenza non passa mai. Il contatto arriva dalla variabile `TITOLARE_EMAIL` di Cloudflare Pages oppure da `config/sito.mjs`. Un valore con un a capo o che non è un indirizzo email ferma la build, così nessuno può aggiungere righe al file attraverso quella variabile.
 
+## 9. Aggiornamento dal computer in Italia
+
+Il server del Ministero accetta solo connessioni dall'Italia, quindi i dati li legge un computer in Italia con un timer di systemd dell'utente (`scripts/aggiorna-italia.sh`). Le regole:
+
+- **Codice fisso.** Il timer esegue una copia del codice presa dall'ultimo commit locale al momento dell'installazione, con le sole dipendenze bloccate della build. Il codice che arriva da GitHub non viene mai eseguito sul computer. Chi riuscisse a modificare il repository non potrebbe quindi far girare niente lì.
+- **Solo i dati.** Nella copia del repository usata dal timer cambiano e si inviano soltanto `data/scioperi.json` e `data/stato.json`, con la firma «Fermi Tutti». Prima di inviare si costruisce il sito per prova. I dati che arrivano da GitHub passano dagli stessi controlli dell'archivio.
+- **Rete di casa.** Se GitHub non risponde lo script si ferma senza toccare niente, così un guasto della rete di casa non viene scambiato per un guasto della fonte.
+- **Chiave SSH.** Il timer usa la chiave SSH già presente sul computer. Chi entrasse nel computer potrebbe usarla per modificare il repository: il computer va tenuto aggiornato e protetto come ogni dispositivo personale.
+- **Sorveglianza.** GitHub controlla ogni due ore lo stato pubblicato. Se da più di 9 ore non arriva una verifica riuscita, il sito mostra l'avviso ai visitatori e il proprietario riceve una segnalazione. Il sito quindi non può restare fermo in silenzio.
+
 ## Come è stato verificato
 
 | Verifica | Risultato |
@@ -127,7 +137,8 @@ Dubbi sulla guida, tutti accolti in `DEPLOY.md`: spegnere le funzioni di Cloudfl
 - **Fonte manipolata in modo «plausibile».** Se qualcuno alterasse il sito del Ministero con dati credibili (date e testi normali), il sito li pubblicherebbe, perché non c'è modo di distinguerli da quelli veri. Il danno resta comunque limitato a testo mostrato come testo: nessuno script e nessun link possono passare.
 - **Fonte manipolata per fermare il sito.** Chi controllasse il feed potrebbe mandare dati che il sito rifiuta. Il sito resterebbe allora fermo agli ultimi dati validi, con un avviso visibile e una segnalazione per te. Non può però far pubblicare dati che rompono il sito, né riempire l'archivio.
 - **Il Ministero non dichiara le revoche.** Uno sciopero che sparisce prima di iniziare viene mostrato come «revocato», ma potrebbe anche essere stato tolto per errore. La spiegazione è sempre visibile e invita a verificare con l'azienda.
-- **Workflow mai eseguiti su GitHub.** I workflow sono stati controllati con prove automatiche e a mano, ma non possono girare qui. `actionlint`, lo strumento di verifica dei workflow, non è stato eseguito: scaricarlo ed eseguirlo non era permesso in questa sessione. Al primo avvio (passo 14 di `DEPLOY.md`) controlla che sia tutto verde.
+- **Workflow su GitHub.** «Verifica», «Controllo online» e l'aggiornamento sono girati su GitHub l'11 novembre 2026: la verifica è verde, l'aggiornamento ha scoperto che il Ministero blocca le connessioni dall'estero. `actionlint`, lo strumento di verifica dei workflow, non è stato eseguito: scaricarlo ed eseguirlo non era permesso in questa sessione. Al suo posto c'è `test/workflow.test.mjs`.
+- **Il computer in Italia può restare spento.** Finché è spento i dati non si aggiornano. Dopo 9 ore senza una verifica riuscita il sito lo dice ai visitatori e il proprietario riceve una segnalazione. Per un aggiornamento sempre attivo serve un dispositivo sempre acceso in Italia, per esempio un Raspberry Pi, con lo stesso script.
 - **Il comportamento di Cloudflare con `_headers`** è stato riprodotto in locale seguendo la documentazione. Dopo il lancio, il workflow «Controllo online» verifica le intestazioni reali, anche quelle del widget.
 - **Funzioni di Cloudflare che modificano le pagine** (offuscamento delle email, Rocket Loader, Bot Fight Mode): se restano accese, inseriscono script che la politica di sicurezza blocca. Non è un rischio per la sicurezza, ma alcune parti potrebbero non funzionare. `DEPLOY.md` dice di spegnerle e il controllo online lo verifica.
 - **Dipendenze di terzi.** Una dipendenza compromessa potrebbe alterare la build. Il rischio è ridotto da versioni bloccate, `--ignore-scripts`, un solo pacchetto nella build, nessuna dipendenza nel lavoro con permesso di scrittura, 7 giorni di attesa per le nuove versioni e revisione delle proposte di Dependabot. Ma non è nullo.

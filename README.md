@@ -14,7 +14,8 @@ Serve Node.js 22 o più recente.
 | Comando | Cosa fa |
 |---|---|
 | `npm ci --ignore-scripts` | Installa le dipendenze bloccate |
-| `npm run aggiorna` | Scarica e controlla il calendario ufficiale, aggiorna `data/` |
+| `npm run aggiorna` | Scarica e controlla il calendario ufficiale, aggiorna `data/`. Funziona solo dall'Italia |
+| `sh scripts/installa-aggiornamento-italia.sh` | Installa sul computer in Italia l'aggiornamento automatico ogni 30 minuti |
 | `npm run build` | Genera il sito in `public/` |
 | `npm test` | Esegue tutte le prove |
 | `npm run servi` | Serve `public/` su http://127.0.0.1:8080 con le intestazioni di `_headers` |
@@ -33,11 +34,12 @@ Serve Node.js 22 o più recente.
 | `data/assistente.json` | Parole chiave e risposte dell'assistente |
 | `data/luoghi.json` | Regioni e città |
 | `data/settori.json` | Settori del Ministero e come li mostriamo |
-| `scripts/aggiorna.mjs` | Aggiornamento dei dati (nessuna dipendenza esterna) |
+| `scripts/aggiorna.mjs` | Aggiornamento dei dati (nessuna dipendenza esterna) e sorveglianza da GitHub |
+| `scripts/aggiorna-italia.sh` | Lo script che il timer del computer in Italia avvia ogni 30 minuti |
 | `scripts/build.mjs` | Generazione del sito |
 | `scripts/lib/` | Lettura del feed, validazione, archivio, pagine, calendari, immagini |
 | `src/` | CSS, intestazioni (`_headers`) e JavaScript del browser (`src/js/`, condiviso con la build) |
 | `test/` | Prove automatiche (`node --test`) |
-| `.github/workflows/` | Aggiornamento automatico, verifica del codice, controllo online |
+| `.github/workflows/` | Sorveglianza dell'aggiornamento, verifica del codice, controllo online |
 
 I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (licenza CC BY 3.0 IT), rielaborati. Il sito non è ufficiale.

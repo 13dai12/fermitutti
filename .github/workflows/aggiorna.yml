@@ -1,23 +1,18 @@
-# Aggiornamento automatico dei dati degli scioperi.
-# Ogni 30 minuti scarica il calendario ufficiale del Ministero, lo controlla e, se serve, salva i dati nel repository:
-# Cloudflare Pages vede il nuovo commit e ripubblica il sito.
+# Sorveglianza dell'aggiornamento degli scioperi.
+# Il server del Ministero accetta solo connessioni dall'Italia (verificato l'11 novembre 2026), quindi i dati li legge
+# un computer in Italia: scripts/aggiorna-italia.sh, avviato ogni 30 minuti da un timer, li invia in questo repository
+# e Cloudflare ripubblica il sito. Questo workflow ogni due ore controlla soltanto lo stato che quel computer pubblica.
+# Se la fonte è guasta, o se da più di 9 ore non arriva una verifica riuscita, segna l'avviso sul sito e apre una
+# segnalazione per il proprietario. Quando i dati tornano ad arrivare, chiude la segnalazione.
 # Sicurezza: il lavoro che può scrivere nel repository esegue SOLO scripts/aggiorna.mjs, che usa Node.js e nessuna
 # dipendenza esterna. Le dipendenze npm girano solo nel lavoro di prova, con permessi di sola lettura.
-name: Aggiorna gli scioperi
+name: Sorveglia gli aggiornamenti
 
 on:
   schedule:
-    - cron: '7,37 * * * *'
+    # Ogni due ore, al minuto 17. Basta così: è solo una sorveglianza.
+    - cron: '17 */2 * * *'
   workflow_dispatch:
-    inputs:
-      forza:
-        description: 'Pubblica anche se i dati non sono cambiati'
-        type: boolean
-        default: false
-      accetta_variazione:
-        description: 'Accetta un calo o un aumento improvviso del numero di scioperi (solo dopo averlo controllato sul sito del Ministero)'
-        type: boolean
-        default: false
 
 permissions: {}
 
@@ -27,7 +22,7 @@ concurrency:
 
 jobs:
   aggiorna:
-    name: Scarica, controlla e salva
+    name: Controlla lo stato e, se serve, salva l'avviso
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -50,19 +45,14 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Scarica e controlla il calendario ufficiale
+      - name: Controlla lo stato pubblicato dal computer in Italia
         id: aggiorna
-        env:
-          FORZA: ${{ inputs.forza }}
-          ACCETTA_VARIAZIONE: ${{ inputs.accetta_variazione && '1' || '0' }}
         run: |
-          argomenti=""
-          if [ "$FORZA" = "true" ]; then argomenti="--forza"; fi
           set +e
-          node scripts/aggiorna.mjs $argomenti
+          node scripts/aggiorna.mjs --sorveglia
           codice=$?
           set -e
-          # 0 = tutto bene, 3 = fonte guasta (dati non toccati, gestito sotto). Qualsiasi altro codice è un errore vero.
+          # 0 = aggiornamento regolare, 3 = fonte guasta o aggiornamento fermo (gestito sotto). Altri codici: errore vero.
           if [ "$codice" -ne 0 ] && [ "$codice" -ne 3 ]; then exit "$codice"; fi
 
       - name: Salva i dati nel repository
@@ -162,7 +152,7 @@ jobs:
           if [ "$RISULTATO_AGGIORNA" != "success" ]; then
             apri "aggiornamento-fermo" "Il controllo automatico degli scioperi si è fermato" "Lo script di aggiornamento si è interrotto per un errore imprevisto. Il sito resta online con gli ultimi dati pubblicati."
           elif [ "$ESITO" = "guasta" ]; then
-            apri "fonte-guasta" "La fonte ufficiale degli scioperi non funziona" "Il calendario del Ministero non risponde o manda dati anomali. Il sito NON ha pubblicato dati nuovi e mostra un avviso ai visitatori."
+            apri "fonte-guasta" "Gli scioperi non si aggiornano" "Il calendario del Ministero non risponde o manda dati anomali, oppure il computer in Italia che lo legge è spento o bloccato. Il sito NON ha pubblicato dati nuovi e mostra un avviso ai visitatori."
           else
             chiudi "aggiornamento-fermo" "Il controllo automatico funziona di nuovo."
             if [ "$RIPRISTINATA" = "true" ]; then chiudi "fonte-guasta" "La fonte ufficiale funziona di nuovo e i dati sono stati aggiornati."; fi

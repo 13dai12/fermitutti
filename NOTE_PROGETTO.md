@@ -80,6 +80,13 @@ Ultimo aggiornamento: 11 novembre 2026.
 
 ## Architettura
 
+### Il Ministero si legge solo dall'Italia
+- **Lezione dell'11 novembre 2026:** al primo avvio su GitHub l'aggiornamento è fallito con «fetch failed». Prova di connessione alla porta 443 di `scioperi.mit.gov.it` con check-host.net: risponde solo da Milano; da Germania, Francia, Paesi Bassi, Polonia, Regno Unito, Stati Uniti e Asia la connessione scade. Il server filtra per indirizzo italiano. `www.mit.gov.it` e `dati.mit.gov.it` rispondono da tutto il mondo, ma non hanno i dati: le pagine «calendario-scioperi» rimandano a `scioperi.mit.gov.it`. `www.cgsse.it` non risponde dagli Stati Uniti.
+- **Decisione:** i dati li legge un computer in Italia (`scripts/aggiorna-italia.sh`, avviato ogni 30 minuti da un timer di systemd dell'utente, installato da `scripts/installa-aggiornamento-italia.sh`). GitHub fa solo da sorveglianza (`node scripts/aggiorna.mjs --sorveglia`, ogni due ore): se il computer vede la fonte guasta, o se da più di 9 ore (`ORE_SORVEGLIANZA`) non arriva una verifica riuscita, segna l'avviso sul sito e apre una segnalazione; quando i dati tornano, la chiude.
+- **Perché:** è gratis e non aggiunge server. Non si aggira il blocco con VPN o proxy: si legge da dove il Ministero permette di leggere. Le alternative sempre accese, cioè un Raspberry Pi a casa o una macchina gratuita in Italia, usano lo stesso script.
+- **Sicurezza del computer:** il timer esegue una copia fissa del codice (`~/.local/share/fermitutti/codice`), presa dall'ultimo commit locale al momento dell'installazione, con le sole dipendenze bloccate della build. Il codice che arriva da GitHub non viene eseguito. Nella copia del repository (`~/.local/share/fermitutti/repo`) cambiano e si inviano solo `data/scioperi.json` e `data/stato.json`, dopo una build di prova completa. Se `git fetch` fallisce lo script si ferma senza toccare niente, così un guasto della rete di casa non diventa una «fonte guasta».
+- **Se un giorno il Ministero apre l'accesso dall'estero** basta tornare al vecchio workflow: in `.github/workflows/aggiorna.yml` togliere `--sorveglia` e riportare l'orario a ogni 30 minuti.
+
 ### GitHub Actions più Cloudflare Pages, collegati via Git
 - **Decisione:** repository pubblico su GitHub; il workflow salva i dati con un commit; Cloudflare Pages ricostruisce a ogni commit.
 - **Perché:**
@@ -204,4 +211,4 @@ Ultimo aggiornamento: 11 novembre 2026.
 - Lighthouse mobile: 100 in tutte le categorie su home, pagina di sciopero e pagina di città.
 - Dati reali scaricati l'11/11/2026: 30 scioperi.
 - Prova con fonte guasta sui dati reali: i dati sono rimasti identici, stessa impronta prima e dopo.
-- Dominio `fermitutti.com` registrato su Cloudflare, con la zona DNS ancora vuota. Il sito non è ancora pubblicato: mancano il repository su GitHub e il nome e l'email del titolare in `config/sito.mjs`.
+- Sito pubblicato su `fermitutti.com` con Cloudflare Pages l'11 novembre 2026. Nome ed email del titolare nelle variabili di Cloudflare. Aggiornamento dei dati dal computer in Italia, sorveglianza da GitHub.

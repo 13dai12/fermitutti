@@ -15,7 +15,7 @@
 //
 // Codici di uscita: 0 = tutto bene (dati cambiati o no), 3 = fonte guasta o dati anomali: i dati NON sono stati toccati.
 // Il risultato viene anche scritto in $GITHUB_OUTPUT (esito, pubblica, motivo, riassunto) per il workflow.
-import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync, realpathSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -217,7 +217,8 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
     emettiOutput({ esito: 'ok', pubblica: decisione.pubblica, motivo: decisione.motivo, dati_cambiati: cambiato, urgente, fonte_ripristinata: eraGuasta, riassunto });
     return { ok: true, ...decisione, cambiato, urgente, diff, avvisi, archivio, stato };
   } catch (e) {
-    const messaggio = senzaIndirizzi(e instanceof ErroreDati ? `dati anomali: ${e.message}` : (e instanceof ErroreFeed ? `feed non valido: ${e.message}` : `fonte non raggiungibile: ${e.message}`));
+    const causa = e?.cause?.code ? ` (${String(e.cause.code).replace(/[^A-Z0-9_]/gi, '').slice(0, 40)})` : '';
+    const messaggio = senzaIndirizzi(e instanceof ErroreDati ? `dati anomali: ${e.message}` : (e instanceof ErroreFeed ? `feed non valido: ${e.message}` : `fonte non raggiungibile: ${e.message}${causa}`));
     const decisione = decidiPubblicazione({ cambiato: false, eraGuasta, guasta: true, forza, statoPrecedente, adesso });
     const stato = {
       ...statoPrecedente,
@@ -234,13 +235,67 @@ export async function aggiorna({ fonteUrl, fonteHtmlUrl, dataDir, forza = false,
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+/** Ore senza una verifica riuscita dopo le quali la sorveglianza considera fermo l'aggiornamento: più delle 6 del battito. */
+export const ORE_SORVEGLIANZA = 9;
+
+/**
+ * Sorveglianza da GitHub, senza scaricare niente. Il server del Ministero accetta solo connessioni dall'Italia (verificato
+ * l'11 novembre 2026), quindi l'aggiornamento vero gira su un computer in Italia (scripts/aggiorna-italia.sh), che pubblica
+ * data/stato.json. Qui si legge quello stato. Se è recente e la fonte funziona non si tocca nulla. Se il computer in Italia
+ * vede la fonte guasta si avvisa il proprietario. Se da troppe ore non arriva una verifica riuscita si segna la fonte
+ * come guasta: il sito mostra l'avviso ai visitatori e il proprietario riceve una segnalazione.
+ */
+export function sorveglia({ dataDir, adesso = new Date(), oreMassime = ORE_SORVEGLIANZA, log = console.error } = {}) {
+  const fileStato = join(dataDir, 'stato.json');
+  const statoPrecedente = leggiJson(fileStato, {});
+  const istante = adesso.toISOString();
+  const eraGuasta = statoPrecedente.fonte_guasta_dal != null;
+  const ultima = statoPrecedente.ultima_verifica_riuscita ? new Date(statoPrecedente.ultima_verifica_riuscita) : null;
+  const ore = ultima ? (adesso - ultima) / 3600000 : Infinity;
+  if (ore <= oreMassime) {
+    if (eraGuasta) {
+      const messaggio = statoPrecedente.ultimo_errore?.messaggio ?? 'fonte guasta';
+      log(`Il computer in Italia vede la fonte guasta: ${messaggio}`);
+      emettiOutput({ esito: 'guasta', pubblica: false, motivo: 'fonte guasta vista dal computer in Italia', dati_cambiati: false, urgente: false, prima_segnalazione: false, riassunto: messaggio });
+      return { ok: false, pubblica: false, motivo: 'fonte guasta vista dal computer in Italia' };
+    }
+    const riassunto = `ultima verifica riuscita ${Math.floor(ore * 10) / 10} ore fa`;
+    log(`Aggiornamento regolare: ${riassunto}.`);
+    emettiOutput({ esito: 'ok', pubblica: false, motivo: 'aggiornamento regolare', dati_cambiati: false, urgente: false, fonte_ripristinata: true, riassunto });
+    return { ok: true, pubblica: false, motivo: 'aggiornamento regolare' };
+  }
+  const quando = Number.isFinite(ore) ? `l'ultima verifica riuscita della fonte è di ${Math.floor(ore)} ore fa` : 'non risulta nessuna verifica riuscita della fonte';
+  const messaggio = `${quando}: il computer in Italia che aggiorna i dati è spento o bloccato, oppure il calendario del Ministero non risponde`;
+  const decisione = decidiPubblicazione({ cambiato: false, eraGuasta, guasta: true, forza: false, statoPrecedente, adesso });
+  const stato = {
+    ...statoPrecedente,
+    ultima_pubblicazione: decisione.pubblica ? istante : (statoPrecedente.ultima_pubblicazione ?? null),
+    fonte_guasta_dal: statoPrecedente.fonte_guasta_dal ?? istante,
+    ultimo_errore: { quando: istante, messaggio },
+  };
+  scriviJson(fileStato, stato);
+  log(`ERRORE: ${messaggio}`);
+  emettiOutput({ esito: 'guasta', pubblica: decisione.pubblica, motivo: decisione.motivo, dati_cambiati: false, urgente: false, prima_segnalazione: !eraGuasta, riassunto: messaggio });
+  return { ok: false, ...decisione, messaggio, stato };
+}
+
+// Avviato come programma: si confrontano i percorsi reali, così funziona anche passando da un collegamento simbolico.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+  const dataDir = process.env.DATA_DIR || new URL('../data', import.meta.url).pathname;
+  // ADESSO serve solo alle prove: fissa l'ora di riferimento.
+  const adesso = process.env.ADESSO ? new Date(process.env.ADESSO) : new Date();
+  if (Number.isNaN(adesso.getTime())) throw new Error('ADESSO non è una data valida');
+  if (process.argv.includes('--sorveglia')) {
+    const s = sorveglia({ dataDir, adesso });
+    process.exit(s.ok ? 0 : 3);
+  }
   const usaFonteDiProva = Boolean(process.env.FONTE_URL);
   const fonteHtml = process.env.FONTE_HTML_URL !== undefined ? process.env.FONTE_HTML_URL : (usaFonteDiProva ? '' : FONTE_HTML_UFFICIALE);
   const r = await aggiorna({
     fonteUrl: process.env.FONTE_URL || FONTE_URL_UFFICIALE,
     fonteHtmlUrl: fonteHtml,
-    dataDir: process.env.DATA_DIR || new URL('../data', import.meta.url).pathname,
+    dataDir,
+    adesso,
     forza: process.argv.includes('--forza'),
     accettaVariazione: process.env.ACCETTA_VARIAZIONE === '1',
     timeoutMs: Number(process.env.TIMEOUT_MS || 20000),

@@ -9,7 +9,8 @@ Questa guida è per chi non ha mai usato GitHub. Segui i passi nell'ordine, senz
 
 Le parole che incontrerai:
 
-- **GitHub** è il sito che conserva il codice del sito e ogni 30 minuti fa partire l'aggiornamento automatico degli scioperi.
+- **GitHub** è il sito che conserva il codice del sito e ogni due ore controlla che l'aggiornamento degli scioperi funzioni.
+- **Il computer in Italia** è un computer acceso a casa tua, con Linux, che ogni 30 minuti legge il calendario del Ministero e manda i dati nuovi su GitHub. Serve perché il Ministero accetta solo connessioni dall'Italia.
 - **Cloudflare** è il servizio dove hai comprato il dominio. Pubblica anche il sito e lo protegge.
 - **DNS** è l'elenco che dice a Internet dove si trova il sito e chi può usare il dominio per le email.
 - **Repository** è la cartella del progetto su GitHub.
@@ -234,15 +235,31 @@ In *DNS › Records* devono esserci **solo**:
 
 Se c'è altro, cancellalo. Ogni record che punta a un servizio che non usi è una porta che qualcuno potrebbe aprire.
 
-## Passo 14. Avvia l'aggiornamento automatico
+## Passo 14. Avvia l'aggiornamento automatico dal computer in Italia
 
-1. Su GitHub apri la scheda **Actions** del repository. Se GitHub chiede di attivare i workflow, conferma.
-2. A sinistra scegli **Aggiorna gli scioperi**, poi *Run workflow › Run workflow*.
-3. Dopo un minuto o due l'esecuzione diventa verde. Se i dati sono cambiati, compare un nuovo commit «Dati aggiornati» e Cloudflare ripubblica il sito da solo.
+Il server del Ministero con il calendario degli scioperi accetta solo connessioni dall'Italia. L'11 novembre 2026 una prova da più Paesi ha avuto risposta solo da Milano: da Germania, Francia, Paesi Bassi, Regno Unito e Stati Uniti niente. I server di GitHub sono all'estero, quindi i dati li legge un computer in Italia con Linux, per esempio il tuo.
 
-Da questo momento l'aggiornamento parte da solo **ogni 30 minuti**. Il sito si ripubblica quando cambiano i dati, ogni notte dopo la mezzanotte e comunque almeno ogni 6 ore.
+1. Sul computer apri il terminale ed entra nella cartella del progetto. Prima scarica le ultime modifiche, poi installa:
 
-Una regola di GitHub disattiva i workflow programmati nei repository pubblici dopo 60 giorni senza attività. Qui non succede, perché il sito salva i dati almeno ogni 6 ore e ogni salvataggio conta come attività.
+```
+git pull
+sh scripts/installa-aggiornamento-italia.sh
+```
+
+2. Lo script prepara una copia fissa del codice, una copia del repository per i dati e un timer che parte ogni 30 minuti. Alla fine fa subito un primo aggiornamento e ne mostra il risultato.
+
+**Fatto bene se:** alla fine leggi «Pubblicato» oppure «Niente da pubblicare». Quando i dati cambiano, su GitHub compare un commit «Dati aggiornati» e Cloudflare ripubblica il sito da solo.
+
+Da sapere:
+
+- **Il computer aggiorna i dati solo quando è acceso e connesso.** Se non arriva un aggiornamento riuscito per più di 9 ore, il sito mostra un avviso ai visitatori e GitHub ti manda una segnalazione via email. Quando riaccendi il computer, l'aggiornamento riparte da solo e la segnalazione si chiude.
+- **Il timer parte quando accedi al computer.** Per farlo partire anche senza accedere, per esempio dopo un riavvio, scrivi una volta `loginctl enable-linger`. Può chiederti la password.
+- **Il computer esegue sempre la copia fissa del codice.** Le modifiche che arrivano su GitHub non vengono eseguite finché non rilanci l'installazione. Così chi riuscisse a modificare il repository non potrebbe far girare niente sul tuo computer. Rilancia l'installazione, dopo `git pull`, ogni volta che il codice cambia, per esempio dopo aver unito una proposta di Dependabot.
+- **Per vedere cosa ha fatto:** `journalctl --user -u fermitutti-aggiorna -n 30`. **Per fermarlo:** `systemctl --user disable --now fermitutti-aggiorna.timer`.
+
+Su GitHub il workflow **Sorveglia gli aggiornamenti** parte da solo ogni due ore. Non legge il Ministero: controlla soltanto che i dati arrivino. Puoi avviarlo anche a mano da *Actions › Sorveglia gli aggiornamenti › Run workflow*.
+
+Il sito si ripubblica quando cambiano i dati, ogni notte dopo la mezzanotte e comunque almeno ogni 6 ore. Una regola di GitHub disattiva i workflow programmati dopo 60 giorni senza attività nel repository. Qui non succede, perché il computer in Italia salva i dati almeno ogni 6 ore.
 
 ## Passo 15. Controllo finale
 
@@ -341,14 +358,20 @@ Il sito permetterà così solo lo script di Cloudflare, e la pagina della privac
 
 Il sito non pubblica mai dati che sembrano sbagliati. In alto nelle pagine compare un avviso se la fonte non risponde o se i dati hanno più di 8 ore. Quando qualcosa non va, su GitHub si apre una **segnalazione** (scheda *Issues*) e ti arriva un'email.
 
-- **«La fonte ufficiale degli scioperi non funziona».**
-  - Di solito si risolve da sola: il sito del Ministero è giù o lento. La segnalazione si chiude da sola quando la fonte torna.
-  - Se dura più di un giorno, apri https://scioperi.mit.gov.it/mit2/public/scioperi nel browser. Se lì funziona, probabilmente il Ministero ha cambiato il formato dei dati e serve una modifica al codice. Chiedi a uno sviluppatore oppure a Claude Code, partendo da `NOTE_PROGETTO.md`.
-  - Se il messaggio dice **«numero di scioperi crollato»**, **«cresciuto in modo anomalo»** o **«troppi scioperi nuovi»**, controlla a mano sul sito del Ministero. Se il numero è davvero cambiato così, vai in *Actions › Aggiorna gli scioperi › Run workflow*, spunta **Accetta un calo o un aumento improvviso** e avvia.
-  - Se il messaggio dice **«i dati nuovi non si possono pubblicare»**, un dato del Ministero è scritto in un modo che il sito non sa ancora gestire. Il sito resta com'era. Serve una piccola modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, incollando il messaggio.
+Il primo posto dove guardare è il computer in Italia. Nel terminale:
+
+```
+journalctl --user -u fermitutti-aggiorna -n 30
+```
+
+- **«Gli scioperi non si aggiornano».**
+  - Se il computer in Italia era spento o senza rete, riaccendilo: entro mezz'ora l'aggiornamento riparte e la segnalazione si chiude da sola entro due ore.
+  - Se il registro del computer dice **«fonte non raggiungibile»**, il sito del Ministero è giù o lento. Di solito si risolve da solo. Se dura più di un giorno, apri https://scioperi.mit.gov.it/mit2/public/scioperi nel browser. Se lì funziona, probabilmente il Ministero ha cambiato il formato dei dati e serve una modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, partendo da `NOTE_PROGETTO.md`.
+  - Se il registro dice **«numero di scioperi crollato»**, **«cresciuto in modo anomalo»** o **«troppi scioperi nuovi»**, controlla a mano sul sito del Ministero. Se il numero è davvero cambiato così, nel terminale scrivi `ACCETTA_VARIAZIONE=1 sh ~/.local/share/fermitutti/aggiorna-italia.sh`.
+  - Se il registro dice **«i dati nuovi non si possono pubblicare»**, un dato del Ministero è scritto in un modo che il sito non sa ancora gestire. Il sito resta com'era. Serve una piccola modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, incollando il messaggio.
 - **«Il controllo automatico si è fermato».** Apri il link nella segnalazione e guarda il punto rosso. Se l'errore si ripete, serve uno sviluppatore.
 - **«La build del sito non funziona con i dati nuovi».** Cloudflare continua a mostrare l'ultima versione buona. Serve uno sviluppatore. Su Cloudflare, nel progetto, la scheda *Deployments* mostra il messaggio d'errore.
-- **Nessuna segnalazione, ma il sito dice che i dati sono vecchi.** Apri *Actions › Aggiorna gli scioperi*. Se vedi «This scheduled workflow is disabled», premi **Enable workflow**. Se GitHub ha problemi (https://www.githubstatus.com), aspetta.
+- **Nessuna segnalazione, ma il sito dice che i dati sono vecchi.** Controlla il timer con `systemctl --user list-timers fermitutti-aggiorna.timer`. Se non compare, rilancia l'installazione del passo 14. Su GitHub apri *Actions › Sorveglia gli aggiornamenti*: se vedi «This scheduled workflow is disabled», premi **Enable workflow**.
 
 ## Manutenzione ordinaria
 
@@ -356,6 +379,7 @@ Circa 10 minuti al mese.
 
 - **Aggiornamenti delle dipendenze.** Dependabot apre delle proposte (scheda *Pull requests*). Se il controllo «Verifica» è verde, premi *Merge pull request*. Se è rosso, non unire e chiedi a uno sviluppatore. Meglio aspettare qualche giorno dall'uscita della nuova versione prima di unire.
 - **Fasce garantite.** Una volta l'anno ricontrolla i link in `data/fasce_garanzia.json`: le aziende cambiano pagine e regole. Ogni voce ha la data di verifica.
+- **Codice sul computer in Italia.** Dopo ogni modifica al codice, comprese le proposte di Dependabot che unisci, nella cartella del progetto scrivi `git pull` e poi `sh scripts/installa-aggiornamento-italia.sh`.
 - **Dominio.** Il rinnovo è automatico, ma controlla che la carta di pagamento su Cloudflare sia valida. Se un rinnovo non riesce, Cloudflare ti scrive e riprova.
 - **Search Console.** Una volta al mese guarda se ci sono avvisi o errori.
 
@@ -364,7 +388,8 @@ Circa 10 minuti al mese.
 | Servizio | Costo | Limite gratuito | Uso previsto |
 |---|---|---|---|
 | Dominio `.com` (Cloudflare) | Il rinnovo annuale: Cloudflare fa pagare il prezzo del registro, senza ricarichi | | |
-| GitHub (repository pubblico) | 0 | Minuti di Actions illimitati per i repository pubblici | Circa 50 esecuzioni al giorno, un minuto ciascuna |
+| GitHub (repository pubblico) | 0 | Minuti di Actions illimitati per i repository pubblici | 12 controlli al giorno, meno di un minuto ciascuno |
+| Computer in Italia | 0, oltre alla corrente | | Un aggiornamento ogni 30 minuti, pochi secondi ciascuno |
 | Cloudflare Pages | 0 | 500 build al mese, 20.000 file | Da 120 a 250 build al mese (dati cambiati più una ogni 6 ore); da 350 a circa 800 file |
 | Email Routing di Cloudflare | 0 | | Solo se scegli la strada A del passo 12 |
 

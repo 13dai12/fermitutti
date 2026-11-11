@@ -5,7 +5,8 @@ import { mkdtempSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { avviaFonteFinta } from '../scripts/fonte-finta.mjs';
-import { aggiorna, decidiPubblicazione, ORE_BATTITO } from '../scripts/aggiorna.mjs';
+import { aggiorna, decidiPubblicazione, ORE_BATTITO, sorveglia, ORE_SORVEGLIANZA } from '../scripts/aggiorna.mjs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 
 let fonte;
 const cartelle = [];
@@ -75,4 +76,56 @@ test('regole di pubblicazione', () => {
   assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: false, guasta: false, forza: true, statoPrecedente: fresca, adesso }).motivo, 'richiesta manuale');
   assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: true, guasta: true, forza: false, statoPrecedente: fresca, adesso }).pubblica, false);
   assert.equal(ORE_BATTITO, 6);
+});
+
+// Sorveglianza da GitHub: legge solo lo stato pubblicato dal computer in Italia, senza scaricare niente.
+const ORA = new Date('2026-11-12T12:00:00Z');
+const oreFa = (h) => new Date(ORA.getTime() - h * 3600000).toISOString();
+function cartellaConStato(stato) {
+  const dir = nuovaCartella();
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'stato.json'), JSON.stringify(stato));
+  return dir;
+}
+
+test('sorveglianza: verifiche recenti e fonte buona, nessuna modifica e segnalazioni da chiudere', () => {
+  const dir = cartellaConStato({ ultima_verifica_riuscita: oreFa(2), ultima_pubblicazione: oreFa(2), fonte_guasta_dal: null });
+  const prima = readFileSync(join(dir, 'stato.json'), 'utf8');
+  const r = sorveglia({ dataDir: dir, adesso: ORA, log: () => {} });
+  assert.equal(r.ok, true);
+  assert.equal(r.pubblica, false);
+  assert.equal(readFileSync(join(dir, 'stato.json'), 'utf8'), prima, 'lo stato non si tocca');
+  assert.equal(existsSync(join(dir, 'scioperi.json')), false, 'nessun file di dati inventato');
+});
+
+test('sorveglianza: il computer in Italia vede la fonte guasta, si avvisa senza ripubblicare', () => {
+  const dir = cartellaConStato({ ultima_verifica_riuscita: oreFa(3), ultima_pubblicazione: oreFa(1), fonte_guasta_dal: oreFa(1), ultimo_errore: { quando: oreFa(1), messaggio: 'fonte non raggiungibile: HTTP 500' } });
+  const prima = readFileSync(join(dir, 'stato.json'), 'utf8');
+  const r = sorveglia({ dataDir: dir, adesso: ORA, log: () => {} });
+  assert.equal(r.ok, false);
+  assert.equal(r.pubblica, false);
+  assert.equal(readFileSync(join(dir, 'stato.json'), 'utf8'), prima);
+});
+
+test('sorveglianza: nessuna verifica riuscita da troppe ore, avviso sul sito una volta sola', () => {
+  const dir = cartellaConStato({ ultima_verifica_riuscita: oreFa(ORE_SORVEGLIANZA + 1), ultima_pubblicazione: oreFa(ORE_SORVEGLIANZA + 1), fonte_guasta_dal: null, scioperi_nel_feed: 30 });
+  const r = sorveglia({ dataDir: dir, adesso: ORA, log: () => {} });
+  assert.equal(r.ok, false);
+  assert.equal(r.pubblica, true, 'la prima volta si pubblica, così il sito mostra l’avviso');
+  const stato = leggi(dir, 'stato.json');
+  assert.equal(stato.fonte_guasta_dal, ORA.toISOString());
+  assert.equal(stato.ultima_verifica_riuscita, oreFa(ORE_SORVEGLIANZA + 1), 'la verifica riuscita resta quella vera');
+  assert.equal(stato.scioperi_nel_feed, 30);
+  assert.match(stato.ultimo_errore.messaggio, /computer in Italia/);
+  const dopo = sorveglia({ dataDir: dir, adesso: new Date(ORA.getTime() + 2 * 3600000), log: () => {} });
+  assert.equal(dopo.pubblica, false, 'due ore dopo non si ripubblica');
+  assert.equal(leggi(dir, 'stato.json').fonte_guasta_dal, ORA.toISOString(), 'la data del guasto non cambia');
+});
+
+test('sorveglianza: senza nessuno stato la fonte risulta mai verificata', () => {
+  const dir = nuovaCartella();
+  const r = sorveglia({ dataDir: dir, adesso: ORA, log: () => {} });
+  assert.equal(r.ok, false);
+  assert.match(leggi(dir, 'stato.json').ultimo_errore.messaggio, /non risulta nessuna verifica riuscita/);
+  assert.equal(existsSync(join(dir, 'scioperi.json')), false);
 });

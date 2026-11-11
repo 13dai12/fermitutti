@@ -7,7 +7,7 @@
 //   DATA_DIR=...                     cartella dei dati
 //   SALTA_IMMAGINI=1                 non genera le immagini di anteprima (più veloce)
 //   USCITA=...                       cartella di uscita (predefinita: public)
-import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, copyFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, copyFileSync, existsSync, realpathSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { pathToFileURL, fileURLToPath } from 'node:url';
@@ -236,7 +236,8 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   return { pagine: pagine.length, versione, uscita };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Avviato come programma: si confrontano i percorsi reali, così funziona anche passando da un collegamento simbolico.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   try {
     await build({
       dataDir: process.env.DATA_DIR || undefined,

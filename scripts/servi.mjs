@@ -3,7 +3,7 @@
 // come fa Cloudflare Pages: le regole che corrispondono si sommano; "! Nome" toglie un'intestazione.
 // Uso: node scripts/servi.mjs [porta] [cartella]
 import { createServer } from 'node:http';
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, realpathSync } from 'node:fs';
 import { join, normalize, extname, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -79,7 +79,7 @@ export function avviaServer({ porta = 8080, cartella = 'public' } = {}) {
   return new Promise((risolvi) => server.listen(porta, '127.0.0.1', () => risolvi(server)));
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   const porta = Number(process.argv[2] || 8080);
   await avviaServer({ porta, cartella: process.argv[3] || 'public' });
   console.log(`Sito in prova su http://127.0.0.1:${porta}/ (Ctrl+C per fermare)`);
