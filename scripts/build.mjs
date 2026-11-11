@@ -79,9 +79,9 @@ export function intestazioniPerConfigurazione(testo, sito) {
     .replace("; require-trusted-types-for 'script'; trusted-types 'none'", '');
 }
 
-export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log, pubblicazione = process.env.CF_PAGES === '1', ambiente = process.env } = {}) {
+export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log, pubblicazione = process.env.CF_PAGES === '1' || process.env.WORKERS_CI === '1', ambiente = process.env } = {}) {
   const sito = titolareDaAmbiente({ ...configSito, titolare: { ...configSito.titolare } }, ambiente);
-  // Su Cloudflare Pages (CF_PAGES=1) non si pubblica un sito con i segnaposto: email e nome del titolare devono essere veri.
+  // Su Cloudflare (Pages imposta CF_PAGES=1, Workers Builds imposta WORKERS_CI=1) non si pubblica un sito con i segnaposto: email e nome del titolare devono essere veri.
   const mancanti = segnaposti(sito);
   if (pubblicazione && mancanti.length) {
     throw new Error(`segnaposto ancora da compilare. Su Cloudflare Pages aggiungi le variabili TITOLARE_NOME e TITOLARE_EMAIL, oppure compila config/sito.mjs (vedi DEPLOY.md, passo 5):\n  - ${mancanti.join('\n  - ')}`);

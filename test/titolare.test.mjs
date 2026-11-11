@@ -7,6 +7,7 @@ import { join, relative } from 'node:path';
 import { build, titolareDaAmbiente } from '../scripts/build.mjs';
 import sito from '../config/sito.mjs';
 import { archivioDiProva } from './aiuto.mjs';
+import { CI_SONO_SEGNAPOSTI } from './dominio.mjs';
 
 const copia = () => ({ ...sito, titolare: { ...sito.titolare } });
 const A_CAPO = String.fromCharCode(10);
@@ -21,6 +22,21 @@ function tuttiIFile(dir) {
   }
   return out;
 }
+
+test('anche nelle build di Workers (WORKERS_CI=1) la pubblicazione si ferma se mancano nome ed email', { skip: !CI_SONO_SEGNAPOSTI && 'nome ed email già scritti in config/sito.mjs' }, async () => {
+  const radice = mkdtempSync(join(tmpdir(), 'fermitutti-workers-'));
+  const prima = process.env.WORKERS_CI;
+  process.env.WORKERS_CI = '1';
+  try {
+    const dati = join(radice, 'dati');
+    mkdirSync(dati);
+    writeFileSync(join(dati, 'scioperi.json'), JSON.stringify(archivioDiProva()));
+    await assert.rejects(build({ dataDir: dati, uscita: join(radice, 'public'), oggi: '2026-11-11', immagini: false, log: () => {}, ambiente: {} }), /segnaposto ancora da compilare/);
+  } finally {
+    if (prima === undefined) delete process.env.WORKERS_CI; else process.env.WORKERS_CI = prima;
+    rmSync(radice, { recursive: true, force: true });
+  }
+});
 
 test('TITOLARE_NOME e TITOLARE_EMAIL sostituiscono i segnaposto, anche nel contatto di sicurezza', () => {
   const s = titolareDaAmbiente(copia(), { TITOLARE_NOME: `  ${NOME} `, TITOLARE_EMAIL: ` ${EMAIL}` });

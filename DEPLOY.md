@@ -126,7 +126,7 @@ Il dominio è registrato su Cloudflare, quindi usa già i server DNS di Cloudfla
 
 ## Passo 8. Pubblica il sito con Cloudflare Pages
 
-1. Su Cloudflare vai in *Workers & Pages › Create application*, scegli **Pages** e poi **Connect to Git**. In alcune versioni del pannello il pulsante si chiama *Import an existing Git repository*.
+1. Su Cloudflare vai in *Workers & Pages › Create application*, scegli **Pages** e poi **Connect to Git**. In alcune versioni del pannello il pulsante si chiama *Import an existing Git repository*. Attenzione: il pannello propone per primo **Workers**, che non va bene per questo sito. Se vedi solo opzioni per Workers, cerca in basso un link per Pages, per esempio *Looking to deploy Pages? Get started*.
 2. Scegli **GitHub** e autorizza Cloudflare. Quando te lo chiede, dagli accesso **solo** al repository `fermitutti` (*Only select repositories*), poi premi *Install & Authorize*.
 3. Scegli il repository `fermitutti`, premi *Begin setup* e compila così:
    - *Project name*: `fermitutti`
@@ -142,6 +142,8 @@ Il dominio è registrato su Cloudflare, quindi usa già i server DNS di Cloudfla
 7. Nel progetto apri *Custom domains › Set up a custom domain*, scrivi `fermitutti.com` e conferma. Il dominio è nello stesso account, quindi Cloudflare crea da solo il record DNS che serve.
 
 **Fatto bene se:** dopo qualche minuto `https://fermitutti.com` mostra il sito.
+
+**Se hai creato un Worker per sbaglio.** Lo riconosci perché nel registro della build compare `wrangler deploy` e l'indirizzo tecnico finisce con `workers.dev`. Funziona, ma l'indirizzo contiene il nome del tuo account, a ogni pubblicazione Cloudflare scarica l'ultima versione di un programma esterno e la pagina «non trovata» resta vuota. Cancellalo: apri il Worker, poi *Settings*, e in fondo premi *Delete*. Poi ricomincia da questo passo scegliendo Pages.
 
 ## Passo 9. Un solo indirizzo: da www e da pages.dev al dominio
 
