@@ -132,7 +132,7 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   scriviPagina('/incorpora/', P.paginaIncorpora(ctx));
   scriviPagina('/come-funziona/', P.paginaComeFunziona(ctx));
   scriviPagina('/fonti/', P.paginaFonti(ctx));
-  scriviPagina('/privacy/', P.paginaPrivacy(ctx));
+  scriviPagina('/privacy/', P.paginaPrivacy(ctx), { sitemap: false });
   scriviPagina('/note-legali/', P.paginaNoteLegali(ctx));
   scriviPagina('/contatti/', P.paginaContatti(ctx));
   scriviPagina('/stato/', P.paginaStato(ctx), { sitemap: false });

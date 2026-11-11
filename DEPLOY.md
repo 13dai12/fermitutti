@@ -76,7 +76,7 @@ I commit risultano firmati «Fermi Tutti», non con il tuo nome. Puoi lasciarlo 
 
 ## Passo 5. Scegli il nome e l'email del sito
 
-Il nome compare solo nelle pagine Privacy e Note legali. L'email compare lì, nella pagina Contatti e in `security.txt`, il file per chi segnala problemi di sicurezza. Finché mancano, Cloudflare si rifiuta di pubblicare il sito: la privacy e le note legali sarebbero incomplete.
+Il nome compare solo nella pagina Privacy, che è esclusa da Google: chi cerca il tuo nome non trova il sito. L'email compare lì, nelle Note legali, nella pagina Contatti e in `security.txt`, il file per chi segnala problemi di sicurezza. Finché mancano, Cloudflare si rifiuta di pubblicare il sito: la privacy e le note legali sarebbero incomplete.
 
 - **Nome:** nome e cognome di chi gestisce davvero il sito. Le regole sulla privacy chiedono il nome vero, quindi niente nomi inventati. Puoi mettere quello di un'altra persona solo se è d'accordo e gestisce il sito con te, perché per la legge diventa lei la responsabile. L'indirizzo di casa non serve.
 - **Email:** sarà visibile a tutti. Per non mostrare la tua email personale usa `contatti@fermitutti.com` e attiva l'inoltro gratuito al passo 12. Le email arrivano nella tua casella di sempre: Cloudflare non crea una casella nuova.
@@ -292,7 +292,7 @@ Su Cloudflare, nel dominio, cerca **Crawler Hints** e attivalo. Quando una pagin
 ### Come capire se funziona
 
 - Dopo due o tre giorni cerca `site:fermitutti.com` su Google: compaiono le pagine già indicizzate.
-- In Search Console, la sezione **Pagine** mostra quante pagine sono indicizzate e perché alcune non lo sono. Le pagine `/widget/` sono escluse apposta: servono solo dentro altri siti. Nei primi giorni è normale vedere molte pagine «rilevate» ma non ancora indicizzate.
+- In Search Console, la sezione **Pagine** mostra quante pagine sono indicizzate e perché alcune non lo sono. Sono escluse apposta le pagine `/widget/`, che servono solo dentro altri siti, e la pagina Privacy, che contiene il nome del titolare. Nei primi giorni è normale vedere molte pagine «rilevate» ma non ancora indicizzate.
 - Per controllare i dati strutturati di uno sciopero, incolla l'indirizzo della sua pagina in https://search.google.com/test/rich-results.
 
 Un dominio nuovo ha bisogno di qualche settimana per comparire bene nelle ricerche più comuni, come «sciopero treni domani». **Non pagare** servizi che promettono indicizzazione o link: non servono e possono far penalizzare il sito.

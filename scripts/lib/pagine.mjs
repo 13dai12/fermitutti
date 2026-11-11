@@ -576,7 +576,8 @@ export function paginaFonti(ctx) {
 export function paginaPrivacy(ctx) {
   const t = ctx.sito.titolare;
   return paginaTesto(ctx, {
-    percorso: '/privacy/', titolo: 'Privacy',
+    // Fuori da Google e dalla sitemap: è l'unica pagina con il nome del titolare, che non vuole renderlo più visibile del necessario.
+    percorso: '/privacy/', titolo: 'Privacy', noindex: true,
     descrizione: `Come ${ctx.sito.nome} tratta i dati: nessun cookie, nessun tracciamento, nessun dato personale raccolto.`,
     corpo: `<p class="avviso avviso-ok"><strong>In breve:</strong> non usiamo cookie, non tracciamo chi visita il sito e non raccogliamo dati personali. Non ci sono moduli, iscrizioni o account.</p>
 <h2>Chi è il titolare</h2>
@@ -601,7 +602,7 @@ export function paginaNoteLegali(ctx) {
     percorso: '/note-legali/', titolo: 'Note legali',
     descrizione: `Note legali di ${ctx.sito.nome}: fonti dei dati, limiti di responsabilità e link di affiliazione.`,
     corpo: `<h2>Chi gestisce il sito</h2>
-<p>${e(ctx.sito.nome)} è gestito da ${e(t.nome)}${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
+<p>${e(ctx.sito.nome)} è gestito dal titolare indicato nella pagina <a href="/privacy/">Privacy</a>${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
 <h2>Non siamo un sito ufficiale</h2>
 <p>Il sito non è affiliato né collegato al Ministero delle Infrastrutture e dei Trasporti, alla Commissione di garanzia per l'attuazione della legge sullo sciopero nei servizi pubblici essenziali, né alle aziende di trasporto.</p>
 <h2>Da dove vengono i dati</h2>
@@ -611,7 +612,7 @@ export function paginaNoteLegali(ctx) {
 <h2>Link di affiliazione</h2>
 <p>Alcuni link verso servizi di terzi (per esempio per verificare un rimborso aereo o per viaggiare con altri mezzi) sono link di affiliazione: se li usi, il sito può ricevere una commissione, senza costi in più per te. Sono sempre segnalati come tali e non cambiano le informazioni sugli scioperi. Nessuno può garantirti un rimborso: dipende dal tuo caso.</p>
 <h2>Contenuti del sito</h2>
-<p>I testi originali del sito sono di ${e(t.nome)}. Se riprendi i dati degli scioperi, cita la fonte ufficiale: il Ministero delle Infrastrutture e dei Trasporti.</p>`,
+<p>I testi originali del sito sono del titolare. Se riprendi i dati degli scioperi, cita la fonte ufficiale: il Ministero delle Infrastrutture e dei Trasporti.</p>`,
   });
 }
 

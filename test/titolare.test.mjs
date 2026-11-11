@@ -48,7 +48,7 @@ test('valori non validi fermano la build invece di finire nelle pagine o in secu
   ]) assert.throws(() => titolareDaAmbiente(copia(), ambiente), /TITOLARE_(NOME|EMAIL) non valid/);
 });
 
-test('su Cloudflare, con le variabili, la build parte e il nome compare solo in Privacy e Note legali', async () => {
+test('su Cloudflare, con le variabili, la build parte e il nome compare solo nella pagina Privacy, fuori da Google', async () => {
   const radice = mkdtempSync(join(tmpdir(), 'fermitutti-titolare-'));
   try {
     const dati = join(radice, 'dati');
@@ -57,7 +57,12 @@ test('su Cloudflare, con le variabili, la build parte e il nome compare solo in 
     const uscita = join(radice, 'public');
     await build({ dataDir: dati, uscita, oggi: '2026-11-11', immagini: false, log: () => {}, pubblicazione: true, ambiente: { TITOLARE_NOME: NOME, TITOLARE_EMAIL: EMAIL } });
     const conNome = tuttiIFile(uscita).filter((f) => readFileSync(f).includes(NOME)).map((f) => relative(uscita, f)).sort();
-    assert.deepEqual(conNome, ['note-legali/index.html', 'privacy/index.html']);
+    assert.deepEqual(conNome, ['privacy/index.html']);
+    const privacy = readFileSync(join(uscita, 'privacy', 'index.html'), 'utf8');
+    assert.match(privacy, /<meta name="robots" content="noindex">/);
+    assert.doesNotMatch(readFileSync(join(uscita, 'sitemap.xml'), 'utf8'), /privacy/);
+    assert.doesNotMatch(readFileSync(join(uscita, 'robots.txt'), 'utf8'), /privacy/, 'Google deve poter leggere il noindex');
+    assert.match(readFileSync(join(uscita, 'note-legali', 'index.html'), 'utf8'), /gestito dal titolare indicato nella pagina <a href="\/privacy\/">Privacy<\/a>/);
     const conEmail = tuttiIFile(uscita).filter((f) => readFileSync(f).includes(EMAIL)).map((f) => relative(uscita, f)).sort();
     assert.deepEqual(conEmail, ['.well-known/security.txt', 'contatti/index.html', 'note-legali/index.html', 'privacy/index.html']);
     assert.match(readFileSync(join(uscita, '.well-known', 'security.txt'), 'utf8'), /^Contact: mailto:contatti@fermitutti[.]com$/m);
