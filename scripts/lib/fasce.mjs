@@ -163,8 +163,10 @@ function htmlVoce(v) {
   const fonte = v.fonte_url ? `<a href="${urlSicuro(v.fonte_url)}" rel="noopener">${e(v.fonte_titolo || 'fonte ufficiale')}</a>` : e(v.fonte_titolo || '');
   const orari = t ? `${e(t)}.` : 'orari nel testo qui sotto.';
   return `<li><strong>${e(nome)}</strong>: ${orari}
+<details class="fonte-fasce"><summary>Testo ufficiale e fonte</summary>
 <blockquote class="citazione">«${e(v.fasce_testo)}»</blockquote>
-<p class="fonte">Fonte: ${fonte}${origine ? `, ${e(origine)}` : ''}; ${e(verificato)}.${linkAvvisi ? ` Controlla anche gli ${linkAvvisi}.` : ''}${v.note ? ` ${e(v.note)}` : ''}</p></li>`;
+<p class="fonte">Fonte: ${fonte}${origine ? `, ${e(origine)}` : ''}; ${e(verificato)}.${linkAvvisi ? ` Controlla anche gli ${linkAvvisi}.` : ''}${v.note ? ` ${e(v.note)}` : ''}</p>
+</details></li>`;
 }
 
 /** Blocco HTML con i gruppi di fasce. */

@@ -10,6 +10,19 @@ export const STATI = {
   concluso: { testo: 'Concluso', classe: 'concluso', spiegazione: 'Lo sciopero è terminato.' },
 };
 
+/** Titolo dell'elenco apribile di una scheda che raggruppa più scioperi identici. */
+export function testoProclamazioni(n) {
+  return `Proclamato ${n} volte da sindacati diversi`;
+}
+
+/** Testo lungo accorciato a una parola intera, per le schede: il testo completo resta nella pagina dello sciopero. */
+export function accorcia(t, max = 110) {
+  if (!t || t.length <= max) return t;
+  const taglio = t.slice(0, max);
+  const spazio = taglio.lastIndexOf(' ');
+  return `${taglio.slice(0, spazio > 60 ? spazio : max).replace(/[\s,;:.-]+$/, '')}…`;
+}
+
 export function statoMostrato(s, oggi) {
   if ((s.stato === 'confermato' || (s.stato === 'differito' && !s.differito_a)) && s.a < oggi) return 'concluso';
   return s.stato;
@@ -40,7 +53,9 @@ export function quandoTesto(s, oggi) {
 }
 
 /**
- * Modello di una scheda: { id, classe, url, titolo, quando, orario (breve) o modalita (testo lungo), chi, etichette: [{testo, classe}], note: [testo], link: {testo, url}|null }
+ * Modello di una scheda: { id, classe, url, titolo, quando, orario (breve) o modalita (testo lungo), chi, garantite, etichette: [{testo, classe}],
+ * note: [testo], link: {testo, url}|null, proclamazioni: [{testo, url}]|null }. I sindacati non compaiono nella scheda: sono
+ * nella pagina di ogni sciopero. Se `s.gruppo` contiene più scioperi identici per chi viaggia, la scheda li elenca tutti.
  */
 export function schedaModello(s, oggi, { giorno = null } = {}) {
   const stato = statoMostrato(s, oggi);
@@ -69,9 +84,9 @@ export function schedaModello(s, oggi, { giorno = null } = {}) {
     titolo: s.titolo,
     quando: quandoTesto(s, oggi),
     orario: s.orario || null,
-    modalita: s.orario ? null : (s.modalita || null),
+    modalita: s.orario ? null : (accorcia(s.modalita) || null),
     chi: s.chi,
-    sindacati: s.sindacati || null,
+    proclamazioni: s.gruppo && s.gruppo.length > 1 ? s.gruppo.map((x) => ({ testo: x.sindacati || 'Sindacati non indicati', url: `/sciopero/${x.slug}/` })) : null,
     garantite: stato === 'revocato' || stato === 'rimosso' || stato === 'concluso' ? null : (s.garantite || null),
     etichette,
     note,

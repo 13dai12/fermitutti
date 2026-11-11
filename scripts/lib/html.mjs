@@ -35,18 +35,17 @@ export function jsonPerScript(oggetto) {
 export const ICONA_SVG = '<svg class="marchio-icona" viewBox="0 0 64 64" width="36" height="36" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#b3261e"/><rect x="14" y="26" width="36" height="12" rx="3" fill="#fff"/></svg>';
 
 const VOCI_MENU = [
-  ['/', 'Oggi e domani'],
+  ['/', 'Oggi'],
   ['/citta/', 'Città'],
-  ['/settore/', 'Settori'],
+  ['/settore/', 'Settori', 'solo-largo'],
   ['/calendario/', 'Calendario'],
-  ['/assistente/', 'Assistente'],
-  ['/come-funziona/', 'Come funziona'],
+  ['/assistente/', 'Chiedi'],
 ];
 
 function navigazione(percorso) {
-  return `<nav class="nav" aria-label="Sezioni del sito"><ul>${VOCI_MENU.map(([href, testo]) => {
+  return `<nav class="nav" aria-label="Sezioni del sito"><ul>${VOCI_MENU.map(([href, testo, classe]) => {
     const attuale = href === '/' ? percorso === '/' : percorso.startsWith(href) || (href === '/citta/' && percorso.startsWith('/regione/'));
-    return `<li><a href="${href}"${attuale ? ' aria-current="page"' : ''}>${testo}</a></li>`;
+    return `<li${classe ? ` class="${classe}"` : ''}><a href="${href}"${attuale ? ' aria-current="page"' : ''}>${testo}</a></li>`;
   }).join('')}</ul></nav>`;
 }
 
@@ -81,9 +80,11 @@ ${p.noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonic
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${e(p.ogAlt || p.titolo)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#b3261e">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1c21" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/icona.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icona-180.png">
+<link rel="preload" href="/caratteri/atkinson-regolare.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/stile.css${v}">
 <script src="/tema.js${v}"></script>
 ${jsonLd}</head>
@@ -103,6 +104,7 @@ ${p.corpo}
 <footer class="pie">
 <p><strong>${e(sito.nome)}</strong> non è un sito ufficiale e non è collegato al Ministero né alla Commissione di garanzia scioperi. I dati vengono dal <a href="https://scioperi.mit.gov.it/mit2/public/scioperi" rel="noopener">calendario degli scioperi del Ministero delle Infrastrutture e dei Trasporti</a> e possono cambiare: prima di partire verifica sempre con la tua azienda di trasporto.</p>
 <ul class="pie-link">
+<li><a href="/settore/">Scioperi per settore</a></li>
 <li><a href="/come-funziona/">Come funziona</a></li>
 <li><a href="/fonti/">Fonti dei dati</a></li>
 <li><a href="/stato/">Stato degli aggiornamenti</a></li>

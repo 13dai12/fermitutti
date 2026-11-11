@@ -3,7 +3,6 @@
 Sito che risponde a una sola domanda: **lo sciopero tocca me, e quando?** Scioperi dei trasporti in Italia (treni, aerei, bus e metro, traghetti, taxi), presi ogni 30 minuti dal calendario ufficiale del Ministero delle Infrastrutture e dei Trasporti. Sito statico, senza server, senza login, senza cookie.
 
 - **Mettere online il sito:** `DEPLOY.md`
-- **Nome e dominio:** `DOMINIO.md`
 - **Sicurezza:** `SICUREZZA.md`
 - **Decisioni e lezioni (da leggere prima di modificare il codice):** `NOTE_PROGETTO.md`
 

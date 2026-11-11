@@ -61,7 +61,7 @@ export function spezza(testo, max, righeMax) {
 const COLORI = {
   confermato: { banda: '#b3261e', etichetta: 'SCIOPERO' },
   differito: { banda: '#9a5b00', etichetta: 'SCIOPERO RINVIATO' },
-  revocato: { banda: '#4a5560', etichetta: 'SCIOPERO REVOCATO' },
+  revocato: { banda: '#16653a', etichetta: 'SCIOPERO REVOCATO' },
   rimosso: { banda: '#4a5560', etichetta: 'RIMOSSO DAL CALENDARIO' },
   concluso: { banda: '#4a5560', etichetta: 'SCIOPERO CONCLUSO' },
 };
@@ -80,7 +80,7 @@ export function svgAnteprima(p) {
   const yDettaglio = yTitolo + righeTitolo.length * 80 + 10;
   const dettaglio = righeDettaglio.map((r, i) => `<text x="80" y="${yDettaglio + i * 44}" font-size="32" fill="#3c3c3c">${e(r)}</text>`).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Atkinson Hyperlegible">
-<rect width="1200" height="630" fill="#fff8f0"/>
+<rect width="1200" height="630" fill="#fbfbfa"/>
 <rect width="1200" height="120" fill="${c.banda}"/>
 <circle cx="90" cy="60" r="34" fill="#fff"/><rect x="70" y="53" width="40" height="14" rx="3" fill="${c.banda}"/>
 <text x="150" y="78" font-size="46" font-weight="700" fill="#fff">${e(c.etichetta)}</text>

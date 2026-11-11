@@ -150,6 +150,8 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
     scrivi(join(uscita, 'js', f.replace(/\.mjs$/, '.js')), js);
   }
   scrivi(join(uscita, 'icona.svg'), readFileSync(join(RADICE, 'src', 'icona.svg')));
+  // Carattere del marchio (Atkinson Hyperlegible, licenza OFL), ridotto ai caratteri latini: niente font da servizi esterni.
+  for (const f of readdirSync(join(RADICE, 'src', 'caratteri'))) scrivi(join(uscita, 'caratteri', f), readFileSync(join(RADICE, 'src', 'caratteri', f)));
   scrivi(join(uscita, '_headers'), intestazioniPerConfigurazione(readFileSync(join(RADICE, 'src', '_headers'), 'utf8'), sito));
   scrivi(join(uscita, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /widget/\n\nSitemap: ${sito.urlBase}/sitemap.xml\n`);
   const scadenza = new Date(Date.parse(`${oggi}T00:00:00Z`) + 180 * 86400000).toISOString().replace(/\.\d{3}Z$/, '.000Z');

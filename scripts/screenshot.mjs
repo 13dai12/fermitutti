@@ -64,7 +64,7 @@ fatte.push(await apri('/', viste[0], {
   suffisso: '-napoli',
   azione: async (p) => {
     await p.select('#scegli-luogo', 'c:napoli');
-    await p.waitForFunction(() => document.getElementById('vista-nome')?.textContent === 'Napoli');
+    await p.waitForFunction(() => document.getElementById('elenchi')?.dataset.vista === 'Napoli');
   },
 }));
 const domande = ["c'è sciopero domani a milano?", 'fasce garantite roma', 'sciopero bus napoli lunedi'];

@@ -1,7 +1,7 @@
 // Modelli delle pagine. Ogni valore variabile passa da e() o urlSicuro().
 import { e, urlSicuro, pagina } from './html.mjs';
 import { dataLunga, dataMedia, dataOraRoma, aggiungiGiorni } from './date.mjs';
-import { schedaModello, STATI, statoMostrato } from '../../src/js/schede.mjs';
+import { schedaModello, STATI, statoMostrato, testoProclamazioni } from '../../src/js/schede.mjs';
 import { costruisciElenchi, contaTesto } from '../../src/js/elenchi.mjs';
 import { titoloPagina, luogoTesto, leggibile, orarioTesto, elencoSettoriTesto } from './presenta.mjs';
 import { infoSettore } from './normalizza.mjs';
@@ -24,14 +24,14 @@ export function htmlScheda(m, livello = 3) {
 <p class="scheda-etichette">${m.etichette.map((x) => `<span class="pill ${e(x.classe)}">${e(x.testo)}</span>`).join(' ')}</p>
 <${h} class="scheda-titolo"><a href="${urlSicuro(m.url)}">${e(m.titolo)}</a></${h}>
 <p class="scheda-quando">${e(m.quando)}${m.orario ? `<span class="scheda-orario">${e(m.orario)}</span>` : ''}</p>
-${m.modalita ? `<p class="scheda-modalita">Orari: ${e(m.modalita)}</p>` : ''}${m.chi ? `<p class="scheda-chi">${e(m.chi)}</p>` : ''}${m.garantite ? `<p class="scheda-garantite">${e(m.garantite)}</p>` : ''}${m.sindacati ? `<p class="scheda-sindacati">Sindacati: ${e(m.sindacati)}</p>` : ''}
-${m.note.map((n) => `<p class="scheda-nota">${e(n)}</p>`).join('')}${m.link ? `<p class="scheda-nota"><a href="${urlSicuro(m.link.url)}">${e(m.link.testo)}</a></p>` : ''}
+${m.modalita ? `<p class="scheda-modalita">Orari: ${e(m.modalita)}</p>` : ''}${m.chi ? `<p class="scheda-chi">${e(m.chi)}</p>` : ''}${m.garantite ? `<p class="scheda-garantite">${e(m.garantite)}</p>` : ''}
+${m.note.map((n) => `<p class="scheda-nota">${e(n)}</p>`).join('')}${m.link ? `<p class="scheda-nota"><a href="${urlSicuro(m.link.url)}">${e(m.link.testo)}</a></p>` : ''}${m.proclamazioni ? `<details class="scheda-proclamazioni"><summary>${e(testoProclamazioni(m.proclamazioni.length))}</summary><ul>${m.proclamazioni.map((p) => `<li><a href="${urlSicuro(p.url)}">${e(p.testo)}</a></li>`).join('')}</ul></details>` : ''}
 </li>`;
 }
 
 function htmlGruppo(g, oggi, livello) {
   const principali = g.principali.map((s) => htmlScheda(schedaModello(s, oggi, { giorno: g.giorno }), livello)).join('\n');
-  const altri = g.altri.length ? `<details class="altri"><summary>${g.altri.length === 1 ? 'Un altro sciopero' : `Altri ${g.altri.length} scioperi`} che di norma non toccano chi viaggia</summary>
+  const altri = g.altri.length ? `<details class="altri"><summary>${g.altri.length === 1 ? 'Un altro sciopero che di norma non tocca chi viaggia' : `Altri ${g.altri.length} scioperi che di norma non toccano chi viaggia`}</summary>
 <ul class="elenco-schede">${g.altri.map((s) => htmlScheda(schedaModello(s, oggi, { giorno: g.giorno }), livello)).join('\n')}</ul></details>` : '';
   const vuoto = !g.principali.length ? '<p class="nessuno">Nessuno sciopero per chi viaggia.</p>' : '';
   return `${vuoto}${principali ? `<ul class="elenco-schede">${principali}</ul>` : ''}${altri}`;
@@ -107,6 +107,20 @@ export function htmlIscrizione(ctx, nome, titolo) {
 </div>`;
 }
 
+/** Riquadro breve per iscriversi a un calendario: due pulsanti e il rimando alla pagina con tutte le istruzioni. */
+export function htmlIscrizioneBreve(ctx, nome, testo) {
+  const f = feedPer(ctx, nome);
+  return `<section class="riquadro iscrizione-breve" aria-labelledby="iscr-titolo">
+<h2 id="iscr-titolo">Nel calendario del telefono</h2>
+<p>${e(testo)}</p>
+<div class="bottoni">
+<a class="btn" href="${urlSicuro(f.webcal)}">Aggiungi su iPhone o Mac</a>
+<a class="btn btn-secondario" href="${urlSicuro(f.google)}" rel="noopener">Aggiungi a Google Calendar</a>
+</div>
+<p class="nota"><a href="/calendario/">Altri calendari e come funziona l'aggiornamento</a></p>
+</section>`;
+}
+
 export function htmlNotaCalendario() {
   return `<p class="nota"><strong>Quanto è veloce?</strong> Il calendario si aggiorna da solo, ma i tempi li decide il telefono. Sull'iPhone puoi scegliere ogni quanto controllare (Impostazioni › Calendario › Account › Scarica nuovi dati). Google Calendar invece può metterci 12 ore o anche di più, e non si può accelerare. Per le revoche dell'ultimo minuto controlla il sito il giorno prima.</p>`;
 }
@@ -145,9 +159,8 @@ export function paginaHome(ctx) {
 <p class="sotto">Treni, aerei, bus e metro in tutta Italia, dal calendario ufficiale del Ministero dei Trasporti. ${aggiornatoTesto(ctx)}</p>
 </section>
 ${htmlSceltaLuogo(ctx)}
-<p class="vista" id="vista">Stai vedendo: <strong id="vista-nome">tutta Italia</strong>.</p>
 ${htmlRiepilogo(elenchi.conteggi)}
-<div id="elenchi" data-giorni="7">
+<div id="elenchi" data-giorni="7" data-oggi="${e(ctx.oggi)}">
 ${htmlElenchi(elenchi, ctx.oggi)}
 </div>
 ${htmlAssistente(true)}
@@ -234,7 +247,7 @@ export function paginaSciopero(ctx, s) {
     ['Quando', maiuscolaIniziale(s.inizio === s.fine ? dataLunga(s.inizio) : `da ${dataLunga(s.inizio)} a ${dataLunga(s.fine)}`), 'grande'],
     ['Orari', orario || leggibile(s.modalita) || 'non comunicati', ''],
     ['Dove', luogoTesto(s), ''],
-    ['Settore', settore.nome, ''],
+    ['Chi sciopera', leggibile(s.categoria) || 'non indicato', ''],
   ];
   const coinvolti = (s.settore_slug === 'generale' || s.settore_slug === 'piu-settori') && !s.esclude_trasporti
     ? (s.coinvolti && s.coinvolti.length ? `Nel testo ufficiale sono citati: ${elencoSettoriTesto(s.coinvolti)}.` : 'Il testo ufficiale non indica i settori: può toccare tutti i trasporti.') : null;
@@ -259,14 +272,12 @@ export function paginaSciopero(ctx, s) {
 <h1>${e(titolo)}</h1>
 <p class="stato-grande ${e(info.classe)}">${e(info.testo)}</p>
 ${avvisoStato.join('\n')}
-<p class="sottotitolo">${e(leggibile(s.categoria))}</p>
 <ul class="fatti">
 ${fatti.map(([eti, val, cl]) => `<li><span class="eti">${e(eti)}</span><span class="val ${cl}">${e(val)}</span></li>`).join('\n')}
 ${anticipo ? `<li class="largo"><span class="eti">Attenzione</span><span class="val">${e(anticipo)}</span></li>` : ''}
 ${coinvolti ? `<li class="largo"><span class="eti">Settori</span><span class="val">${e(coinvolti)}</span></li>` : ''}
 ${esclusi ? `<li class="largo"><span class="eti">Esclusi</span><span class="val">${e(esclusi)}</span></li>` : ''}
 ${s.note ? `<li class="largo"><span class="eti">Note del Ministero</span><span class="val">${e(leggibile(s.note))}</span></li>` : ''}
-${s.sindacati ? `<li class="largo"><span class="eti">Sindacati</span><span class="val">${e(s.sindacati)}</span></li>` : ''}
 </ul>
 <div class="bottoni">
 <a class="btn btn-whatsapp" href="${urlSicuro(wa)}" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>Manda su WhatsApp</a>
@@ -276,16 +287,13 @@ ${s.sindacati ? `<li class="largo"><span class="eti">Sindacati</span><span class
 ${htmlFasce(gruppiFasce)}
 ${aereo ? htmlDirittiVolo(s, ctx.aff) : ''}
 ${viaggio ? htmlAlternative(s, ctx.aff) : ''}
-<section class="riquadro" aria-labelledby="iscr-titolo">
-<h2 id="iscr-titolo">Non perdere i prossimi</h2>
-<p>Metti nel calendario del telefono tutti gli scioperi ${zona ? `di ${e(zona.nome)}` : (regione ? `della regione ${e(regione.nome)}` : `del settore ${e(settore.nome.toLowerCase())}`)}: si aggiornano da soli.</p>
-${htmlIscrizione(ctx, feedLuogo.nome, feedLuogo.titolo)}
-${htmlNotaCalendario()}
-</section>
+${htmlIscrizioneBreve(ctx, feedLuogo.nome, `Tutti gli scioperi ${zona ? `di ${zona.nome}` : (regione ? `della regione ${regione.nome}` : `del settore ${settore.nome.toLowerCase()}`)} nel tuo calendario: compaiono da soli e si aggiornano se vengono revocati.`)}
 <section aria-labelledby="ufficiale-titolo">
-<h2 id="ufficiale-titolo">Il testo ufficiale</h2>
+<details class="ufficiale">
+<summary><h2 id="ufficiale-titolo">Il testo ufficiale del Ministero</h2></summary>
 <dl class="dettagli">${dettagli.map(([k, v]) => `<dt>${e(k)}</dt><dd>${e(v)}</dd>`).join('')}</dl>
 <p class="fonte-mit">Fonte: <a href="${MIT_PAGINA}" rel="noopener">calendario degli scioperi del Ministero delle Infrastrutture e dei Trasporti</a>${ctx.archivio.fonte?.aggiornato_al ? `, aggiornato dal Ministero al ${e(ctx.archivio.fonte.aggiornato_al)}` : ''}. Codice dello sciopero nel calendario: ${e(s.id)}. Visto per la prima volta: ${e(dataOraRoma(s.visto_prima))}.</p>
+</details>
 </section>
 ${storia.length ? `<section aria-labelledby="storia-titolo"><h2 id="storia-titolo">Cosa è cambiato</h2><ul>${storia.map((x) => `<li><time datetime="${e(x.quando)}">${e(dataOraRoma(x.quando))}</time>: ${e(x.testo)}</li>`).join('')}</ul></section>` : ''}
 <p class="nota">Le informazioni possono cambiare fino all'ultimo momento: prima di partire verifica con la tua azienda di trasporto.</p>
@@ -319,15 +327,11 @@ function paginaZona(ctx, { percorso, titoloH1, intro, zona, settori, attributi, 
 <h1>${e(titoloH1)}</h1>
 <p class="sotto">${intro} ${aggiornatoTesto(ctx)}</p>
 ${htmlRiepilogo(elenchi.conteggi, 'più avanti')}
-<div id="elenchi" data-giorni="60">
+<div id="elenchi" data-giorni="60" data-oggi="${e(ctx.oggi)}">
 ${htmlElenchi(elenchi, ctx.oggi)}
 </div>
 ${fasceHtml || ''}
-<section class="riquadro" aria-labelledby="iscr-titolo">
-<h2 id="iscr-titolo">Nel calendario del telefono</h2>
-${htmlIscrizione(ctx, feed.nome, feed.titolo)}
-${htmlNotaCalendario()}
-</section>
+${htmlIscrizioneBreve(ctx, feed.nome, `${feed.titolo} nel tuo calendario: compaiono da soli e si aggiornano se vengono revocati.`)}
 ${extra}
 ${htmlPubblicita(ctx.aff)}`;
   return pagina({ sito: ctx.sito, versione: ctx.versione, percorso, tipoPagina: 'zona', titolo, descrizione, corpo, attributi });

@@ -2,7 +2,7 @@
 // I dati arrivano da /dati/*.json (stesso sito). Le preferenze restano in localStorage.
 import { oggiRoma, dataMedia, dataOraRoma } from './date.mjs';
 import { costruisciElenchi } from './elenchi.mjs';
-import { schedaModello } from './schede.mjs';
+import { schedaModello, testoProclamazioni } from './schede.mjs';
 import { hrefSicuro } from './filtri.mjs';
 
 const pagina = document.body.dataset.pagina || '';
@@ -117,9 +117,10 @@ function nodoScheda(m, livello) {
     m.modalita ? el('p', { class: 'scheda-modalita' }, `Orari: ${m.modalita}`) : null,
     m.chi ? el('p', { class: 'scheda-chi' }, m.chi) : null,
     m.garantite ? el('p', { class: 'scheda-garantite' }, m.garantite) : null,
-    m.sindacati ? el('p', { class: 'scheda-sindacati' }, `Sindacati: ${m.sindacati}`) : null,
     m.note.map((n) => el('p', { class: 'scheda-nota' }, n)),
-    m.link ? el('p', { class: 'scheda-nota' }, el('a', { href: m.link.url }, m.link.testo)) : null);
+    m.link ? el('p', { class: 'scheda-nota' }, el('a', { href: m.link.url }, m.link.testo)) : null,
+    m.proclamazioni ? el('details', { class: 'scheda-proclamazioni' }, el('summary', {}, testoProclamazioni(m.proclamazioni.length)),
+      el('ul', {}, m.proclamazioni.map((p) => el('li', {}, el('a', { href: p.url }, p.testo))))) : null);
 }
 
 function nodiGruppo(g, oggi, livello) {
@@ -128,7 +129,7 @@ function nodiGruppo(g, oggi, livello) {
   else nodi.push(el('ul', { class: 'elenco-schede' }, g.principali.map((s) => nodoScheda(schedaModello(s, oggi, { giorno: g.giorno }), livello))));
   if (g.altri.length) {
     nodi.push(el('details', { class: 'altri' },
-      el('summary', null, `${g.altri.length === 1 ? 'Un altro sciopero' : `Altri ${g.altri.length} scioperi`} che di norma non toccano chi viaggia`),
+      el('summary', null, g.altri.length === 1 ? 'Un altro sciopero che di norma non tocca chi viaggia' : `Altri ${g.altri.length} scioperi che di norma non toccano chi viaggia`),
       el('ul', { class: 'elenco-schede' }, g.altri.map((s) => nodoScheda(schedaModello(s, oggi, { giorno: g.giorno }), livello)))));
   }
   return nodi;
@@ -179,13 +180,15 @@ async function ridisegna({ zona = null, settori = null, forza = false } = {}) {
   const contenitore = document.getElementById('elenchi');
   if (!contenitore) return;
   const oggi = oggiRoma();
+  // La pagina costruita oggi mostra già la zona giusta: nessun download. Si ridisegna solo con un altro giorno o un'altra zona.
+  if (!forza && contenitore.dataset.oggi === oggi) return;
   let dati;
   try { dati = await scioperi(); } catch { return; }
-  // Se la pagina è stata costruita oggi e non c'è un filtro, l'HTML statico è già giusto.
-  if (!forza && !zona && dati.stato.oggi_build === oggi) return;
   const giorni = Number(contenitore.dataset.giorni) || 7;
   const elenchi = costruisciElenchi(dati.scioperi, oggi, { zona, settori, giorniAvanti: giorni });
   disegnaElenchi(contenitore, elenchi, oggi);
+  // Segnale per chi controlla la pagina (anche le prove con il browser): quale zona è disegnata adesso.
+  contenitore.dataset.vista = zona ? (zona.nome || '') : 'tutta Italia';
   aggiornaRiepilogo(elenchi.conteggi);
 }
 
@@ -193,14 +196,12 @@ async function ridisegna({ zona = null, settori = null, forza = false } = {}) {
 
 function avviaHome() {
   const sel = document.getElementById('scegli-luogo');
-  const vista = document.getElementById('vista-nome');
   if (!sel) return ridisegna();
   const salvato = memoria('luogo');
   if (salvato && [...sel.options].some((o) => o.value === salvato)) sel.value = salvato;
   const applica = (forza) => {
     const opt = sel.options[sel.selectedIndex];
     const zona = zonaDaOpzione(opt);
-    if (vista) vista.textContent = zona ? zona.nome : 'tutta Italia';
     ridisegna({ zona, forza });
   };
   sel.addEventListener('change', () => { memoria('luogo', sel.value || null); applica(true); });

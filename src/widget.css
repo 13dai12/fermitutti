@@ -1,11 +1,11 @@
 /* Stile del widget incorporabile: piccolo, leggibile, nessuno script. */
-:root { color-scheme: light dark; --w-testo: #1b1b1b; --w-sfondo: #fffdf9; --w-sfondo-2: #f3efe8; --w-accento: #b3261e; --w-link: #0b4f9c; --w-ok: #1b6e3a; }
-@media (prefers-color-scheme: dark) { :root { --w-testo: #f1efea; --w-sfondo: #141414; --w-sfondo-2: #202020; --w-accento: #ff6b5e; --w-link: #8fc1ff; --w-ok: #8fe0ac; } }
+:root { color-scheme: light dark; --w-testo: #18181b; --w-sfondo: #ffffff; --w-sfondo-2: #f4f4f2; --w-accento: #b3261e; --w-link: #0b55ad; --w-ok: #16653a; }
+@media (prefers-color-scheme: dark) { :root { --w-testo: #f2f2f4; --w-sfondo: #1b1c21; --w-sfondo-2: #26272d; --w-accento: #ff7b6d; --w-link: #8db8ff; --w-ok: #8de0aa; } }
 body { margin: 0; padding: .8rem; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.45; color: var(--w-testo); background: var(--w-sfondo); }
 h1 { font-size: 1.1rem; margin: 0 0 .5rem; }
 ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
 li { padding: .5rem .7rem; border-left: 5px solid var(--w-accento); background: var(--w-sfondo-2); border-radius: 8px; }
-li.revocato { border-left-color: #6b7680; opacity: .9; }
+li.revocato { border-left-color: var(--w-ok); }
 .q { font-weight: 700; }
 .s { font-size: .9rem; opacity: .85; }
 .ok { color: var(--w-ok); font-weight: 700; }

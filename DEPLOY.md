@@ -47,7 +47,7 @@ I dati del titolare non sono pubblici: Cloudflare li nasconde nel whois.
 
 ## Passo 3. Controlla che il nome sia libero da marchi
 
-Cinque minuti, prima di far conoscere il sito. Le istruzioni sono in `DOMINIO.md`, sezione «Possibili conflitti con altri nomi».
+Fatto l'11 novembre 2026 su TMview: nessun conflitto. È emerso un solo marchio «fermi tutti», turco, del 2005, per abbigliamento e pubblicità, terminato. Per ripetere il controllo cerca `fermi tutti` e `fermitutti` su https://www.tmdn.org/tmview/, che contiene anche i marchi italiani. Fermati solo se trovi un marchio ancora valido nelle classi 9, 35, 38, 39, 41 o 42.
 
 ## Passo 4. Metti il codice su GitHub
 
