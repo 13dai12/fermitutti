@@ -1,10 +1,10 @@
 // Impostazioni del sito. Cambia qui nome, dominio e contatti: tutto il resto si adegua alla prossima build.
 export default {
-  // Nome e dominio. Se compri un dominio diverso da fermitutti.it, cambia SOLO queste due righe.
+  // Nome e dominio: fermitutti.com, registrato su Cloudflare. Per cambiare dominio basta modificare dominio e urlBase.
   nome: 'Fermi Tutti',
-  dominio: 'fermitutti.it',
+  dominio: 'fermitutti.com',
   // Indirizzo completo del sito, senza barra finale. Usato per link assoluti, calendari, sitemap e anteprime.
-  urlBase: 'https://fermitutti.it',
+  urlBase: 'https://fermitutti.com',
   slogan: 'Lo sciopero tocca me, e quando?',
   descrizione: 'Scioperi dei trasporti in Italia: oggi, domani e nei prossimi 7 giorni. Treni, aerei, bus e metro, città per città, dai dati ufficiali del Ministero. Senza login e senza app.',
   lingua: 'it',
@@ -12,7 +12,7 @@ export default {
   // SEGNAPOSTO DA COMPILARE PRIMA DI PUBBLICARE (vedi DEPLOY.md e il rapporto finale).
   titolare: {
     nome: '[NOME E COGNOME DEL TITOLARE]',       // es. "Mario Rossi"
-    email: '[EMAIL DI CONTATTO]',                // es. "ciao@fermitutti.it" oppure un indirizzo personale
+    email: '[EMAIL DI CONTATTO]',                // es. "contatti@fermitutti.com" con l'inoltro gratuito di Cloudflare (DEPLOY.md, passo 12)
     partitaIva: '',                               // lascia vuoto se non hai partita IVA
     indirizzo: '',                                // facoltativo
   },
@@ -20,7 +20,7 @@ export default {
   emailSicurezza: '[EMAIL DI CONTATTO]',
 
   // Repository GitHub (serve per i link "segnala un problema" e la pagina di stato).
-  repository: 'https://github.com/[UTENTE-GITHUB]/fermitutti',
+  repository: 'https://github.com/13dai12/fermitutti',
 
   // Dopo quante ore senza pubblicazioni il sito mostra l'avviso "dati non aggiornati" (il sito si ripubblica almeno ogni 6 ore).
   oreAvvisoDatiVecchi: 8,

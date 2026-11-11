@@ -88,6 +88,12 @@ Ultimo aggiornamento: 11 novembre 2026.
   - i minuti di Actions sono illimitati nei repository pubblici;
   - ogni commit è anche «attività», quindi GitHub non disattiva il workflow dopo 60 giorni.
 
+### Dominio `fermitutti.com` su Cloudflare
+- **Decisione:** `fermitutti.com`, registrato su Cloudflare l'11 novembre 2026. Cloudflare non vende i `.it`. Dominio, DNS e sito stanno nello stesso account.
+- **Perché:** non serve cambiare i nameserver; il DNSSEC si attiva con un clic, perché Cloudflare invia da solo il record DS al registro; prezzo di costo; whois oscurato.
+- **Nel codice:** il dominio compare solo in `config/sito.mjs` (`dominio` e `urlBase`). Le prove lo leggono da lì con `test/dominio.mjs`, quindi un cambio di dominio non tocca le prove.
+- **Posta:** `scripts/verifica-online.mjs` accetta due configurazioni: nessuna email (SPF `-all` e MX nullo) oppure solo l'inoltro di Cloudflare (Email Routing). Se l'email del titolare è sul dominio del sito, la pagina della privacy dice da sola che le email passano dall'inoltro di Cloudflare.
+
 ### Quando pubblicare (limite di 500 build al mese)
 - **Decisione** (`decidiPubblicazione` in `scripts/aggiorna.mjs`): si controlla ogni 30 minuti (minuti 7 e 37, per evitare l'inizio dell'ora, quando GitHub è sovraccarico). Si pubblica solo:
   - se i dati cambiano;
@@ -183,6 +189,7 @@ Ultimo aggiornamento: 11 novembre 2026.
 ## Lezioni tecniche
 
 - **Caratteri speciali nei comandi.** Scrivendo file da riga di comando, alcune sequenze di escape per i separatori di riga Unicode sono diventate caratteri veri e hanno rotto due espressioni regolari. Anche una barra rovesciata si è persa: l'escape del punto e virgola nei calendari è diventato un semplice `;`, e il test era sbagliato allo stesso modo. Ora i caratteri delicati si costruiscono con `String.fromCharCode` (per esempio `BARRA` in `scripts/lib/ics.mjs`), e una prova controlla il risultato finale nei file generati.
+- **Barre rovesciate doppie.** Verificato di nuovo l'11 novembre 2026: nei comandi una doppia barra rovesciata arriva nel file come barra singola, mentre una barra singola resta. Nelle prove, i testi letterali dentro le espressioni regolari si costruiscono con `letterale()` di `test/dominio.mjs`.
 - **Siti con certificati incompleti.** `www.mit.gov.it`, `cgsse.it` e `trenitaliatper.it` non inviano il certificato intermedio. Non si disattiva mai la verifica TLS: si usano la Wayback Machine o l'intermedio scaricato dall'indirizzo AIA del certificato.
 - **Statistiche di Cloudflare e politica di sicurezza.** Lo script di Cloudflare Web Analytics viene da un altro dominio. Se si accendono le statistiche, la build aggiunge solo quei due indirizzi alla CSP e toglie Trusted Types (`intestazioniPerConfigurazione` in `scripts/build.mjs`).
 - **Cloudflare e `_headers`.** La documentazione non dice cosa succede se la stessa regola toglie e reimposta un'intestazione. Per questo il widget non lo fa, e una prova lo controlla.
@@ -195,3 +202,4 @@ Ultimo aggiornamento: 11 novembre 2026.
 - Lighthouse mobile: 100 in tutte le categorie su home, pagina di sciopero e pagina di città.
 - Dati reali scaricati l'11/11/2026: 30 scioperi.
 - Prova con fonte guasta sui dati reali: i dati sono rimasti identici, stessa impronta prima e dopo.
+- Dominio `fermitutti.com` registrato su Cloudflare, con la zona DNS ancora vuota. Il sito non è ancora pubblicato: mancano il repository su GitHub e il nome e l'email del titolare in `config/sito.mjs`.

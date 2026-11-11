@@ -1,12 +1,13 @@
 # Controllo del sito pubblicato, da lanciare a mano: Actions > Controllo online > Run workflow.
-# Controlla HTTPS, reindirizzamenti, intestazioni di sicurezza, DNSSEC, SPF, DMARC, MX nullo, CAA e calendari.
+# Controlla HTTPS, reindirizzamenti, intestazioni di sicurezza, DNSSEC, SPF, DMARC, MX, CAA e calendari.
 name: Controllo online
 
 on:
   workflow_dispatch:
     inputs:
       dominio:
-        description: 'Il tuo dominio, per esempio fermitutti.it'
+        description: 'Il dominio da controllare'
+        default: 'fermitutti.com'
         required: true
         type: string
 

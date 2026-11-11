@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// Controlli dopo la pubblicazione: HTTPS, reindirizzamenti, intestazioni di sicurezza, DNS (DNSSEC, SPF, DMARC, MX nullo, CAA),
+// Controlli dopo la pubblicazione: HTTPS, reindirizzamenti, intestazioni di sicurezza, DNS (DNSSEC, SPF, DMARC, MX, CAA),
 // calendari, security.txt e freschezza dei dati.
-// Uso: npm run verifica-online -- fermitutti.it
+// Uso: npm run verifica-online -- fermitutti.com
 // Le domande DNS passano dal servizio DNS-over-HTTPS di Cloudflare (1.1.1.1), che verifica anche il DNSSEC.
 import tls from 'node:tls';
 
 const dominio = String(process.argv[2] || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
 if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(dominio)) {
-  console.error('Uso: npm run verifica-online -- tuodominio.it');
+  console.error('Uso: npm run verifica-online -- tuodominio.com');
   process.exit(2);
 }
 const risultati = [];
@@ -131,10 +131,17 @@ await controlla('DNSSEC attivo e verificato', async () => {
   else ko('DNSSEC attivo e verificato', `firma verificata: ${a.AD}; record DS presenti: ${valori(ds, 43).length}`);
 });
 
-await controlla('SPF che vieta ogni invio di email', async () => {
+// Posta. Due configurazioni sono corrette: il dominio non usa email (SPF "-all" e MX nullo), oppure riceve soltanto,
+// con l'inoltro gratuito di Cloudflare (Email Routing), all'indirizzo di contatto pubblicato sul sito.
+const mx = await dns(dominio, 'MX').then((r) => valori(r, 15), () => null);
+const inoltro = Array.isArray(mx) && mx.length > 0 && mx.every((v) => /\.mx\.cloudflare\.net\.?$/i.test(v.trim()));
+
+await controlla('SPF', async () => {
+  const nome = inoltro ? "SPF: email inviate solo dall'inoltro di Cloudflare" : 'SPF che vieta ogni invio di email';
   const spf = valori(await dns(dominio, 'TXT'), 16).filter((v) => v.startsWith('v=spf1'));
-  if (spf.length === 1 && spf[0].trim() === 'v=spf1 -all') ok('SPF che vieta ogni invio di email', spf[0]);
-  else ko('SPF che vieta ogni invio di email', spf.join(' | ') || 'assente');
+  const testo = spf.length === 1 ? spf[0].trim().replace(/\s+/g, ' ') : '';
+  const giusto = inoltro ? /^v=spf1 include:_spf\.mx\.cloudflare\.net [~-]all$/.test(testo) : testo === 'v=spf1 -all';
+  if (giusto) ok(nome, testo); else ko(nome, spf.join(' | ') || 'assente');
 });
 
 await controlla('DMARC con p=reject', async () => {
@@ -142,9 +149,11 @@ await controlla('DMARC con p=reject', async () => {
   if (d.length === 1 && /;\s*p=reject/.test(d[0])) ok('DMARC con p=reject', d[0]); else ko('DMARC con p=reject', d.join(' | ') || 'assente');
 });
 
-await controlla('MX nullo (il dominio non riceve email)', async () => {
-  const mx = valori(await dns(dominio, 'MX'), 15);
-  if (mx.length === 1 && /^0 \.?$/.test(mx[0].trim())) ok('MX nullo (il dominio non riceve email)', mx[0]); else ko('MX nullo (il dominio non riceve email)', mx.join(' | ') || 'assente');
+await controlla('MX', async () => {
+  if (!mx) throw new Error('domanda DNS non riuscita');
+  if (inoltro) ok("MX: la posta arriva solo all'inoltro di Cloudflare", mx.join(' | '));
+  else if (mx.length === 1 && /^0 \.?$/.test(mx[0].trim())) ok('MX nullo (il dominio non riceve email)', mx[0]);
+  else ko("MX nullo, oppure solo l'inoltro di Cloudflare", mx.join(' | ') || 'assente');
 });
 
 await controlla('CAA: solo le autorità usate da Cloudflare', async () => {

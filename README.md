@@ -19,7 +19,7 @@ Serve Node.js 22 o più recente.
 | `npm test` | Esegue tutte le prove |
 | `npm run servi` | Serve `public/` su http://127.0.0.1:8080 con le intestazioni di `_headers` |
 | `npm run screenshot` | Schermate a 360 px e desktop con Chromium, controllando console e CSP |
-| `npm run verifica-online -- fermitutti.it` | Controlli dopo la pubblicazione: HTTPS, intestazioni, DNS, calendari |
+| `npm run verifica-online -- fermitutti.com` | Controlli dopo la pubblicazione: HTTPS, intestazioni, DNS, calendari |
 
 ## Struttura
 

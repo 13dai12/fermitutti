@@ -73,13 +73,15 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
 
 ## 6. Dominio e DNS
 
-Istruzioni in `DEPLOY.md`, passi 3 e 7-13 (il 16 per Google Search Console): DNSSEC, protezione contro il trasferimento presso il registrar, record CAA (solo le autorità di Cloudflare), nessun record orfano, SPF `v=spf1 -all`, DMARC `p=reject`, MX nullo, un solo reindirizzamento da `www` al dominio principale, solo HTTPS e TLS minimo 1.2.
+Istruzioni in `DEPLOY.md`, passi 2 e 7-13 (il 16 per Google Search Console). Il dominio `fermitutti.com` è registrato su Cloudflare, nello stesso account del sito: verifica dell'email del titolare, blocco contro i trasferimenti, rinnovo automatico, DNSSEC con il record DS inviato da Cloudflare al registro, record CAA (solo le autorità di Cloudflare), nessun record orfano, DMARC `p=reject`, un solo reindirizzamento da `www` e da `pages.dev` al dominio principale, solo HTTPS e TLS minimo 1.2.
 
-Il controllo automatico è `npm run verifica-online -- fermitutti.it`, oppure il workflow «Controllo online» su GitHub. Controlla anche che Cloudflare non inserisca script nelle pagine (offuscamento delle email, Rocket Loader), che la politica di sicurezza bloccherebbe.
+Per la posta ci sono due configurazioni corrette. Nella prima il dominio non usa email: SPF `v=spf1 -all` e MX nullo. Nella seconda riceve soltanto, con l'inoltro gratuito di Cloudflare (Email Routing) dall'indirizzo di contatto alla casella del titolare: i record MX, SPF e DKIM li crea Cloudflare. In tutti e due i casi nessuno può mandare email credibili a nome del dominio.
+
+Il controllo automatico è `npm run verifica-online -- fermitutti.com`, oppure il workflow «Controllo online» su GitHub. Riconosce da solo quale delle due configurazioni di posta è in uso. Controlla anche che Cloudflare non inserisca script nelle pagine (offuscamento delle email, Rocket Loader), che la politica di sicurezza bloccherebbe.
 
 ## 7. Account
 
-La verifica in due passaggi su email, registrar, GitHub e Cloudflare è il **primo passo** di `DEPLOY.md`, con i codici di recupero su carta. Cloudflare riceve accesso solo al repository del sito.
+La verifica in due passaggi su email, GitHub e Cloudflare, che è anche il registrar del dominio, è il **primo passo** di `DEPLOY.md`, con i codici di recupero su carta. Cloudflare riceve accesso solo al repository del sito.
 
 ## 8. security.txt
 
@@ -117,11 +119,11 @@ Un secondo agente, con contesto pulito, ha rivisto tutto il repository rispetto 
 | Bassa | Token codificato non mascherato nei registri | `::add-mask::` |
 | Bassa | Si poteva pubblicare con i segnaposto in `security.txt`; un vecchio `security.txt` inutilizzato | Su Cloudflare la build si ferma se restano segnaposto; file tolto |
 
-Dubbi sulla guida, tutti accolti in `DEPLOY.md`: spegnere le funzioni di Cloudflare che modificano le pagine, approvazione dei workflow proposti da sconosciuti, `gh auth logout` dopo il push, cosa fare se manca la protezione del trasferimento per il `.it`, reindirizzamento di `pages.dev`, controllo su hstspreload.org prima del preload, `cooldown` di Dependabot.
+Dubbi sulla guida, tutti accolti in `DEPLOY.md`: spegnere le funzioni di Cloudflare che modificano le pagine, approvazione dei workflow proposti da sconosciuti, `gh auth logout` dopo il push, reindirizzamento di `pages.dev`, controllo su hstspreload.org prima del preload, `cooldown` di Dependabot. Il dubbio sulla protezione del trasferimento dei `.it` non vale più: il dominio è un `.com` registrato su Cloudflare, bloccato contro i trasferimenti.
 
 ## Rischi che restano
 
-- **Account.** Il rischio più grande: chi entra nel tuo account GitHub, Cloudflare, OVHcloud o nella tua email può cambiare il sito o prendersi il dominio. La verifica in due passaggi e i codici di recupero su carta lo riducono molto.
+- **Account.** Il rischio più grande: chi entra nel tuo account GitHub, Cloudflare o nella tua email può cambiare il sito o prendersi il dominio. La verifica in due passaggi e i codici di recupero su carta lo riducono molto.
 - **Fonte manipolata in modo «plausibile».** Se qualcuno alterasse il sito del Ministero con dati credibili (date e testi normali), il sito li pubblicherebbe, perché non c'è modo di distinguerli da quelli veri. Il danno resta comunque limitato a testo mostrato come testo: nessuno script e nessun link possono passare.
 - **Fonte manipolata per fermare il sito.** Chi controllasse il feed potrebbe mandare dati che il sito rifiuta. Il sito resterebbe allora fermo agli ultimi dati validi, con un avviso visibile e una segnalazione per te. Non può però far pubblicare dati che rompono il sito, né riempire l'archivio.
 - **Il Ministero non dichiara le revoche.** Uno sciopero che sparisce prima di iniziare viene mostrato come «revocato», ma potrebbe anche essere stato tolto per errore. La spiegazione è sempre visibile e invita a verificare con l'azienda.

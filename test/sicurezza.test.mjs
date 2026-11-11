@@ -26,7 +26,7 @@ test('link: solo interni, https, webcal e mailto; tutto il resto diventa #', () 
   }
   assert.equal(urlSicuro('/sciopero/2026-11-20-treni/'), '/sciopero/2026-11-20-treni/');
   assert.equal(urlSicuro('https://europa.eu/x?a=1&b=2'), 'https://europa.eu/x?a=1&amp;b=2');
-  assert.equal(urlSicuro('webcal://fermitutti.it/ics/italia.ics'), 'webcal://fermitutti.it/ics/italia.ics');
+  assert.equal(urlSicuro('webcal://fermitutti.com/ics/italia.ics'), 'webcal://fermitutti.com/ics/italia.ics');
   assert.equal(urlSicuro('https://evil.example/', ['trenitalia.com']), '#');
   assert.equal(urlSicuro('https://www.trenitalia.com/x', ['trenitalia.com']), 'https://www.trenitalia.com/x');
 });

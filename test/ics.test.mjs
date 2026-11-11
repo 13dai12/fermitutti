@@ -6,6 +6,10 @@ import { join } from 'node:path';
 import ICAL from 'ical.js';
 import { buildDiProva } from './costruisci.mjs';
 import { evento, calendario, escapaTesto, piega } from '../scripts/lib/ics.mjs';
+import { DOMINIO, BASE, letterale } from './dominio.mjs';
+
+const UID = new RegExp('^mit-[0-9]+@' + letterale(DOMINIO) + '$');
+const AVVISA = new RegExp('Avvisa anche i colleghi: ' + letterale(BASE) + '/sciopero/[a-z0-9-]+/');
 
 function controllaFormato(testo, nome) {
   assert.ok(testo.startsWith('BEGIN:VCALENDAR\r\n'), `${nome}: inizio`);
@@ -51,13 +55,13 @@ test('tutti i calendari generati sono validi', async () => {
     assert.ok(comp.getFirstPropertyValue('prodid'));
     assert.equal(comp.getFirstSubcomponent('vtimezone').getFirstPropertyValue('tzid'), 'Europe/Rome');
     for (const e of ev) {
-      assert.match(e.getFirstPropertyValue('uid'), /^mit-\d+@fermitutti\.it$/);
+      assert.match(e.getFirstPropertyValue('uid'), UID);
       assert.ok(e.getFirstPropertyValue('dtstamp'));
       assert.ok(Number.isInteger(e.getFirstPropertyValue('sequence')));
       assert.ok(['CONFIRMED', 'CANCELLED'].includes(e.getFirstPropertyValue('status')));
       const ev2 = new ICAL.Event(e);
       assert.ok(ev2.endDate.compare(ev2.startDate) > 0, `${f}: la fine deve seguire l'inizio`);
-      assert.match(ev2.description, /Avvisa anche i colleghi: https:\/\/fermitutti\.it\/sciopero\/[a-z0-9-]+\//);
+      assert.match(ev2.description, AVVISA);
     }
   }
   // Calendari per singolo sciopero
@@ -69,7 +73,7 @@ test('tutti i calendari generati sono validi', async () => {
 test('revoche, rinvii, orari e giornate intere nel calendario nazionale', async () => {
   const { uscita } = await buildDiProva();
   const { eventi: ev } = eventi(readFileSync(join(uscita, 'ics', 'italia.ics'), 'utf8'));
-  const per = (id) => ev.find((e) => e.getFirstPropertyValue('uid') === `mit-${id}@fermitutti.it`);
+  const per = (id) => ev.find((e) => e.getFirstPropertyValue('uid') === `mit-${id}@${DOMINIO}`);
   const revocato = per('9001');
   assert.equal(revocato.getFirstPropertyValue('status'), 'CANCELLED');
   assert.equal(revocato.getFirstPropertyValue('sequence'), 1);
@@ -106,12 +110,12 @@ test('testo malevolo: niente righe iniettate, escape corretto, UTF-8 non spezzat
   assert.equal(escapaTesto('a;b,c' + B + 'd\r\ne\nf'), 'a' + B + ';b' + B + ',c' + B + B + 'd' + B + 'ne' + B + 'nf');
   const s = { id: '1', slug: 'x', stato: 'confermato', sequence: 3, modificato_il: '2026-11-11T07:00:00Z', visto_prima: '2026-11-10T07:00:00Z', inizio: '2026-11-20', fine: '2026-11-20', orario: null };
   const cattivo = 'ATTACCO\r\nEND:VEVENT\r\nBEGIN:VEVENT\r\nUID:finto\r\nSUMMARY:finto;,\\ èèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèèè 🚌🚌🚌';
-  const t = { titolo: cattivo, chi: cattivo, orari: cattivo, settore: 'Treni', luogo: cattivo, fasce: null, note: cattivo, sindacati: cattivo, url: 'https://fermitutti.it/sciopero/x/', dominio: 'fermitutti.it', avviso: cattivo };
+  const t = { titolo: cattivo, chi: cattivo, orari: cattivo, settore: 'Treni', luogo: cattivo, fasce: null, note: cattivo, sindacati: cattivo, url: `${BASE}/sciopero/x/`, dominio: DOMINIO, avviso: cattivo };
   const testo = calendario({ nome: cattivo, descrizione: cattivo, prodid: '-//prova//IT', eventi: [evento(s, t)] });
   controllaFormato(testo, 'malevolo');
   const { eventi: ev } = eventi(testo);
   assert.equal(ev.length, 1, 'un solo evento');
-  assert.equal(ev[0].getFirstPropertyValue('uid'), 'mit-1@fermitutti.it');
+  assert.equal(ev[0].getFirstPropertyValue('uid'), `mit-1@${DOMINIO}`);
   assert.ok(ev[0].getFirstPropertyValue('summary').includes('END:VEVENT'), 'il testo resta testo');
   assert.ok(ev[0].getFirstPropertyValue('summary').endsWith('🚌🚌🚌'));
   assert.equal(piega('a'.repeat(200)).split('\r\n').every((r) => Buffer.byteLength(r) <= 75), true);

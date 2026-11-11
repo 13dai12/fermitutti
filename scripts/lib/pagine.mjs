@@ -581,6 +581,8 @@ export function paginaPrivacy(ctx) {
     corpo: `<p class="avviso avviso-ok"><strong>In breve:</strong> non usiamo cookie, non tracciamo chi visita il sito e non raccogliamo dati personali. Non ci sono moduli, iscrizioni o account.</p>
 <h2>Chi è il titolare</h2>
 <p>${e(t.nome)}${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
+<h2>Se ci scrivi</h2>
+<p>Se ci mandi un'email, usiamo il tuo indirizzo e il messaggio solo per risponderti.${t.email.toLowerCase().endsWith('@' + ctx.sito.dominio) ? ' Le email per questo indirizzo passano dal servizio di inoltro di Cloudflare (Email Routing), che le consegna alla casella del titolare.' : ''}</p>
 <h2>Cosa resta sul tuo dispositivo</h2>
 <p>Se scegli una città o il tema chiaro o scuro, la scelta viene salvata solo nella memoria del tuo browser (localStorage). Non la riceviamo e puoi cancellarla in qualsiasi momento dalle impostazioni del browser. Anche le domande all'assistente restano sul tuo dispositivo.</p>
 <h2>Hosting</h2>

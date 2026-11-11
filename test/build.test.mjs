@@ -5,6 +5,9 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { buildDiProva } from './costruisci.mjs';
 import { archivioDiProva } from './aiuto.mjs';
+import { BASE, letterale } from './dominio.mjs';
+
+const B = letterale(BASE);
 
 function tuttiIFile(dir) {
   const out = [];
@@ -70,9 +73,9 @@ test('ogni pagina ha titolo, descrizione, canonical, lingua e un solo h1', async
     assert.ok(titolo, `${nome}: titolo`);
     titoli.add(titolo[1]);
     assert.match(t, /<meta name="description" content="[^"]{50,}">/, `${nome}: descrizione`);
-    assert.match(t, /<link rel="canonical" href="https:\/\/fermitutti\.it\/[^"]*">/, `${nome}: canonical`);
+    assert.match(t, new RegExp('<link rel="canonical" href="' + B + '/[^"]*">'), `${nome}: canonical`);
     assert.equal((t.match(/<h1[\s>]/g) || []).length, 1, `${nome}: un solo h1`);
-    assert.match(t, /<meta property="og:image" content="https:\/\/fermitutti\.it\/og\/[a-z0-9-]+\.png">/, `${nome}: anteprima`);
+    assert.match(t, new RegExp('<meta property="og:image" content="' + B + '/og/[a-z0-9-]+[.]png">'), `${nome}: anteprima`);
   }
   assert.ok(titoli.size > pagine.length * 0.6, 'titoli in gran parte diversi');
 });
@@ -97,11 +100,11 @@ test('dati strutturati schema.org Event sulle pagine degli scioperi', async () =
 test('sitemap, robots e security.txt', async () => {
   const { uscita } = await buildDiProva();
   const sitemap = readFileSync(join(uscita, 'sitemap.xml'), 'utf8');
-  assert.match(sitemap, /<loc>https:\/\/fermitutti\.it\/<\/loc>/);
+  assert.match(sitemap, new RegExp('<loc>' + B + '/</loc>'));
   assert.match(sitemap, /sciopero\/2026-11-20-treni-nazionale/);
   assert.doesNotMatch(sitemap, /2026-11-10-/, 'gli scioperi già passati non vanno nella sitemap');
   assert.doesNotMatch(sitemap, /widget|stato\//);
-  assert.match(readFileSync(join(uscita, 'robots.txt'), 'utf8'), /Sitemap: https:\/\/fermitutti\.it\/sitemap\.xml/);
+  assert.match(readFileSync(join(uscita, 'robots.txt'), 'utf8'), new RegExp('Sitemap: ' + B + '/sitemap[.]xml'));
   const sec = readFileSync(join(uscita, '.well-known', 'security.txt'), 'utf8');
   assert.match(sec, /^Contact: mailto:/m);
   const scade = /^Expires: (.+)$/m.exec(sec)[1];
