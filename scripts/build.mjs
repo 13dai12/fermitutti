@@ -43,6 +43,28 @@ function segnaposti(sito) {
   return trovati;
 }
 
+/**
+ * Nome ed email del titolare possono arrivare dalle variabili d'ambiente di Cloudflare Pages, TITOLARE_NOME e TITOLARE_EMAIL.
+ * Così il nome non finisce nel repository pubblico né nella sua storia. I valori finiscono nelle pagine e in security.txt,
+ * quindi quelli non validi fermano la build invece di essere pubblicati.
+ */
+export function titolareDaAmbiente(sito, ambiente = process.env) {
+  const leggi = (nome) => (typeof ambiente[nome] === 'string' && ambiente[nome].trim() ? ambiente[nome].trim() : null);
+  const nome = leggi('TITOLARE_NOME');
+  const email = leggi('TITOLARE_EMAIL');
+  if (nome !== null) {
+    const controllo = (c) => { const n = c.codePointAt(0); return n < 32 || (n >= 127 && n < 160) || n === 8232 || n === 8233; };
+    if (nome.length > 100 || [...nome].some(controllo)) throw new Error('TITOLARE_NOME non valido: scrivi solo nome e cognome, su una riga.');
+    sito.titolare.nome = nome;
+  }
+  if (email !== null) {
+    if (email.length > 254 || !/^[^\s@<>"'()]+@[a-z0-9-]+([.][a-z0-9-]+)*[.][a-z]{2,}$/i.test(email)) throw new Error('TITOLARE_EMAIL non valida: scrivi un solo indirizzo, per esempio contatti@fermitutti.com.');
+    if (/\[[A-ZÀ-Ý -]+\]/.test(sito.emailSicurezza) || sito.emailSicurezza === sito.titolare.email) sito.emailSicurezza = email;
+    sito.titolare.email = email;
+  }
+  return sito;
+}
+
 function hash(testo) { return createHash('sha256').update(testo).digest('hex').slice(0, 10); }
 
 /**
@@ -57,12 +79,12 @@ export function intestazioniPerConfigurazione(testo, sito) {
     .replace("; require-trusted-types-for 'script'; trusted-types 'none'", '');
 }
 
-export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log, pubblicazione = process.env.CF_PAGES === '1' } = {}) {
-  const sito = { ...configSito, titolare: { ...configSito.titolare } };
+export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADICE, 'public'), oggi = oggiRoma(), urlBase = null, immagini = true, log = console.log, pubblicazione = process.env.CF_PAGES === '1', ambiente = process.env } = {}) {
+  const sito = titolareDaAmbiente({ ...configSito, titolare: { ...configSito.titolare } }, ambiente);
   // Su Cloudflare Pages (CF_PAGES=1) non si pubblica un sito con i segnaposto: email e nome del titolare devono essere veri.
   const mancanti = segnaposti(sito);
   if (pubblicazione && mancanti.length) {
-    throw new Error(`prima di pubblicare compila questi segnaposto in config/sito.mjs (vedi DEPLOY.md, passo 5):\n  - ${mancanti.join('\n  - ')}`);
+    throw new Error(`segnaposto ancora da compilare. Su Cloudflare Pages aggiungi le variabili TITOLARE_NOME e TITOLARE_EMAIL, oppure compila config/sito.mjs (vedi DEPLOY.md, passo 5):\n  - ${mancanti.join('\n  - ')}`);
   }
   if (urlBase) sito.urlBase = urlBase.replace(/\/+$/, '');
   if (!/^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(sito.urlBase)) throw new Error(`urlBase non valido: ${sito.urlBase}`);
@@ -208,7 +230,7 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   }
 
   const avvisi = segnaposti(sito);
-  if (avvisi.length) log(`ATTENZIONE: segnaposto ancora da compilare in config/sito.mjs:\n  - ${avvisi.join('\n  - ')}`);
+  if (avvisi.length) log(`ATTENZIONE: segnaposto ancora da compilare. Su Cloudflare servono le variabili TITOLARE_NOME e TITOLARE_EMAIL, oppure i dati in config/sito.mjs:\n  - ${avvisi.join('\n  - ')}`);
   if (aff.pubblicita) log('ATTENZIONE: pubblicita.attiva è true. Prima di mostrare pubblicità serve una piattaforma di consenso certificata da Google (vedi DEPLOY.md).');
   log(`Build completata: ${pagine.length} pagine nella sitemap, ${archivio.scioperi.length} scioperi, data di riferimento ${oggi}, versione ${versione}.`);
   return { pagine: pagine.length, versione, uscita };

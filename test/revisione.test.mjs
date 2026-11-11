@@ -15,6 +15,7 @@ import { provaCostruzione } from '../scripts/lib/prova-costruzione.mjs';
 import { hrefSicuro } from '../src/js/filtri.mjs';
 import { avviaServer } from '../scripts/servi.mjs';
 import { FEED_REALE, itemFinto, archivioDiProva } from './aiuto.mjs';
+import { CI_SONO_SEGNAPOSTI } from './dominio.mjs';
 
 const cartelle = [];
 function nuovaCartella() { const c = mkdtempSync(join(tmpdir(), 'fermitutti-rev-')); cartelle.push(c); return c; }
@@ -151,9 +152,9 @@ test('la pagina 404 ha la sua politica di sicurezza (serve sotto /widget/)', asy
   assert.match(t, /<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';[^"]*object-src 'none'; base-uri 'none'; form-action 'none'">/);
 });
 
-test('su Cloudflare (CF_PAGES=1) la build si ferma se restano segnaposto', async () => {
+test('su Cloudflare (CF_PAGES=1) la build si ferma se restano segnaposto e mancano le variabili', { skip: !CI_SONO_SEGNAPOSTI && 'nome ed email già scritti in config/sito.mjs' }, async () => {
   const dir = nuovaCartella();
   mkdirSync(join(dir, 'dati'));
   writeFileSync(join(dir, 'dati', 'scioperi.json'), JSON.stringify(archivioDiProva()));
-  await assert.rejects(build({ dataDir: join(dir, 'dati'), uscita: join(dir, 'public'), oggi: '2026-11-11', immagini: false, log: () => {}, pubblicazione: true }), /compila questi segnaposto/);
+  await assert.rejects(build({ dataDir: join(dir, 'dati'), uscita: join(dir, 'public'), oggi: '2026-11-11', immagini: false, log: () => {}, pubblicazione: true, ambiente: {} }), /segnaposto ancora da compilare/);
 });

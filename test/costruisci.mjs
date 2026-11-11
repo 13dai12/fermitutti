@@ -16,7 +16,7 @@ export function buildDiProva() {
     writeFileSync(join(dati, 'stato.json'), JSON.stringify({ ultima_verifica_riuscita: '2026-11-11T07:00:00.000Z', ultima_modifica_dati: '2026-11-11T07:00:00.000Z', ultima_pubblicazione: '2026-11-11T07:00:00.000Z', fonte_guasta_dal: null, scioperi_nel_feed: 33 }));
     const messaggi = [];
     const uscita = join(radice, 'public');
-    const esito = await build({ dataDir: dati, uscita, oggi: '2026-11-11', immagini: true, log: (m) => messaggi.push(m) });
+    const esito = await build({ dataDir: dati, uscita, oggi: '2026-11-11', immagini: true, log: (m) => messaggi.push(m), ambiente: {} });
     return { uscita, messaggi, esito, radice };
   })();
   return promessa;

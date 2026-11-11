@@ -25,7 +25,7 @@ Serve Node.js 22 o più recente.
 
 | Cartella o file | Contenuto |
 |---|---|
-| `config/sito.mjs` | Nome, dominio, dati del titolare (segnaposto da compilare) |
+| `config/sito.mjs` | Nome e dominio. Nome ed email del titolare arrivano dalle variabili `TITOLARE_NOME` e `TITOLARE_EMAIL` di Cloudflare Pages |
 | `config/affiliati.mjs` | Codici di affiliazione, spenti di default |
 | `data/scioperi.json` | Archivio degli scioperi, aggiornato dal workflow |
 | `data/stato.json` | Stato dei controlli sulla fonte |

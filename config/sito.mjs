@@ -9,7 +9,9 @@ export default {
   descrizione: 'Scioperi dei trasporti in Italia: oggi, domani e nei prossimi 7 giorni. Treni, aerei, bus e metro, città per città, dai dati ufficiali del Ministero. Senza login e senza app.',
   lingua: 'it',
 
-  // SEGNAPOSTO DA COMPILARE PRIMA DI PUBBLICARE (vedi DEPLOY.md e il rapporto finale).
+  // Nome ed email del titolare. Consigliato: lasciare qui i segnaposto e impostare su Cloudflare Pages le variabili
+  // TITOLARE_NOME e TITOLARE_EMAIL, così il nome non finisce nel repository pubblico (vedi DEPLOY.md, passo 5).
+  // Se invece li scrivi qui, saranno visibili a tutti su GitHub e resteranno nella storia del repository.
   titolare: {
     nome: '[NOME E COGNOME DEL TITOLARE]',       // es. "Mario Rossi"
     email: '[EMAIL DI CONTATTO]',                // es. "contatti@fermitutti.com" con l'inoltro gratuito di Cloudflare (DEPLOY.md, passo 12)

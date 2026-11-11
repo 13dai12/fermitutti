@@ -93,6 +93,7 @@ Ultimo aggiornamento: 11 novembre 2026.
 - **Perché:** non serve cambiare i nameserver; il DNSSEC si attiva con un clic, perché Cloudflare invia da solo il record DS al registro; prezzo di costo; whois oscurato.
 - **Nel codice:** il dominio compare solo in `config/sito.mjs` (`dominio` e `urlBase`). Le prove lo leggono da lì con `test/dominio.mjs`, quindi un cambio di dominio non tocca le prove.
 - **Posta:** `scripts/verifica-online.mjs` accetta due configurazioni: nessuna email (SPF `-all` e MX nullo) oppure solo l'inoltro di Cloudflare (Email Routing). Se l'email del titolare è sul dominio del sito, la pagina della privacy dice da sola che le email passano dall'inoltro di Cloudflare.
+- **Dati del titolare fuori dal repository:** nome ed email arrivano dalle variabili `TITOLARE_NOME` e `TITOLARE_EMAIL` di Cloudflare Pages (`titolareDaAmbiente` in `scripts/build.mjs`). In `config/sito.mjs` restano i segnaposto. Perché: il repository è pubblico e la sua storia conserva per sempre ciò che vi passa, mentre l'utente non vuole esporre i propri dati più del necessario. Il nome compare solo in Privacy e Note legali, e una prova lo verifica su tutti i file generati. Valori non validi, per esempio con un a capo, fermano la build perché l'email finisce anche in `security.txt`.
 
 ### Quando pubblicare (limite di 500 build al mese)
 - **Decisione** (`decidiPubblicazione` in `scripts/aggiorna.mjs`): si controlla ogni 30 minuti (minuti 7 e 37, per evitare l'inizio dell'ora, quando GitHub è sovraccarico). Si pubblica solo:

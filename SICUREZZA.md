@@ -85,7 +85,7 @@ La verifica in due passaggi su email, GitHub e Cloudflare, che è anche il regis
 
 ## 8. security.txt
 
-`/.well-known/security.txt` (RFC 9116) viene rigenerato a ogni build con il contatto preso da `config/sito.mjs` e una scadenza a 180 giorni. Siccome il sito si ricostruisce ogni giorno, la scadenza non passa mai.
+`/.well-known/security.txt` (RFC 9116) viene rigenerato a ogni build con una scadenza a 180 giorni. Siccome il sito si ricostruisce ogni giorno, la scadenza non passa mai. Il contatto arriva dalla variabile `TITOLARE_EMAIL` di Cloudflare Pages oppure da `config/sito.mjs`. Un valore con un a capo o che non è un indirizzo email ferma la build, così nessuno può aggiungere righe al file attraverso quella variabile.
 
 ## Come è stato verificato
 

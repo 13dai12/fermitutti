@@ -74,18 +74,25 @@ Se il repository è su un altro account GitHub, sostituisci `13dai12` con quel n
 
 I commit risultano firmati «Fermi Tutti», non con il tuo nome. Puoi lasciarlo così.
 
-## Passo 5. Scrivi i tuoi dati nel sito
+## Passo 5. Scegli il nome e l'email del sito
 
-Finché restano dei segnaposto, Cloudflare si rifiuta di pubblicare il sito: la privacy e le note legali sarebbero incomplete. Se usi Claude Code, dagli nome ed email e li scrive lui.
+Il nome compare solo nelle pagine Privacy e Note legali. L'email compare lì, nella pagina Contatti e in `security.txt`, il file per chi segnala problemi di sicurezza. Finché mancano, Cloudflare si rifiuta di pubblicare il sito: la privacy e le note legali sarebbero incomplete.
 
-1. Su GitHub apri il file `config/sito.mjs` e premi la matita (*Edit this file*).
-2. Sostituisci i segnaposto tra parentesi quadre:
-   - `[NOME E COGNOME DEL TITOLARE]`: il nome di chi gestisce il sito, che comparirà nella privacy e nelle note legali. Le regole sulla privacy chiedono il nome vero. L'indirizzo di casa non serve;
-   - `[EMAIL DI CONTATTO]`, che compare due volte: l'indirizzo per le segnalazioni. Sarà **visibile a tutti** sul sito. Per non mostrare la tua email personale scrivi `contatti@fermitutti.com` e attiva l'inoltro gratuito al passo 12: le email ti arriveranno nella tua casella;
-   - `partitaIva`: lasciala vuota se non hai partita IVA.
-3. Premi *Commit changes*.
+- **Nome:** nome e cognome di chi gestisce davvero il sito. Le regole sulla privacy chiedono il nome vero, quindi niente nomi inventati. Puoi mettere quello di un'altra persona solo se è d'accordo e gestisce il sito con te, perché per la legge diventa lei la responsabile. L'indirizzo di casa non serve.
+- **Email:** sarà visibile a tutti. Per non mostrare la tua email personale usa `contatti@fermitutti.com` e attiva l'inoltro gratuito al passo 12. Le email arrivano nella tua casella di sempre: Cloudflare non crea una casella nuova.
 
-**Fatto bene se:** nel file non resta nessun testo tra parentesi quadre.
+**Dove scriverli, il modo consigliato: nelle impostazioni di Cloudflare.** Al passo 8, nel modulo di Cloudflare Pages, aggiungi due variabili d'ambiente di tipo *Text*:
+
+| Variabile | Valore |
+|---|---|
+| `TITOLARE_NOME` | nome e cognome |
+| `TITOLARE_EMAIL` | per esempio `contatti@fermitutti.com` |
+
+Così il nome compare solo sul sito: non finisce nel codice pubblico su GitHub e non resta nella sua storia. Non serve nemmeno dirlo a Claude Code. Per cambiarli in futuro, nel progetto Pages apri *Settings › Variables and Secrets* (in alcune versioni *Environment variables*), modifica il valore per l'ambiente *Production* e salva. Poi in *Deployments* apri il menu dell'ultima pubblicazione e scegli *Retry deployment*.
+
+**In alternativa: nel file `config/sito.mjs`.** Su GitHub apri il file, premi la matita, sostituisci i testi tra parentesi quadre e premi *Commit changes*. Così però il nome è visibile a tutti su GitHub e resta per sempre nella storia del repository.
+
+**Fatto bene se:** hai deciso nome ed email e sai dove scriverli.
 
 Da questo momento l'aggiornamento automatico parte già da solo su GitHub, anche se il sito non è ancora online: è normale.
 
@@ -128,7 +135,8 @@ Il dominio è registrato su Cloudflare, quindi usa già i server DNS di Cloudfla
    - *Build command*: `npm ci --omit=dev --ignore-scripts --no-audit --no-fund && npm run build`
    - *Build output directory*: `public`
    - *Root directory*: lascia vuoto
-4. Premi *Save and Deploy* e aspetta un paio di minuti. Se la build si ferma con «segnaposto ancora da compilare», torna al passo 5.
+   - *Environment variables*: aggiungi `TITOLARE_NOME` e `TITOLARE_EMAIL` come al passo 5, di tipo *Text*. Se il modulo non mostra questa parte, aggiungile dopo in *Settings › Variables and Secrets* e poi premi *Retry deployment*.
+4. Premi *Save and Deploy* e aspetta un paio di minuti. Se la build si ferma con «segnaposto ancora da compilare», mancano le due variabili del passo 5.
 5. Cloudflare crea anche un indirizzo tecnico, per esempio `fermitutti.pages.dev`. Segnatelo: serve al passo 9. Aprilo solo per controllare che il sito funzioni e **non condividerlo**: il sito vero è solo il dominio. Google non lo indicizzerà, perché quell'indirizzo risponde con «noindex» e ogni pagina indica il dominio come indirizzo principale.
 6. Per non sprecare build: nel progetto apri *Settings › Builds & deployments*. In **Preview branch control** scegli **None**, lascia attiva la pubblicazione automatica del ramo principale e salva.
 7. Nel progetto apri *Custom domains › Set up a custom domain*, scrivi `fermitutti.com` e conferma. Il dominio è nello stesso account, quindi Cloudflare crea da solo il record DNS che serve.
@@ -246,7 +254,7 @@ Se una riga ha ✘:
 - **DNSSEC**: può volerci un giorno o due; se dopo 48 ore è ancora ✘, rivedi il passo 11.
 - **SPF, DMARC, MX o CAA**: rivedi il passo 12.
 - **TLS minimo 1.2**: rivedi il passo 10.
-- **security.txt**: c'è ancora un segnaposto in `config/sito.mjs` (passo 5).
+- **security.txt**: controlla le variabili `TITOLARE_NOME` e `TITOLARE_EMAIL` su Cloudflare (passo 5).
 - **Cloudflare non modifica le pagine**: rivedi il punto 4 del passo 10.
 - **Pagina inesistente sotto /widget/**: il sito non è aggiornato all'ultima versione; aspetta la ripubblicazione e riprova.
 

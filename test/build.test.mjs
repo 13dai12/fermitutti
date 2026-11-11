@@ -5,7 +5,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { buildDiProva } from './costruisci.mjs';
 import { archivioDiProva } from './aiuto.mjs';
-import { BASE, letterale } from './dominio.mjs';
+import { BASE, letterale, CI_SONO_SEGNAPOSTI } from './dominio.mjs';
 
 const B = letterale(BASE);
 
@@ -32,7 +32,7 @@ test('la build produce tutte le pagine e i file attesi', async () => {
     'icona.svg', 'icona-180.png', 'og/predefinita.png', 'ics/italia.ics', 'ics/citta-roma.ics', 'ics/regione-sicilia.ics', 'ics/settore-aerei.ics']) {
     assert.ok(existsSync(join(uscita, p)), p);
   }
-  assert.ok(messaggi.some((m) => /segnaposto ancora da compilare/.test(m)), 'avviso sui segnaposto');
+  if (CI_SONO_SEGNAPOSTI) assert.ok(messaggi.some((m) => /segnaposto ancora da compilare/.test(m)), 'avviso sui segnaposto');
   const png = readFileSync(join(uscita, 'og', 'predefinita.png'));
   assert.equal(png.subarray(1, 4).toString(), 'PNG');
   assert.equal(png.readUInt32BE(16), 1200);
