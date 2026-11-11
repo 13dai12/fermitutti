@@ -40,6 +40,9 @@ Sono ambiti molto lontani dal tuo, quindi il rischio di conflitto è basso, ma n
 1. Apri [TMview](https://www.tmdn.org/tmview/) (marchi europei e italiani insieme), scrivi `fermi tutti` e cerca.
 2. Apri la [banca dati dell'UIBM](https://www.uibm.gov.it/bancadati/), sezione Marchi, e cerca `fermi tutti`.
 3. Se trovi un marchio **in vigore** nelle classi 9 (app e software), 35 (pubblicità), 38 (servizi online), 39 (informazioni sui trasporti), 41 (informazione ed editoria) o 42 (servizi web), parlane con un esperto prima di far conoscere il sito. Se trovi solo marchi in altre classi, o scaduti, puoi andare avanti.
+4. Fai uno screenshot dei risultati e conservalo.
+
+**Risultato del controllo su TMview, 11 novembre 2026.** È emerso un marchio «fermi tutti» depositato in Turchia nel 2005 per abbigliamento e pubblicità (classi 25 e 35), con stato «Terminato». Non è un conflitto: non è più valido e valeva solo in Turchia.
 
 ## Gli altri nomi considerati
 
