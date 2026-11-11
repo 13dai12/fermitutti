@@ -1,0 +1,12 @@
+# dipendenze e output della build
+node_modules/
+public/
+.cache/
+# file locali
+*.log
+.DS_Store
+# istruzioni di progetto: non vanno pubblicate
+PROMPT_FABLE.md
+
+# schermate di prova
+schermate/

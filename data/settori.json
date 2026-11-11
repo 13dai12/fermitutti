@@ -1,0 +1,16 @@
+{
+  "_commento": "Settori usati dal Ministero (legenda su scioperi.mit.gov.it) e come li mostriamo. Un settore sconosciuto finisce in _altro.",
+  "Aereo": { "slug": "aerei", "nome": "Aerei", "breve": "aerei", "descrizione": "Compagnie aeree, aeroporti, assistenza al volo e servizi di terra." },
+  "Ferroviario": { "slug": "treni", "nome": "Treni", "breve": "treni", "descrizione": "Trenitalia, Italo, ferrovie regionali e gestori della rete." },
+  "Appalti ferroviari": { "slug": "servizi-ferroviari", "nome": "Servizi ferroviari in appalto", "breve": "servizi ferroviari", "descrizione": "Pulizie, ristorazione a bordo e altri servizi in appalto nelle ferrovie: i treni di solito circolano." },
+  "Trasporto pubblico locale": { "slug": "bus-metro", "nome": "Bus, tram e metro", "breve": "bus e metro", "descrizione": "Trasporto pubblico locale: autobus, tram, metropolitane e ferrovie urbane." },
+  "Marittimo": { "slug": "traghetti", "nome": "Traghetti e navi", "breve": "traghetti", "descrizione": "Trasporto marittimo, traghetti e porti." },
+  "Trasporto merci": { "slug": "merci", "nome": "Trasporto merci e logistica", "breve": "merci", "descrizione": "Autotrasporto, logistica e merci su rotaia: di norma non ferma i passeggeri." },
+  "Taxi": { "slug": "taxi", "nome": "Taxi", "breve": "taxi", "descrizione": "Servizio taxi." },
+  "Ncc": { "slug": "ncc", "nome": "Noleggio con conducente", "breve": "NCC", "descrizione": "Auto a noleggio con conducente." },
+  "Elicotteri": { "slug": "elicotteri", "nome": "Elicotteri", "breve": "elicotteri", "descrizione": "Servizi di trasporto con elicottero." },
+  "Circolazione e sicurezza stradale": { "slug": "autostrade", "nome": "Autostrade e sicurezza stradale", "breve": "autostrade", "descrizione": "Personale delle autostrade e della circolazione stradale: possibili code ai caselli." },
+  "Generale": { "slug": "generale", "nome": "Sciopero generale", "breve": "sciopero generale", "descrizione": "Sciopero di tutte le categorie, pubbliche e private: di solito coinvolge anche i trasporti." },
+  "Plurisettoriale": { "slug": "piu-settori", "nome": "Più settori dei trasporti", "breve": "più settori", "descrizione": "Sciopero che riguarda più settori dei trasporti insieme: leggi le modalità per capire cosa si ferma." },
+  "_altro": { "slug": "altro", "nome": "Altro settore", "breve": "altro settore", "descrizione": "Settore non ancora classificato: leggi le modalità." }
+}

@@ -1,0 +1,170 @@
+# Aggiornamento automatico dei dati degli scioperi.
+# Ogni 30 minuti scarica il calendario ufficiale del Ministero, lo controlla e, se serve, salva i dati nel repository:
+# Cloudflare Pages vede il nuovo commit e ripubblica il sito.
+# Sicurezza: il lavoro che può scrivere nel repository esegue SOLO scripts/aggiorna.mjs, che usa Node.js e nessuna
+# dipendenza esterna. Le dipendenze npm girano solo nel lavoro di prova, con permessi di sola lettura.
+name: Aggiorna gli scioperi
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+    inputs:
+      forza:
+        description: 'Pubblica anche se i dati non sono cambiati'
+        type: boolean
+        default: false
+      accetta_calo:
+        description: 'Accetta un calo improvviso del numero di scioperi (solo dopo averlo controllato sul sito del Ministero)'
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: aggiorna-scioperi
+  cancel-in-progress: false
+
+jobs:
+  aggiorna:
+    name: Scarica, controlla e salva
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      esito: ${{ steps.aggiorna.outputs.esito }}
+      pubblica: ${{ steps.aggiorna.outputs.pubblica }}
+      motivo: ${{ steps.aggiorna.outputs.motivo }}
+      riassunto: ${{ steps.aggiorna.outputs.riassunto }}
+      fonte_ripristinata: ${{ steps.aggiorna.outputs.fonte_ripristinata }}
+      salvato: ${{ steps.salva.outputs.salvato }}
+    steps:
+      - name: Scarica il repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Prepara Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+
+      - name: Scarica e controlla il calendario ufficiale
+        id: aggiorna
+        env:
+          FORZA: ${{ inputs.forza }}
+          ACCETTA_CALO: ${{ inputs.accetta_calo && '1' || '0' }}
+        run: |
+          argomenti=""
+          if [ "$FORZA" = "true" ]; then argomenti="--forza"; fi
+          set +e
+          node scripts/aggiorna.mjs $argomenti
+          codice=$?
+          set -e
+          # 0 = tutto bene, 3 = fonte guasta (dati non toccati, gestito sotto). Qualsiasi altro codice è un errore vero.
+          if [ "$codice" -ne 0 ] && [ "$codice" -ne 3 ]; then exit "$codice"; fi
+
+      - name: Salva i dati nel repository
+        id: salva
+        if: steps.aggiorna.outputs.pubblica == 'true'
+        env:
+          MOTIVO: ${{ steps.aggiorna.outputs.motivo }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/scioperi.json data/stato.json
+          if git diff --cached --quiet; then
+            echo "salvato=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Dati aggiornati: $MOTIVO"
+          autorizzazione=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $autorizzazione" push origin "HEAD:$GITHUB_REF_NAME"
+          echo "salvato=true" >> "$GITHUB_OUTPUT"
+
+  prova-build:
+    name: Prova la build del sito
+    needs: aggiorna
+    if: needs.aggiorna.outputs.salvato == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Scarica il repository aggiornato
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+      - name: Prepara Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: Installa solo le dipendenze della build, bloccate
+        run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+      - name: Costruisci il sito come farà Cloudflare
+        run: npm run build
+
+  segnala:
+    name: Avvisa il proprietario se qualcosa non va
+    needs: [aggiorna, prova-build]
+    # Parte solo quando c'è qualcosa da aprire o da chiudere: errore, fonte guasta o tornata, oppure dopo una prova di build.
+    if: >-
+      always() && (needs.aggiorna.result != 'success' || needs.aggiorna.outputs.esito == 'guasta'
+      || needs.aggiorna.outputs.fonte_ripristinata == 'true'
+      || needs.prova-build.result == 'success' || needs.prova-build.result == 'failure')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+      PROPRIETARIO: ${{ github.repository_owner }}
+      ESITO: ${{ needs.aggiorna.outputs.esito }}
+      RIASSUNTO: ${{ needs.aggiorna.outputs.riassunto }}
+      RIPRISTINATA: ${{ needs.aggiorna.outputs.fonte_ripristinata }}
+      RISULTATO_AGGIORNA: ${{ needs.aggiorna.result }}
+      RISULTATO_BUILD: ${{ needs.prova-build.result }}
+      URL_ESECUZIONE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Apri, aggiorna o chiudi le segnalazioni
+        run: |
+          set -euo pipefail
+          # Apre una segnalazione con l'etichetta indicata, se non ce n'è già una aperta (o riapre quella chiusa da poco).
+          apri() {
+            etichetta="$1"; titolo="$2"; testo="$3"
+            gh label create "$etichetta" --repo "$REPO" --color B60205 --description "Segnalazione automatica" --force >/dev/null
+            aperta=$(gh issue list --repo "$REPO" --label "$etichetta" --state open --json number --jq '.[0].number // empty')
+            if [ -n "$aperta" ]; then echo "Segnalazione già aperta: #$aperta"; return; fi
+            printf '%s\n\n%s\n\nDettagli tecnici: %s\n\n@%s ti avviso io: non serve fare nulla se il problema si risolve da solo. Quando la fonte torna a funzionare questa segnalazione si chiude in automatico. Se resta aperta per più di un giorno, leggi la sezione «Se il sito smette di aggiornarsi» in DEPLOY.md.\n' \
+              "$testo" "Ultimo messaggio: ${RIASSUNTO:-nessun dettaglio}" "$URL_ESECUZIONE" "$PROPRIETARIO" > corpo.md
+            recente=$(gh issue list --repo "$REPO" --label "$etichetta" --state closed --limit 1 --json number,closedAt --jq '[.[] | select((now - (.closedAt | fromdateiso8601)) < 604800)][0].number // empty')
+            if [ -n "$recente" ]; then
+              gh issue reopen "$recente" --repo "$REPO"
+              gh issue comment "$recente" --repo "$REPO" --body-file corpo.md
+            else
+              gh issue create --repo "$REPO" --title "$titolo" --label "$etichetta" --body-file corpo.md
+            fi
+          }
+          chiudi() {
+            etichetta="$1"; messaggio="$2"
+            for n in $(gh issue list --repo "$REPO" --label "$etichetta" --state open --json number --jq '.[].number'); do
+              gh issue close "$n" --repo "$REPO" --comment "$messaggio"
+            done
+          }
+          if [ "$RISULTATO_AGGIORNA" != "success" ]; then
+            apri "aggiornamento-fermo" "Il controllo automatico degli scioperi si è fermato" "Lo script di aggiornamento si è interrotto per un errore imprevisto. Il sito resta online con gli ultimi dati pubblicati."
+          elif [ "$ESITO" = "guasta" ]; then
+            apri "fonte-guasta" "La fonte ufficiale degli scioperi non funziona" "Il calendario del Ministero non risponde o manda dati anomali. Il sito NON ha pubblicato dati nuovi e mostra un avviso ai visitatori."
+          else
+            chiudi "aggiornamento-fermo" "Il controllo automatico funziona di nuovo."
+            if [ "$RIPRISTINATA" = "true" ]; then chiudi "fonte-guasta" "La fonte ufficiale funziona di nuovo e i dati sono stati aggiornati."; fi
+          fi
+          if [ "$RISULTATO_BUILD" = "failure" ]; then
+            apri "build-fallita" "La build del sito non funziona con i dati nuovi" "I dati sono stati salvati ma la prova di build è fallita: Cloudflare probabilmente non ripubblicherà il sito finché il problema non viene risolto."
+          elif [ "$RISULTATO_BUILD" = "success" ]; then
+            chiudi "build-fallita" "La build funziona di nuovo."
+          fi

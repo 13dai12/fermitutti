@@ -1,0 +1,449 @@
+{
+ "_commento": "Base di conoscenza dell'assistente senza AI. Modifica liberamente parole chiave e risposte: nessun codice da toccare. I testi delle risposte non contengono HTML.",
+ "settori": {
+  "treni": [
+   "treno",
+   "treni",
+   "ferroviario",
+   "ferroviari",
+   "ferrovia",
+   "ferrovie",
+   "trenitalia",
+   "italo",
+   "trenord",
+   "frecciarossa",
+   "frecciargento",
+   "frecciabianca",
+   "intercity",
+   "tper",
+   "fs",
+   "rfi",
+   "binari",
+   "stazione",
+   "eurocity",
+   "treni regionali",
+   "treno regionale",
+   "alta velocita",
+   "frecce"
+  ],
+  "aerei": [
+   "aereo",
+   "aerei",
+   "aereoporto",
+   "aeroporto",
+   "aeroporti",
+   "volo",
+   "voli",
+   "volare",
+   "ryanair",
+   "easyjet",
+   "ita airways",
+   "wizz",
+   "wizzair",
+   "vueling",
+   "volotea",
+   "lufthansa",
+   "enav",
+   "malpensa",
+   "fiumicino",
+   "linate",
+   "orio",
+   "ciampino",
+   "capodichino",
+   "compagnia aerea",
+   "hostess",
+   "piloti",
+   "controllori"
+  ],
+  "bus-metro": [
+   "bus",
+   "autobus",
+   "pullman",
+   "metro",
+   "metropolitana",
+   "tram",
+   "mezzi",
+   "mezzi pubblici",
+   "trasporto pubblico",
+   "trasporto locale",
+   "tpl",
+   "filobus",
+   "corriera",
+   "corriere",
+   "navetta",
+   "autolinee",
+   "vaporetto",
+   "vaporetti"
+  ],
+  "traghetti": [
+   "traghetto",
+   "traghetti",
+   "nave",
+   "navi",
+   "marittimo",
+   "aliscafo",
+   "aliscafi",
+   "moby",
+   "tirrenia",
+   "caronte",
+   "porti marittimi"
+  ],
+  "taxi": [
+   "taxi",
+   "tassisti",
+   "tassista"
+  ],
+  "ncc": [
+   "ncc",
+   "noleggio con conducente"
+  ],
+  "merci": [
+   "merci",
+   "camion",
+   "camionisti",
+   "autotrasporto",
+   "logistica",
+   "corrieri",
+   "tir"
+  ],
+  "autostrade": [
+   "autostrada",
+   "autostrade",
+   "casello",
+   "caselli",
+   "autostradale"
+  ],
+  "generale": [
+   "sciopero generale",
+   "scioperi generali"
+  ],
+  "elicotteri": [
+   "elicottero",
+   "elicotteri"
+  ]
+ },
+ "aziende": {
+  "trenitalia": {
+   "settore": "treni"
+  },
+  "italo": {
+   "settore": "treni"
+  },
+  "trenord": {
+   "settore": "treni",
+   "regione": "Lombardia"
+  },
+  "atm": {
+   "settore": "bus-metro",
+   "citta": "Milano"
+  },
+  "atac": {
+   "settore": "bus-metro",
+   "citta": "Roma"
+  },
+  "anm": {
+   "settore": "bus-metro",
+   "citta": "Napoli"
+  },
+  "gtt": {
+   "settore": "bus-metro",
+   "citta": "Torino"
+  },
+  "amt": {
+   "settore": "bus-metro",
+   "citta": "Genova"
+  },
+  "tper": {
+   "settore": "bus-metro",
+   "citta": "Bologna"
+  },
+  "actv": {
+   "settore": "bus-metro",
+   "citta": "Venezia"
+  },
+  "atv": {
+   "settore": "bus-metro",
+   "citta": "Verona"
+  },
+  "amat": {
+   "settore": "bus-metro",
+   "citta": "Palermo"
+  },
+  "ctm": {
+   "settore": "bus-metro",
+   "citta": "Cagliari"
+  },
+  "amtab": {
+   "settore": "bus-metro",
+   "citta": "Bari"
+  },
+  "cotral": {
+   "settore": "bus-metro",
+   "regione": "Lazio"
+  },
+  "eav": {
+   "settore": "bus-metro",
+   "regione": "Campania"
+  },
+  "circumvesuviana": {
+   "settore": "bus-metro",
+   "regione": "Campania"
+  },
+  "autolinee toscane": {
+   "settore": "bus-metro",
+   "regione": "Toscana"
+  },
+  "enav": {
+   "settore": "aerei"
+  },
+  "ryanair": {
+   "settore": "aerei"
+  },
+  "easyjet": {
+   "settore": "aerei"
+  },
+  "ita airways": {
+   "settore": "aerei"
+  },
+  "wizzair": {
+   "settore": "aerei"
+  },
+  "malpensa": {
+   "settore": "aerei",
+   "citta": "Milano"
+  },
+  "linate": {
+   "settore": "aerei",
+   "citta": "Milano"
+  },
+  "fiumicino": {
+   "settore": "aerei",
+   "citta": "Roma"
+  },
+  "ciampino": {
+   "settore": "aerei",
+   "citta": "Roma"
+  },
+  "orio": {
+   "settore": "aerei",
+   "citta": "Bergamo"
+  },
+  "capodichino": {
+   "settore": "aerei",
+   "citta": "Napoli"
+  }
+ },
+ "intenti": {
+  "saluto": [
+   "ciao",
+   "buongiorno",
+   "buonasera",
+   "buona sera",
+   "buon giorno",
+   "salve",
+   "hey",
+   "ehi",
+   "hola",
+   "buonanotte"
+  ],
+  "grazie": [
+   "grazie",
+   "gracias",
+   "thanks",
+   "ti ringrazio",
+   "perfetto grazie",
+   "ok grazie"
+  ],
+  "aiuto": [
+   "aiuto",
+   "help",
+   "cosa sai fare",
+   "cosa puoi fare",
+   "come funzioni",
+   "come funziona",
+   "chi sei",
+   "cosa sei",
+   "istruzioni",
+   "come si usa"
+  ],
+  "rimborso": [
+   "rimborso",
+   "rimborsi",
+   "rimborsano",
+   "rimborsa",
+   "rimborsato",
+   "rimborsata",
+   "rimborsare",
+   "rimborsabile",
+   "risarcimento",
+   "risarcimenti",
+   "risarcire",
+   "risarcito",
+   "compensazione",
+   "compensazioni",
+   "indennizzo",
+   "indennizzi",
+   "soldi indietro",
+   "mi spetta",
+   "mi spettano",
+   "spetta",
+   "spettano",
+   "261",
+   "diritti del passeggero",
+   "diritti passeggeri",
+   "biglietto pagato"
+  ],
+  "fasce": [
+   "fasce",
+   "fascia",
+   "garantiti",
+   "garantite",
+   "garantito",
+   "garantita",
+   "garanzia",
+   "servizi minimi",
+   "servizio minimo",
+   "minimi",
+   "orari garantiti",
+   "corse garantite",
+   "treni garantiti",
+   "voli garantiti",
+   "cosa funziona",
+   "cosa passa",
+   "quali mezzi",
+   "fasce orarie"
+  ],
+  "calendario": [
+   "calendario",
+   "calendari",
+   "iscrivermi",
+   "iscrivere",
+   "iscriversi",
+   "iscrizione",
+   "abbonarmi",
+   "ics",
+   "google calendar",
+   "promemoria",
+   "notifica",
+   "notifiche",
+   "avvisami",
+   "avvisarmi",
+   "avvisi sul telefono",
+   "agenda",
+   "webcal"
+  ],
+  "fonte": [
+   "fonte",
+   "fonti",
+   "da dove",
+   "ufficiale",
+   "ufficiali",
+   "affidabile",
+   "affidabili",
+   "attendibile",
+   "attendibili",
+   "chi siete",
+   "vi aggiornate",
+   "aggiornate",
+   "quanto aggiornato",
+   "sono aggiornati"
+  ],
+  "revoca": [
+   "revocato",
+   "revocata",
+   "revoca",
+   "revocati",
+   "revocate",
+   "annullato",
+   "annullata",
+   "annullati",
+   "confermato",
+   "confermata",
+   "confermati",
+   "ancora valido",
+   "si fa ancora",
+   "ancora confermato",
+   "rinviato",
+   "rinviata",
+   "differito",
+   "sospeso",
+   "sospesa",
+   "ritirato",
+   "saltato"
+  ],
+  "scuola": [
+   "scuola",
+   "scuole",
+   "insegnanti",
+   "docenti",
+   "maestre",
+   "universita",
+   "studenti",
+   "asilo",
+   "asili",
+   "nido",
+   "sanita",
+   "ospedale",
+   "ospedali",
+   "medici",
+   "infermieri",
+   "poste",
+   "comune",
+   "comunali",
+   "statali",
+   "pubblico impiego",
+   "benzinai",
+   "distributori"
+  ]
+ },
+ "parole_sciopero": [
+  "sciopero",
+  "scioperi",
+  "scioperano",
+  "sciopera",
+  "scioperare",
+  "scioperò",
+  "agitazione",
+  "agitazioni",
+  "fermo",
+  "fermi",
+  "stop",
+  "bloccati",
+  "bloccato",
+  "funziona",
+  "funzionano",
+  "circolano",
+  "circola",
+  "passa",
+  "passano",
+  "disagi",
+  "problemi",
+  "chiuso",
+  "chiusa",
+  "partono",
+  "parte"
+ ],
+ "suggerimenti": [
+  "C'è sciopero domani?",
+  "Scioperi dei treni questa settimana",
+  "Sciopero aerei prossimi giorni",
+  "Fasce garantite a Roma",
+  "Come metto gli scioperi nel calendario?",
+  "Mi rimborsano il volo?"
+ ],
+ "risposte": {
+  "saluto": "Ciao! Chiedimi di uno sciopero: per esempio \"c'è sciopero domani a Milano?\", \"treni venerdì\" oppure \"fasce garantite Roma\".",
+  "grazie": "Di niente. Buon viaggio, e controlla il sito il giorno prima: le revoche arrivano spesso all'ultimo.",
+  "aiuto": "Sono un assistente senza intelligenza artificiale: cerco negli scioperi dei trasporti pubblicati dal Ministero. Capisco date (oggi, domani, venerdì, 14 novembre), città, regioni e settori (treni, aerei, bus e metro, traghetti, taxi). Posso anche dirti le fasce garantite, come iscriverti al calendario e cosa fare per i rimborsi dei voli.",
+  "scuola": "Qui trovi solo gli scioperi dei trasporti (treni, aerei, bus e metro, traghetti, taxi, merci): sono quelli pubblicati dal Ministero dei Trasporti. Per scuola, sanità e altri settori pubblici consulta il Cruscotto degli scioperi della Funzione Pubblica.",
+  "fonte": "I dati vengono dal calendario ufficiale degli scioperi del Ministero delle Infrastrutture e dei Trasporti, controllato ogni 30 minuti. Non siamo un sito ufficiale: le informazioni possono cambiare, quindi verifica sempre con la tua azienda di trasporto.",
+  "calendario": "Puoi iscriverti a un calendario che si aggiorna da solo: scegli la tua città o il settore nella pagina Calendario. Su iPhone tocca il pulsante \"Aggiungi su iPhone\"; su Android o Google Calendar usa \"Aggiungi a Google Calendar\". Attenzione: Google Calendar aggiorna i calendari iscritti con molte ore di ritardo.",
+  "rimborso_volo": "Se il tuo volo è cancellato o arriva con più di 3 ore di ritardo, il regolamento europeo 261/2004 prevede assistenza (pasti, hotel, volo alternativo o rimborso del biglietto) e, in alcuni casi, una compensazione tra 250 e 600 euro. Quando lo sciopero è del personale della compagnia aerea la compensazione può spettare; quando scioperano i controllori di volo o il personale aeroportuale, di solito no. Nessuno può promettertela: dipende dal caso. Verifica sui siti ufficiali indicati nelle pagine degli scioperi aerei.",
+  "rimborso_treno": "Per treni e mezzi pubblici lo sciopero non dà diritto a compensazioni: di norma puoi chiedere il rimborso del biglietto non usato o cambiare viaggio secondo le regole della tua azienda di trasporto (Trenitalia, Italo, Trenord o l'azienda locale). Controlla la loro pagina sugli scioperi.",
+  "fasce_generiche": "Le fasce garantite dipendono dal settore e dalla città: per i treni regionali di solito 6-9 e 18-21 nei giorni feriali; per gli aerei 7-10 e 18-21; per bus e metro ogni città ha le sue. Dimmi la città o il settore e ti mostro quelle ufficiali che conosco, con la fonte.",
+  "non_capito": "Non ho capito la domanda. Prova a scrivere un giorno (oggi, domani, venerdì, 14 novembre), una città o un settore, per esempio: \"sciopero treni domani\" oppure \"c'è sciopero a Napoli giovedì?\".",
+  "nessun_dato_fasce": "Per {luogo} non abbiamo fasce ufficiali di bus e metro: controlla gli avvisi dell'azienda di trasporto locale.",
+  "chiarimento_reggio": "Intendi Reggio Calabria o Reggio Emilia?",
+  "notifiche": "Non mandiamo notifiche né email, ma puoi iscriverti al calendario della tua città: gli scioperi compaiono da soli nel calendario del telefono."
+ }
+}

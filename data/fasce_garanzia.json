@@ -1,0 +1,1218 @@
+{
+ "_commento": "Fasce di garanzia (servizi minimi in caso di sciopero) SOLO da fonti ufficiali. 'fasce_testo' è una citazione testuale della fonte; 'fasce' contiene gli orari solo se la fonte li indica esplicitamente come garantiti (valori HH:MM oppure 'inizio servizio'/'fine servizio'). 'origine' = 'regola' (documento stabile dell'azienda) oppure 'avviso' (avviso di un singolo sciopero, data in 'avviso_del'). Se non c'è una fonte ufficiale, 'fasce' resta vuoto e si mostra solo il link agli avvisi. Verifica: 10-11 novembre 2026, rileggendo le pagine ufficiali.",
+ "fasce": [
+  {
+   "id": "trenitalia",
+   "tipo": "ferroviario",
+   "ambito": "nazionale",
+   "azienda": "Trenitalia (treni regionali)",
+   "fasce_testo": "Nel trasporto regionale sono stati istituiti i servizi essenziali nelle fasce orarie di maggiore frequentazione (dalle ore 06.00 alle ore 09.00 e dalle ore 18.00 alle ore 21.00 dei giorni feriali; dalle ore 07.00 alle ore 10.00 e dalle ore 18.00 alle ore 21.00 dei giorni festivi).",
+   "fasce": [
+    {
+     "giorni": "feriali",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "feriali",
+     "dalle": "18:00",
+     "alle": "21:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "07:00",
+     "alle": "10:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "fonte_url": "https://www.trenitalia.com/it/informazioni/treni-garantiti-incasodisciopero.html",
+   "fonte_titolo": "Trenitalia, Treni garantiti in caso di sciopero",
+   "pagina_scioperi_url": "https://www.trenitalia.com/it/informazioni/treni-garantiti-incasodisciopero.html",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Le fasce valgono solo per i treni regionali. Frecce e Intercity non hanno fasce orarie ma elenchi fissi di treni garantiti (tabelle in PDF nella stessa pagina). I treni in viaggio all'inizio dello sciopero arrivano a destinazione se raggiungibile entro un'ora.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "italo",
+   "tipo": "ferroviario",
+   "ambito": "nazionale",
+   "azienda": "Italo",
+   "fasce_testo": null,
+   "fasce": [],
+   "fonte_url": "https://www.italotreno.com/",
+   "fonte_titolo": "Italo, sito ufficiale",
+   "pagina_scioperi_url": "https://www.italotreno.com/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Italo non pubblica fasce orarie fisse: per ogni sciopero pubblica in home page un elenco (PDF) dei treni garantiti, che cambia ogni volta.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "trenord",
+   "tipo": "ferroviario",
+   "ambito": "Lombardia",
+   "azienda": "Trenord",
+   "fasce_testo": "nei giorni feriali e il sabato, sono assicurati servizi minimi garantiti negli orari 6-9 e 18-21; nei giorni festivi, sono assicurati servizi minimi garantiti negli orari 7-10 e 18-21",
+   "fasce": [
+    {
+     "giorni": "feriali",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "feriali",
+     "dalle": "18:00",
+     "alle": "21:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "07:00",
+     "alle": "10:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "fonte_url": "https://www.trenord.it/assistenza/informazioni-utili/in-caso-di-sciopero/",
+   "fonte_titolo": "Trenord, In caso di sciopero",
+   "pagina_scioperi_url": "https://www.trenord.it/assistenza/informazioni-utili/in-caso-di-sciopero/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "La fascia feriale vale anche il sabato. L'elenco dei treni garantiti può cambiare a ogni sciopero.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "trenitalia-tper",
+   "tipo": "ferroviario",
+   "ambito": "Emilia-Romagna",
+   "azienda": "Trenitalia Tper (treni regionali in Emilia-Romagna)",
+   "fasce_testo": "Servizi minimi garantiti del trasporto locale nelle fasce orarie di maggiore frequentazione (dalle ore 06.00 alle ore 09.00 e dalle ore 18.00 alle ore 21.00 dei giorni feriali; dalle ore 07.00 alle ore 10.00 e dalle ore 18.00 alle ore 21.00 dei giorni festivi).",
+   "fasce": [
+    {
+     "giorni": "feriali",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "feriali",
+     "dalle": "18:00",
+     "alle": "21:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "07:00",
+     "alle": "10:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "fonte_url": "https://www.trenitalia.com/it/regionale/emilia-romagna/treni-garantiti-emilia-romagna.html",
+   "fonte_titolo": "Trenitalia, Treni garantiti Emilia-Romagna",
+   "pagina_scioperi_url": "https://www.trenitaliatper.it/s/archivio-comunicazioni-2026?language=it",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Elenchi dei treni garantiti nella pagina di Trenitalia per l'Emilia-Romagna.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "aereo-enac",
+   "tipo": "aereo",
+   "ambito": "nazionale",
+   "azienda": "Trasporto aereo (regole ENAC e Commissione di garanzia)",
+   "fasce_testo": "garantiscono la regolare effettuazione di tutti i voli (inclusi i voli charter) schedulati negli orari pubblicati in partenza nelle fasce orarie 7-10 e 18-21, nonché dei voli internazionali in arrivo entro mezz'ora dalla scadenza delle predette fasce.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "07:00",
+     "alle": "10:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "fonte_url": "https://www.enac.gov.it/trasporto-aereo/diritto-alla-mobilita/scioperi-nel-trasporto-aereo/prestazioni-minime-garantite/",
+   "fonte_titolo": "ENAC, Prestazioni minime garantite",
+   "pagina_scioperi_url": "https://www.enac.gov.it/trasporto-aereo/diritto-alla-mobilita/scioperi-nel-trasporto-aereo/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Per ogni sciopero ENAC pubblica l'elenco dei voli garantiti fuori fascia nella pagina 'Voli garantiti in caso di sciopero'. Fonte normativa: regolamentazione provvisoria della Commissione di garanzia, delibera 14/387 del 2014.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "ferroviario-cgsse",
+   "tipo": "ferroviario",
+   "ambito": "nazionale",
+   "azienda": "Gruppo Ferrovie dello Stato (regolamentazione della Commissione di garanzia)",
+   "mostra": false,
+   "fasce_testo": "Le fasce orarie di garanzia sono individuate come segue: 6.00-9.00, 18.00-21.00 nei giorni feriali; 7.00-10.00, 18.00-21.00 nei giorni festivi.",
+   "fasce": [
+    {
+     "giorni": "feriali",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "feriali",
+     "dalle": "18:00",
+     "alle": "21:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "07:00",
+     "alle": "10:00"
+    },
+    {
+     "giorni": "festivi",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "fonte_url": "https://cgsse.it/sites/default/files/2025-06/testo%20coordinato%20disciplina%20sciopero%20Ferrovie%20dello%20Stato_3.pdf",
+   "fonte_titolo": "Commissione di garanzia, testo coordinato per il Gruppo FS",
+   "pagina_scioperi_url": "https://cgsse.it/calendario-scioperi",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Fonte normativa (punto 4.2.1 del testo coordinato). Non mostrata nelle pagine perché ridondante con Trenitalia; conservata come riferimento.",
+   "origine": "regola",
+   "avviso_del": null
+  },
+  {
+   "id": "milano-atm",
+   "tipo": "tpl",
+   "citta": "Milano",
+   "regione": "Lombardia",
+   "azienda": "ATM",
+   "fasce_testo": "Il servizio delle nostre linee potrebbe non essere garantito dalle 8:45 alle 15 e dopo le 18, fino al termine del servizio.",
+   "fasce": [],
+   "origine": "avviso",
+   "avviso_del": "2026-11-13",
+   "fonte_url": "https://www.atm.it/it/ViaggiaConNoi/InfoTraffico/Pagine/ScioperoannunciatodaALCobaseCONFIALTrasportivenerd%C3%AC13novembre.aspx",
+   "fonte_titolo": "Sciopero annunciato da AL Cobas e CONFIAL Trasporti venerdì 13 novembre",
+   "pagina_scioperi_url": "https://www.atm.it/it/ViaggiaConNoi/InfoTraffico/Pagine/default2.aspx",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "L'avviso indica quando il servizio può fermarsi; ATM pubblica le modalità per ogni singolo sciopero."
+  },
+  {
+   "id": "monza-net",
+   "tipo": "tpl",
+   "citta": "Monza",
+   "regione": "Lombardia",
+   "azienda": "NET (linee urbane di Monza, gruppo ATM)",
+   "fasce_testo": "Il servizio delle linee urbane di Monza potrebbe non essere garantito dalle 9 alle 11:50 e dopo le 14:50, fino al termine del servizio.",
+   "fasce": [],
+   "origine": "avviso",
+   "avviso_del": "2026-11-13",
+   "fonte_url": "https://www.nordesttrasporti.it/modifiche-al-servizio/sciopero-annunciato-da-al-cobas-e-confial-trasporti-venerd%C3%AC-13-novembre/",
+   "fonte_titolo": "Nord Est Trasporti - Sciopero annunciato da AL Cobas e CONFIAL Trasporti venerdì 13 novembre",
+   "pagina_scioperi_url": "https://www.nordesttrasporti.it/modifiche-al-servizio/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "L'avviso indica quando il servizio può fermarsi; le linee extraurbane hanno regole proprie."
+  },
+  {
+   "id": "torino-gtt",
+   "tipo": "tpl",
+   "citta": "Torino",
+   "regione": "Piemonte",
+   "azienda": "GTT",
+   "fasce_testo": "Per il servizio urbano e suburbano di Torino (di superficie e metropolitana) tali “fasce di garanzia” in cui il servizio è garantito anche in caso di sciopero sono 6.00-9-00, 12.00-15.00 (le corse in partenza dai capolinea entro tali orari devono completare il percorso sino al capolinea opposto).",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.gtt.to.it/cms/risorse/cdm.pdf",
+   "fonte_titolo": "Carta della mobilità 2026 - Dati consuntivi 2025 - Obiettivi 2026 (GTT)",
+   "pagina_scioperi_url": "https://www.gtt.to.it/cms/avvisi-e-informazioni-di-servizio",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Valgono per bus, tram e metro urbani e suburbani; l'extraurbano ha orari diversi."
+  },
+  {
+   "id": "genova-amt",
+   "tipo": "tpl",
+   "citta": "Genova",
+   "regione": "Liguria",
+   "azienda": "AMT",
+   "fasce_testo": "il servizio sarà garantito nelle due fasce: dalle ore 6.00 alle ore 9.00 e dalle ore 17.30 alle ore 20.30",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "17:30",
+     "alle": "20:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-03",
+   "fonte_url": "https://www.amt.genova.it/amt/sciopero-del-trasporto-pubblico-sabato-3-ottobre-2026-2/",
+   "fonte_titolo": "Sciopero del Trasporto Pubblico sabato 3 ottobre 2026",
+   "pagina_scioperi_url": "https://www.amt.genova.it/amt/sciopero-del-trasporto-pubblico-sabato-3-ottobre-2026-2/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Fasce del trasporto urbano; il servizio provinciale ha orari diversi."
+  },
+  {
+   "id": "venezia-actv",
+   "tipo": "tpl",
+   "citta": "Venezia",
+   "regione": "Veneto",
+   "azienda": "ACTV (AVM)",
+   "fasce_testo": "Nel servizio automobilistico e tranviario verranno garantite tutte le corse in partenza dal capolinea a partire dalle ore 06:00 e fino alle ore 08:59 e a partire dalle ore 16:30 fino alle ore 19:29",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "08:59"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "16:30",
+     "alle": "19:29"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-30",
+   "fonte_url": "https://actv.avmspa.it/it/content/avmactv-informa-sciopero-generale-nazionale-24h-30-ottobre-2026",
+   "fonte_titolo": "AVM/Actv informa: sciopero generale nazionale 24h - 30 ottobre 2026",
+   "pagina_scioperi_url": "https://actv.avmspa.it/it/content/avmactv-informa-sciopero-generale-nazionale-24h-30-ottobre-2026",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Valgono per bus e tram; per la navigazione sono previsti solo collegamenti minimi."
+  },
+  {
+   "id": "verona-atv",
+   "tipo": "tpl",
+   "citta": "Verona",
+   "regione": "Veneto",
+   "azienda": "ATV",
+   "fasce_testo": "corse in partenza dai capolinea dalle ore 6.00 fino alle ore 8.59; corse in partenza dai capolinea dalle ore 12.00 e fino alle ore 14.59.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "08:59"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "14:59"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2025-12-12",
+   "fonte_url": "https://www.atv.verona.it/flex/cm/pages/ServeBLOB.php/L/IT/IDPagina/5337",
+   "fonte_titolo": "Venerdì 12 dicembre 2025, sciopero di 24 ore proclamato dal sindacato FILT CGIL",
+   "pagina_scioperi_url": "https://www.atv.verona.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Fasce del servizio urbano di Verona."
+  },
+  {
+   "id": "padova-busitalia-veneto",
+   "tipo": "tpl",
+   "citta": "Padova",
+   "regione": "Veneto",
+   "azienda": "Busitalia Veneto",
+   "fasce_testo": "Collegamenti garantiti nelle fasce orarie: 05:30-08:29 e 12:30-15:29 per i servizi autobus urbani.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:29"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "15:29"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-05-15",
+   "fonte_url": "https://www.fsbusitalia.it/it/media/news-e-comunicati-stampa/2026/5/12/busitalia-veneto-15-maggio-2026-sciopero.html",
+   "fonte_titolo": "Busitalia Veneto: venerdì 15 maggio 2026 sciopero di 24 ore",
+   "pagina_scioperi_url": "https://www.fsbusitalia.it/it/veneto/news-veneto.html",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Fasce degli autobus urbani; l'extraurbano ha orari diversi."
+  },
+  {
+   "id": "trieste-trieste-trasporti",
+   "tipo": "tpl",
+   "citta": "Trieste",
+   "regione": "Friuli-Venezia Giulia",
+   "azienda": "Trieste Trasporti",
+   "fasce_testo": "Saranno in ogni caso assicurati tutti i collegamenti nelle consuete fasce di garanzia, cioè tra le 6 e le 9 e tra le 13 e le 16",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:00",
+     "alle": "16:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-30",
+   "fonte_url": "https://www.triestetrasporti.it/it/sciopero_30ottobre26",
+   "fonte_titolo": "Sciopero generale di venerdì 30 ottobre: possibili disagi",
+   "pagina_scioperi_url": "https://www.triestetrasporti.it/it/avvisi-infomobilita",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "bergamo-atb",
+   "tipo": "tpl",
+   "citta": "Bergamo",
+   "regione": "Lombardia",
+   "azienda": "ATB",
+   "fasce_testo": "Il servizio sarà garantito nelle fasce protette dalle ore 6.00 alle ore 8.30 e dalle ore 12.30 alle ore 16.00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "16:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-16",
+   "fonte_url": "https://www.atb.bergamo.it/avvisi/sciopero-arriva-italia-venerdi-16-ottobre",
+   "fonte_titolo": "SCIOPERO ARRIVA ITALIA VENERDÌ 16 OTTOBRE",
+   "pagina_scioperi_url": "https://www.atb.bergamo.it/avvisi/sciopero-arriva-italia-venerdi-16-ottobre",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "L'avviso riguardava le linee ATB gestite da Arriva; per altri scioperi le fasce possono essere diverse."
+  },
+  {
+   "id": "modena-seta",
+   "tipo": "tpl",
+   "citta": "Modena",
+   "regione": "Emilia-Romagna",
+   "azienda": "SETA",
+   "fasce_testo": "Modena: Dall'1/9 al 30/6 - Servizio Urbano: dalle 6,30 alle 8,30; dalle 12,00 alle 16,00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "16:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.setaweb.it/pc/regolamento-di-trasporto",
+   "fonte_titolo": "Regolamento di trasporto",
+   "pagina_scioperi_url": "https://www.setaweb.it/pc/regolamento-di-trasporto",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Servizio urbano da settembre a giugno; in luglio e agosto la seconda fascia è 16,30-20,30."
+  },
+  {
+   "id": "reggio-emilia-seta",
+   "tipo": "tpl",
+   "citta": "Reggio Emilia",
+   "regione": "Emilia-Romagna",
+   "azienda": "SETA",
+   "fasce_testo": "Reggio Emilia: Dall'inizio del servizio alle ore 9,00; dalle 13,00 alle 15,30.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "inizio servizio",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:00",
+     "alle": "15:30"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.setaweb.it/pc/regolamento-di-trasporto",
+   "fonte_titolo": "Regolamento di trasporto",
+   "pagina_scioperi_url": "https://www.setaweb.it/pc/regolamento-di-trasporto",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "trento-trentino-trasporti",
+   "tipo": "tpl",
+   "citta": "Trento",
+   "regione": "Trentino-Alto Adige",
+   "azienda": "Trentino Trasporti",
+   "fasce_testo": "In caso di sciopero di durata pari a 24 ore, le fasce di servizio garantito minimo sono dalle ore 05:30 alle ore 08:30 e dalle ore 16:00 alle ore 19:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "16:00",
+     "alle": "19:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.trentinotrasporti.it/it/sciopero",
+   "fonte_titolo": "In caso di sciopero",
+   "pagina_scioperi_url": "https://www.trentinotrasporti.it/it/sciopero",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Per scioperi più brevi le fasce garantite sono più ampie e vengono comunicate di volta in volta."
+  },
+  {
+   "id": "bolzano-sasa",
+   "tipo": "tpl",
+   "citta": "Bolzano",
+   "regione": "Trentino-Alto Adige",
+   "azienda": "SASA",
+   "fasce_testo": "sasa garantisce l’erogazione della quantità di servizio minima con effettuazione di tutti i servizi con partenza programmata nelle fasce orarie ore 6:00–9:00 e ore 12:00–15:00 con garanzia di arrivo al capolinea.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.sasabz.it/it/faq/",
+   "fonte_titolo": "FAQ | SASA SpA AG",
+   "pagina_scioperi_url": "https://www.sasabz.it/index.php/sciopero/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "udine-arriva-udine",
+   "tipo": "tpl",
+   "citta": "Udine",
+   "regione": "Friuli-Venezia Giulia",
+   "azienda": "Arriva Udine",
+   "fasce_testo": "L’azienda assicura in ogni caso lo svolgimento del servizio nelle fasce garantite per legge: 6.00-9.00 e 12.00-15.00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.arrivaudine.it/carta-dei-servizi/",
+   "fonte_titolo": "Carta dei servizi - Arriva Italia - Udine",
+   "pagina_scioperi_url": "https://www.arrivaudine.it/notice/avviso-di-sciopero-di-24-ore-per-il-giorno-19-giugno-2026/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "ravenna-start-romagna",
+   "tipo": "tpl",
+   "citta": "Ravenna",
+   "regione": "Emilia-Romagna",
+   "azienda": "Start Romagna",
+   "fasce_testo": "In caso di sciopero del personale viene comunque assicurato il servizio per un totale di 6 ore: 1ª fascia: 5:30–8:30; 2ª fascia: 12:00–15:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.startromagna.it/biglietti/regolamenti-sanzioni-regole-di-viaggio/",
+   "fonte_titolo": "Regolamenti - Start Romagna",
+   "pagina_scioperi_url": "https://www.startromagna.it/news/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "rimini-start-romagna",
+   "tipo": "tpl",
+   "citta": "Rimini",
+   "regione": "Emilia-Romagna",
+   "azienda": "Start Romagna",
+   "fasce_testo": "Sono escluse dagli scioperi tutte le corse che si svolgono nelle seguenti fasce: 6:00–9:00; 13:00–16:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:00",
+     "alle": "16:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.startromagna.it/biglietti/regolamenti-sanzioni-regole-di-viaggio/",
+   "fonte_titolo": "Regolamenti - Start Romagna",
+   "pagina_scioperi_url": "https://www.startromagna.it/news/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "roma-atac",
+   "tipo": "tpl",
+   "citta": "Roma",
+   "regione": "Lazio",
+   "azienda": "ATAC",
+   "fasce_testo": "Nel territorio del Lazio, in caso di sciopero il servizio di trasporto pubblico gestito da ATAC è garantito dall’inizio del servizio diurno fino alle 8.30 e dalle ore 17.00 alle ore 20.00 (fasce di garanzia).",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "inizio servizio",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "17:00",
+     "alle": "20:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.atac.roma.it/docs/default-source/pubblicazioni/tpl_carta_dei_servizi_2025.pdf?sfvrsn=69a81c83_4",
+   "fonte_titolo": "Carta della qualità dei servizi del trasporto pubblico locale 2025 - ATAC (PDF, sezione SCIOPERO, pag. 59)",
+   "pagina_scioperi_url": "https://www.atac.roma.it/tempo-reale",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Per gli scioperi di 4 ore valgono gli orari comunicati per quello sciopero."
+  },
+  {
+   "id": "roma-cotral",
+   "tipo": "tpl",
+   "citta": "Roma",
+   "regione": "Lazio",
+   "azienda": "Cotral (bus e treni regionali del Lazio)",
+   "fasce_testo": "in occasione di sciopero, Cotral assicura servizi di trasporto minimi per Bus e Treni. Il servizio è garantito fino alle 08:30 e dalle 17:00 alle 20:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "inizio servizio",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "17:00",
+     "alle": "20:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://cotralspa.it/servizi-minimi-in-caso-di-sciopero/",
+   "fonte_titolo": "Servizi minimi in caso di sciopero - Cotral",
+   "pagina_scioperi_url": "https://cotralspa.it/servizi-minimi-in-caso-di-sciopero/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "firenze-autolinee-toscane",
+   "tipo": "tpl",
+   "citta": "Firenze",
+   "regione": "Toscana",
+   "azienda": "Autolinee Toscane",
+   "fasce_testo": "at ricorda ai propri clienti che le fasce orarie di garanzie in cui i servizi bus saranno garantiti sono: tra le ore 4.15 e le ore 8.14 e tra le ore 12.30 e le ore 14.29",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "04:15",
+     "alle": "08:14"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "14:29"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-30",
+   "fonte_url": "https://www.at-bus.it/it/livorno-lucca-massa-carrara-sciopero-24-ore-30-ottobre-2026",
+   "fonte_titolo": "Livorno, Lucca, Massa-Carrara sciopero di 24 ore il 30 ottobre 2026 | Autolinee Toscane",
+   "pagina_scioperi_url": "https://www.at-bus.it/it/viaggia/avvisi",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "L'avviso riguardava Livorno, Lucca e Massa-Carrara, con modalità indicate come uniche su tutto il territorio regionale."
+  },
+  {
+   "id": "livorno-autolinee-toscane",
+   "tipo": "tpl",
+   "citta": "Livorno",
+   "regione": "Toscana",
+   "azienda": "Autolinee Toscane",
+   "fasce_testo": "at ricorda ai propri clienti che le fasce orarie di garanzie in cui i servizi bus saranno garantiti sono: tra le ore 4.15 e le ore 8.14 e tra le ore 12.30 e le ore 14.29",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "04:15",
+     "alle": "08:14"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "14:29"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-30",
+   "fonte_url": "https://www.at-bus.it/it/livorno-lucca-massa-carrara-sciopero-24-ore-30-ottobre-2026",
+   "fonte_titolo": "Livorno, Lucca, Massa-Carrara sciopero di 24 ore il 30 ottobre 2026 | Autolinee Toscane",
+   "pagina_scioperi_url": "https://www.at-bus.it/it/viaggia/avvisi",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "napoli-eav",
+   "tipo": "tpl",
+   "citta": "Napoli",
+   "regione": "Campania",
+   "azienda": "EAV (Circumvesuviana e bus regionali)",
+   "fasce_testo": "Il servizio automobilistico sull’intera rete aziendale sarà garantito nelle fasce di garanzia dalle ore 05:30 alle ore 8:30 e dalle ore 16:30 alle ore 19:30.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "16:30",
+     "alle": "19:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-10-30",
+   "fonte_url": "https://www.eavsrl.it/linee-automobilistiche-avviso-di-sciopero-generale-nazionale-di-24h-venerdi-30-ottobre-2026/",
+   "fonte_titolo": "Linee Automobilistiche: Avviso di sciopero generale nazionale di 24h venerdì 30 Ottobre 2026 - EAV srl",
+   "pagina_scioperi_url": "https://www.eavsrl.it/avvisi-di-sciopero/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Stesse fasce indicate per la Circumvesuviana nello stesso sciopero."
+  },
+  {
+   "id": "bari-amtab",
+   "tipo": "tpl",
+   "citta": "Bari",
+   "regione": "Puglia",
+   "azienda": "AMTAB",
+   "fasce_testo": "Nel rispetto delle fasce di garanzia (ore 05:30/08:29 e ore 12:30/15:29), così come previsto dagli accordi e dalla normativa vigente",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:29"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "15:29"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-11-14",
+   "fonte_url": "https://www.amtab.it/it/140-news-chatbot/3584-sciopero-aziendale-di-24-ore-del-personale-amtab-2",
+   "fonte_titolo": "Amtab - SCIOPERO AZIENDALE DI 24 ORE DEL PERSONALE AMTAB",
+   "pagina_scioperi_url": "https://www.amtab.it/it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "palermo-amat",
+   "tipo": "tpl",
+   "citta": "Palermo",
+   "regione": "Sicilia",
+   "azienda": "AMAT Palermo",
+   "fasce_testo": "Amat Palermo S.p.A. in caso di sciopero garantisce l’effettuazione delle corse in partenza dall’inizio del servizio giornaliero alle ore 08,30 e dalle ore 17,30 a fine servizio.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "inizio servizio",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "17:30",
+     "alle": "fine servizio"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.amat.pa.it/condizioni-di-viaggio/",
+   "fonte_titolo": "Condizioni Generali di Trasporto – AMAT Palermo SpA (art. 13 Servizi garantiti in caso di sciopero)",
+   "pagina_scioperi_url": "https://www.amat.pa.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "catania-amts",
+   "tipo": "tpl",
+   "citta": "Catania",
+   "regione": "Sicilia",
+   "azienda": "AMTS Catania",
+   "fasce_testo": "Le fasce orarie di garanzia durante le quali il servizio sarà reso in modo completo sono 06:30-09:30 e 18:00-21:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:30",
+     "alle": "09:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "18:00",
+     "alle": "21:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2025-06-20",
+   "fonte_url": "https://www.amts.ct.it/avviso-di-sciopero-generale-giorno-20-giugno-2025",
+   "fonte_titolo": "Avviso di sciopero generale giorno 20 giugno 2025 - AMTS Catania",
+   "pagina_scioperi_url": "https://www.amts.ct.it/avvisi-news",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "messina-atm",
+   "tipo": "tpl",
+   "citta": "Messina",
+   "regione": "Sicilia",
+   "azienda": "ATM Messina",
+   "fasce_testo": "fasce aziendali di garanzia di espletamento del servizio: dalle ore 06:30 alle ore 9:30 e dalle ore 12:30 alle ore 15:30",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:30",
+     "alle": "09:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "15:30"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.atmmessinaspa.it/dettaglio.php?notizia=1359&tipo=3",
+   "fonte_titolo": "Azienda Trasporti Messina (ATM) S.p.A. - Comunicato all'utenza: sciopero di 8 ore dell'8 giugno 2026",
+   "pagina_scioperi_url": "https://www.atmmessinaspa.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Fasce del regolamento aziendale del 2022, citate negli avvisi di sciopero."
+  },
+  {
+   "id": "taranto-kyma",
+   "tipo": "tpl",
+   "citta": "Taranto",
+   "regione": "Puglia",
+   "azienda": "Kyma Mobilità",
+   "fasce_testo": "nelle due fasce di garanzia previste (05:30/08:30 – 12:30/15:30), sarà garantita l’erogazione del servizio",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "15:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2024-11-08",
+   "fonte_url": "https://www.kymamobilita.it/servizi-garantiti-sciopero-nazionale-venerdi-8-novembre-2024/",
+   "fonte_titolo": "SERVIZI GARANTITI SCIOPERO NAZIONALE VENERDÌ 8 NOVEMBRE 2024 (AGGIORNAMENTO) - Kyma Mobilità Taranto",
+   "pagina_scioperi_url": "https://www.kymamobilita.it/news/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "salerno-busitalia-campania",
+   "tipo": "tpl",
+   "citta": "Salerno",
+   "regione": "Campania",
+   "azienda": "Busitalia Campania",
+   "fasce_testo": "saranno garantiti i collegamenti nelle fasce giornaliere di garanzia del servizio: 6:30-9:00 e 13:00-16:30 per i servizi autobus urbani ed extraurbani.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:30",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:00",
+     "alle": "16:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-05-15",
+   "fonte_url": "https://www.fsbusitalia.it/it/media/news-e-comunicati-stampa/2026/5/12/busitalia-campania-15-maggio-2026-sciopero.html",
+   "fonte_titolo": "Busitalia Campania: venerdì 15 maggio sciopero di 24 ore",
+   "pagina_scioperi_url": "https://www.fsbusitalia.it/it/campania/news-campania.html",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "pescara-tua",
+   "tipo": "tpl",
+   "citta": "Pescara",
+   "regione": "Abruzzo",
+   "azienda": "TUA",
+   "fasce_testo": "le fasce di garanzia del servizio all’utenza individuate nel CCAL aziendale sono: PRIMA FASCIA: dalle ore 5:30 sino alle ore 8:30 SECONDA FASCIA: dalle ore 13:00 sino alle ore 16:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:00",
+     "alle": "16:00"
+    }
+   ],
+   "origine": "regola",
+   "avviso_del": null,
+   "fonte_url": "https://www.tuabruzzo.it/comunicazioni/sciopero-generale-usb-lunedi-18-maggio-2026/25-1389.html",
+   "fonte_titolo": "Sciopero generale \"USB\" lunedì 18 maggio 2026 - TUA SpA",
+   "pagina_scioperi_url": "https://www.tuabruzzo.it/comunicazioni/25.html",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "perugia-busitalia-umbria",
+   "tipo": "tpl",
+   "citta": "Perugia",
+   "regione": "Umbria",
+   "azienda": "Busitalia Umbria",
+   "fasce_testo": "sciopero di 24 ore con garanzia di effettuazione dei servizi nelle fasce orarie: 6:00 / 9:00 e 12:00 / 15:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:00",
+     "alle": "09:00"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-09-22",
+   "fonte_url": "https://www.fsbusitalia.it/it/media/news-e-comunicati-stampa/2026/9/21/busitalia-umbria-22-settembre-2026-sciopero.html",
+   "fonte_titolo": "Busitalia Umbria: martedì 22 settembre 2026 sciopero di 24 ore",
+   "pagina_scioperi_url": "https://www.fsbusitalia.it/it/umbria/news-umbria.html",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Valgono per bus urbani ed extraurbani del bacino di Perugia e per il Minimetrò."
+  },
+  {
+   "id": "ancona-conerobus",
+   "tipo": "tpl",
+   "citta": "Ancona",
+   "regione": "Marche",
+   "azienda": "Conerobus",
+   "fasce_testo": "Il servizio di Trasporto Pubblico Locale sarà garantito nelle seguenti fasce: Mattina: dalle 05:30 alle 08:29 Pomeriggio: dalle 17:00 alle 20:00",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:30",
+     "alle": "08:29"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "17:00",
+     "alle": "20:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-09-23",
+   "fonte_url": "https://www.conerobus.it/sciopero-23-settembre-2026/",
+   "fonte_titolo": "Sciopero regionale di 24 ore – 23 settembre 2026 - Conerobus S.p.A",
+   "pagina_scioperi_url": "https://www.conerobus.it/categorie/archivio-comunicazioni/archivio-scioperi/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": "Le fasce sono cambiate tra uno sciopero e l'altro: controlla sempre l'avviso."
+  },
+  {
+   "id": "lecce-sgm",
+   "tipo": "tpl",
+   "citta": "Lecce",
+   "regione": "Puglia",
+   "azienda": "SGM Lecce",
+   "fasce_testo": "Il servizio di Trasporto Pubblico Urbano della Città di Lecce sarà garantito, nel rispetto degli accordi aziendali, nelle seguenti fasce orarie: - dalle 06:20 alle 09:20; - dalle 12:30 alle 15:30.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:20",
+     "alle": "09:20"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:30",
+     "alle": "15:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-11-20",
+   "fonte_url": "https://www.sgmlecce.it/archivio-news/item/1089-tpl-sciopero-del-20-novembre-orari-e-fasce-di-garanzia",
+   "fonte_titolo": "SGM - TPL, sciopero 20 novembre: orari e fasce di garanzia",
+   "pagina_scioperi_url": "https://www.sgmlecce.it/archivio-news",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "sassari-atp",
+   "tipo": "tpl",
+   "citta": "Sassari",
+   "regione": "Sardegna",
+   "azienda": "ATP Sassari",
+   "fasce_testo": "il servizio di trasporto pubblico di ATP S.p.A. sarà garantito dalle ore 05:45 alle 08:45 e dalle ore 12:00 alle 15:00.",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "05:45",
+     "alle": "08:45"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "12:00",
+     "alle": "15:00"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2025-12-12",
+   "fonte_url": "https://www.atpsassari.it/comunicazione/sciopero-generale-del-12-dicembre-2025",
+   "fonte_titolo": "Comunicazione - 171/2025 | Azienda Trasporti Pubblici S.p.A. - Sassari (Sciopero generale del 12 dicembre 2025)",
+   "pagina_scioperi_url": "https://www.atpsassari.it/comunicazioni",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "latina-csc",
+   "tipo": "tpl",
+   "citta": "Latina",
+   "regione": "Lazio",
+   "azienda": "CSC Mobilità",
+   "fasce_testo": "Saranno garantiti i servizi minimi essenziali nelle fasce orarie dalle ore 06:30 alle ore 09:30 e dalle ore 13:30 alle ore 16:30",
+   "fasce": [
+    {
+     "giorni": "tutti",
+     "dalle": "06:30",
+     "alle": "09:30"
+    },
+    {
+     "giorni": "tutti",
+     "dalle": "13:30",
+     "alle": "16:30"
+    }
+   ],
+   "origine": "avviso",
+   "avviso_del": "2026-11-20",
+   "fonte_url": "https://cscmobilita.com/sciopero-generale-nazionale-di-venerdi-20-novembre-2026/",
+   "fonte_titolo": "Sciopero Generale Nazionale di venerdì 20 novembre 2026 - CSC Mobilità",
+   "pagina_scioperi_url": "https://cscmobilita.com/avvisi/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "verificato",
+   "note": null
+  },
+  {
+   "id": "bologna-tper",
+   "tipo": "tpl",
+   "citta": "Bologna",
+   "regione": "Emilia-Romagna",
+   "azienda": "TPER",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "TPER, notizie e avvisi",
+   "pagina_scioperi_url": "https://www.tper.it/news",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "brescia-mobilita",
+   "tipo": "tpl",
+   "citta": "Brescia",
+   "regione": "Lombardia",
+   "azienda": "Brescia Mobilità",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "Brescia Mobilità",
+   "pagina_scioperi_url": "https://www.bresciamobilita.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "parma-tep",
+   "tipo": "tpl",
+   "citta": "Parma",
+   "regione": "Emilia-Romagna",
+   "azienda": "TEP",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "TEP, notizie",
+   "pagina_scioperi_url": "https://www.tep.pr.it/news/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "novara-sun",
+   "tipo": "tpl",
+   "citta": "Novara",
+   "regione": "Piemonte",
+   "azienda": "SUN",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "SUN, comunicazioni di servizio",
+   "pagina_scioperi_url": "https://www.sun.novara.it/it/sun-informa/comunicazioni-di-servizio/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "napoli-anm",
+   "tipo": "tpl",
+   "citta": "Napoli",
+   "regione": "Campania",
+   "azienda": "ANM",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "ANM",
+   "pagina_scioperi_url": "https://www.anm.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "cagliari-ctm",
+   "tipo": "tpl",
+   "citta": "Cagliari",
+   "regione": "Sardegna",
+   "azienda": "CTM",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "CTM, notizie",
+   "pagina_scioperi_url": "https://www.ctmcagliari.it/notizie/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  },
+  {
+   "id": "foggia-ataf",
+   "tipo": "tpl",
+   "citta": "Foggia",
+   "regione": "Puglia",
+   "azienda": "ATAF",
+   "fasce_testo": null,
+   "fasce": [],
+   "origine": null,
+   "avviso_del": null,
+   "fonte_url": null,
+   "fonte_titolo": "ATAF Foggia",
+   "pagina_scioperi_url": "https://www.ataf.fg.it/",
+   "verificato_il": "2026-11-11",
+   "stato_verifica": "non_trovato",
+   "note": "Non abbiamo trovato una pagina ufficiale con le fasce: guarda gli avvisi dell'azienda."
+  }
+ ]
+}

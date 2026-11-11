@@ -1,0 +1,19 @@
+# Dependabot propone aggiornamenti per le dipendenze npm e per le azioni di GitHub.
+# Unisci le proposte solo se il controllo "Verifica" è verde e, se possibile, qualche giorno dopo l'uscita della versione.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dipendenze:
+        patterns: ['*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      azioni:
+        patterns: ['*']

@@ -1,0 +1,26 @@
+{
+  "name": "fermitutti",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fermi Tutti: avvisi sugli scioperi dei trasporti in Italia. Sito statico che si aggiorna da solo dai dati del Ministero delle Infrastrutture e dei Trasporti.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "aggiorna": "node scripts/aggiorna.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "servi": "node scripts/servi.mjs",
+    "screenshot": "node scripts/screenshot.mjs",
+    "verifica-online": "node scripts/verifica-online.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "2.6.2"
+  },
+  "devDependencies": {
+    "ical.js": "2.2.1",
+    "puppeteer-core": "25.17.0"
+  }
+}

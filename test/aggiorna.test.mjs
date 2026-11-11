@@ -1,0 +1,78 @@
+// Aggiornamento completo contro una fonte finta: dati buoni e fonte guasta in tutti i modi previsti.
+import { test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync, readFileSync, existsSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { avviaFonteFinta } from '../scripts/fonte-finta.mjs';
+import { aggiorna, decidiPubblicazione, ORE_BATTITO } from '../scripts/aggiorna.mjs';
+
+let fonte;
+const cartelle = [];
+before(async () => { fonte = await avviaFonteFinta(0); });
+after(() => { fonte.server.close(); for (const c of cartelle) rmSync(c, { recursive: true, force: true }); });
+
+function nuovaCartella() { const c = mkdtempSync(join(tmpdir(), 'fermitutti-')); cartelle.push(c); return c; }
+const opz = (dataDir, scenario, extra = {}) => ({ fonteUrl: `${fonte.url}/rss?scenario=${scenario}`, fonteHtmlUrl: '', dataDir, tentativi: 1, attesaMs: 1, timeoutMs: 2000, log: () => {}, adesso: new Date('2026-11-11T10:00:00Z'), ...extra });
+const leggi = (dir, f) => JSON.parse(readFileSync(join(dir, f), 'utf8'));
+
+test('fonte buona: scrive i dati e pubblica', async () => {
+  const dir = nuovaCartella();
+  const r = await aggiorna({ ...opz(dir, 'ok'), fonteHtmlUrl: `${fonte.url}/pagina` });
+  assert.equal(r.ok, true);
+  assert.equal(r.pubblica, true);
+  assert.equal(leggi(dir, 'scioperi.json').scioperi.length, 32);
+  assert.equal(leggi(dir, 'stato.json').fonte_guasta_dal, null);
+  assert.equal(leggi(dir, 'scioperi.json').scioperi.find((s) => s.id === '8579').note, "GARANTITI I VOLI DA E PER L'AEROPORTO DI BARI");
+});
+
+for (const scenario of ['vuoto', 'html', 'errore500', 'lentissimo', 'campi-mancanti', 'date-rotte', 'script', 'script-titolo', 'doctype', 'redirect', 'enorme', 'meta']) {
+  test(`fonte guasta (${scenario}): i dati restano quelli buoni e viene segnalato`, async () => {
+    const dir = nuovaCartella();
+    await aggiorna(opz(dir, 'ok', { adesso: new Date('2026-11-11T09:00:00Z') }));
+    const prima = readFileSync(join(dir, 'scioperi.json'), 'utf8');
+    const r = await aggiorna(opz(dir, scenario));
+    assert.equal(r.ok, false, `lo scenario ${scenario} doveva essere rifiutato`);
+    assert.equal(readFileSync(join(dir, 'scioperi.json'), 'utf8'), prima, 'i dati non devono cambiare');
+    const stato = leggi(dir, 'stato.json');
+    assert.ok(stato.fonte_guasta_dal, 'deve risultare la fonte guasta');
+    assert.ok(stato.ultimo_errore.messaggio.length > 5);
+    assert.equal(r.pubblica, true, 'la prima segnalazione si pubblica');
+    const ancora = await aggiorna(opz(dir, scenario, { adesso: new Date('2026-11-11T10:30:00Z') }));
+    assert.equal(ancora.pubblica, false, 'le segnalazioni successive non ripubblicano');
+    const tornata = await aggiorna(opz(dir, 'ok', { adesso: new Date('2026-11-11T11:00:00Z') }));
+    assert.equal(tornata.ok, true);
+    assert.equal(tornata.pubblica, true, 'quando la fonte torna si ripubblica');
+    assert.equal(leggi(dir, 'stato.json').fonte_guasta_dal, null);
+  });
+}
+
+test('feed con CRLF o unicode strano: accettato ma ripulito', async () => {
+  for (const scenario of ['crlf', 'unicode']) {
+    const dir = nuovaCartella();
+    const r = await aggiorna(opz(dir, scenario));
+    assert.equal(r.ok, true);
+    const s = leggi(dir, 'scioperi.json').scioperi.find((x) => x.id === '8598');
+    const invisibili = new RegExp(`[\r\n${String.fromCharCode(0x202e, 0x200b, 0x2028)}]`);
+    assert.ok(!invisibili.test(s.categoria), JSON.stringify(s.categoria));
+  }
+});
+
+test('archivio vuoto e fonte guasta: nessun file di dati inventato', async () => {
+  const dir = nuovaCartella();
+  const r = await aggiorna(opz(dir, 'errore500'));
+  assert.equal(r.ok, false);
+  assert.equal(existsSync(join(dir, 'scioperi.json')), false);
+});
+
+test('regole di pubblicazione', () => {
+  const adesso = new Date('2026-11-11T10:00:00Z');
+  const fresca = { ultima_pubblicazione: '2026-11-11T09:30:00Z' };
+  assert.deepEqual(decidiPubblicazione({ cambiato: true, eraGuasta: false, guasta: false, forza: false, statoPrecedente: fresca, adesso }), { pubblica: true, motivo: 'dati cambiati' });
+  assert.deepEqual(decidiPubblicazione({ cambiato: false, eraGuasta: false, guasta: false, forza: false, statoPrecedente: fresca, adesso }), { pubblica: false, motivo: 'nessuna novità' });
+  assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: false, guasta: false, forza: false, statoPrecedente: { ultima_pubblicazione: '2026-11-11T03:59:00Z' }, adesso }).motivo, 'controllo periodico');
+  assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: false, guasta: false, forza: false, statoPrecedente: { ultima_pubblicazione: '2026-11-10T22:50:00Z' }, adesso: new Date('2026-11-10T23:10:00Z') }).motivo, 'nuovo giorno', 'mezzanotte italiana passata');
+  assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: false, guasta: false, forza: true, statoPrecedente: fresca, adesso }).motivo, 'richiesta manuale');
+  assert.equal(decidiPubblicazione({ cambiato: false, eraGuasta: true, guasta: true, forza: false, statoPrecedente: fresca, adesso }).pubblica, false);
+  assert.equal(ORE_BATTITO, 6);
+});

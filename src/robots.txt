@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /widget/
+Sitemap: https://fermitutti.it/sitemap.xml

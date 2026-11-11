@@ -1,0 +1,32 @@
+# Intestazioni di sicurezza per Cloudflare Pages. Le regole che corrispondono a un indirizzo si sommano;
+# "! Nome" toglie un'intestazione impostata da una regola più generale.
+# Nessuna regola toglie e reimposta la stessa intestazione: è un caso che la documentazione di Cloudflare non chiarisce.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'; trusted-types 'none'
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# Unica eccezione: il widget si può incorporare in altri siti. La sua politica di sicurezza (niente script)
+# sta in un tag <meta> nella pagina stessa; frame-ancestors non si può mettere nel <meta>, quindi l'incorporamento è permesso.
+/widget/*
+  ! Content-Security-Policy
+  ! X-Frame-Options
+  X-Robots-Tag: noindex
+
+# File con la versione nell'indirizzo (?v=...): si possono tenere in memoria a lungo.
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/stile.css
+  Cache-Control: public, max-age=31536000, immutable
+/tema.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/ics/*
+  Content-Type: text/calendar; charset=utf-8
+  Cache-Control: public, max-age=900
+/og/*
+  Cache-Control: public, max-age=86400

@@ -1,0 +1,37 @@
+# Controlli automatici su ogni modifica del codice: prove, vulnerabilità note delle dipendenze, build.
+name: Verifica
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['data/scioperi.json', 'data/stato.json']
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: verifica-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifica:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: Installa le dipendenze bloccate
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Vulnerabilità note (blocca se alte o critiche)
+        run: npm audit --audit-level=high
+      - name: Prove automatiche
+        run: npm test
+      - name: Build del sito
+        run: npm run build
