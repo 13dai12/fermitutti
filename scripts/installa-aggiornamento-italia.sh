@@ -2,7 +2,7 @@
 # Installa l'aggiornamento automatico degli scioperi su questo computer, che deve trovarsi in Italia.
 # Crea una copia fissa del codice, una copia del repository per i dati e un timer di systemd che parte ogni 30 minuti.
 # Rilancialo dopo ogni modifica al codice: è l'unico modo in cui cambia il codice eseguito dal timer.
-# Per vedere cosa ha fatto:  journalctl --user -u fermitutti-aggiorna -n 30
+# Per vedere cosa ha fatto:  journalctl --user-unit fermitutti-aggiorna -n 30
 # Per toglierlo:             systemctl --user disable --now fermitutti-aggiorna.timer
 set -eu
 
@@ -66,7 +66,7 @@ systemctl --user enable --now fermitutti-aggiorna.timer
 
 echo "4/4 Primo aggiornamento adesso..."
 systemctl --user start fermitutti-aggiorna.service || true
-journalctl --user -u fermitutti-aggiorna -n 12 --no-pager -o cat || true
+journalctl --user-unit fermitutti-aggiorna -n 12 --no-pager -o cat || true
 
 echo
 echo "Fatto. Codice alla versione $(cat "$BASE/codice/VERSIONE")."

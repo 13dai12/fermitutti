@@ -255,7 +255,7 @@ Da sapere:
 - **Il computer aggiorna i dati solo quando è acceso e connesso.** Se non arriva un aggiornamento riuscito per più di 9 ore, il sito mostra un avviso ai visitatori e GitHub ti manda una segnalazione via email. Quando riaccendi il computer, l'aggiornamento riparte da solo e la segnalazione si chiude.
 - **Il timer parte quando accedi al computer.** Per farlo partire anche senza accedere, per esempio dopo un riavvio, scrivi una volta `loginctl enable-linger`. Può chiederti la password.
 - **Il computer esegue sempre la copia fissa del codice.** Le modifiche che arrivano su GitHub non vengono eseguite finché non rilanci l'installazione. Così chi riuscisse a modificare il repository non potrebbe far girare niente sul tuo computer. Rilancia l'installazione, dopo `git pull`, ogni volta che il codice cambia, per esempio dopo aver unito una proposta di Dependabot.
-- **Per vedere cosa ha fatto:** `journalctl --user -u fermitutti-aggiorna -n 30`. **Per fermarlo:** `systemctl --user disable --now fermitutti-aggiorna.timer`.
+- **Per vedere cosa ha fatto:** `journalctl --user-unit fermitutti-aggiorna -n 30`. **Per fermarlo:** `systemctl --user disable --now fermitutti-aggiorna.timer`.
 
 Su GitHub il workflow **Sorveglia gli aggiornamenti** parte da solo ogni due ore. Non legge il Ministero: controlla soltanto che i dati arrivino. Puoi avviarlo anche a mano da *Actions › Sorveglia gli aggiornamenti › Run workflow*.
 
@@ -361,7 +361,7 @@ Il sito non pubblica mai dati che sembrano sbagliati. In alto nelle pagine compa
 Il primo posto dove guardare è il computer in Italia. Nel terminale:
 
 ```
-journalctl --user -u fermitutti-aggiorna -n 30
+journalctl --user-unit fermitutti-aggiorna -n 30
 ```
 
 - **«Gli scioperi non si aggiornano».**
