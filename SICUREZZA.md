@@ -41,7 +41,7 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
 ## 3. Intestazioni HTTP (`src/_headers`)
 
 - **Content-Security-Policy**: `default-src 'self'`, `script-src 'self'`, `style-src 'self'`, `object-src 'none'`, `base-uri 'none'`, `frame-ancestors 'none'`, `form-action 'none'`, `upgrade-insecure-requests`, `require-trusted-types-for 'script'`, `trusted-types 'none'`. Nessun `'unsafe-inline'` e nessun `'unsafe-eval'`; nel sito non ci sono script né stili in linea.
-- **Strict-Transport-Security**: 2 anni con `includeSubDomains`. Il `preload` è lasciato fuori di proposito: va aggiunto solo dopo aver visto che tutto funziona in HTTPS (passo 16 di `DEPLOY.md`).
+- **Strict-Transport-Security**: 2 anni con `includeSubDomains`. Il `preload` è lasciato fuori di proposito: va aggiunto solo dopo aver visto che tutto funziona in HTTPS (passo 17 di `DEPLOY.md`).
 - **Altre intestazioni:** `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` (contro il clickjacking), `Referrer-Policy: strict-origin-when-cross-origin`, una `Permissions-Policy` che spegne fotocamera, microfono, posizione, pagamenti e simili, e `Cross-Origin-Opener-Policy: same-origin`.
 - **Unica eccezione: il widget** (`/widget/*`), che deve potersi incorporare in altri siti.
   - Per quel percorso si tolgono solo `Content-Security-Policy` e `X-Frame-Options`.
@@ -73,7 +73,7 @@ Il calendario del Ministero viene trattato come un dato che potrebbe essere mani
 
 ## 6. Dominio e DNS
 
-Istruzioni in `DEPLOY.md`, passi 3 e 7-13: DNSSEC, protezione contro il trasferimento presso il registrar, record CAA (solo le autorità di Cloudflare), nessun record orfano, SPF `v=spf1 -all`, DMARC `p=reject`, MX nullo, un solo reindirizzamento da `www` al dominio principale, solo HTTPS e TLS minimo 1.2.
+Istruzioni in `DEPLOY.md`, passi 3 e 7-13 (il 16 per Google Search Console): DNSSEC, protezione contro il trasferimento presso il registrar, record CAA (solo le autorità di Cloudflare), nessun record orfano, SPF `v=spf1 -all`, DMARC `p=reject`, MX nullo, un solo reindirizzamento da `www` al dominio principale, solo HTTPS e TLS minimo 1.2.
 
 Il controllo automatico è `npm run verifica-online -- fermitutti.it`, oppure il workflow «Controllo online» su GitHub. Controlla anche che Cloudflare non inserisca script nelle pagine (offuscamento delle email, Rocket Loader), che la politica di sicurezza bloccherebbe.
 
@@ -130,4 +130,4 @@ Dubbi sulla guida, tutti accolti in `DEPLOY.md`: spegnere le funzioni di Cloudfl
 - **Funzioni di Cloudflare che modificano le pagine** (offuscamento delle email, Rocket Loader, Bot Fight Mode): se restano accese, inseriscono script che la politica di sicurezza blocca. Non è un rischio per la sicurezza, ma alcune parti potrebbero non funzionare. `DEPLOY.md` dice di spegnerle e il controllo online lo verifica.
 - **Dipendenze di terzi.** Una dipendenza compromessa potrebbe alterare la build. Il rischio è ridotto da versioni bloccate, `--ignore-scripts`, un solo pacchetto nella build, nessuna dipendenza nel lavoro con permesso di scrittura, 7 giorni di attesa per le nuove versioni e revisione delle proposte di Dependabot. Ma non è nullo.
 - **Calendari iscritti.** Google Calendar può mostrare una revoca con molte ore di ritardo. Il sito lo dice chiaramente e invita a controllare il giorno prima.
-- **HSTS preload** non è attivo finché non lo attivi tu (passo 16).
+- **HSTS preload** non è attivo finché non lo attivi tu (passo 17).

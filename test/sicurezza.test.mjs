@@ -87,6 +87,12 @@ test('intestazioni di sicurezza (_headers)', () => {
   assert.ok(w['Strict-Transport-Security'] && w['X-Content-Type-Options']);
   for (const r of regole) for (const [nome] of r.imposta) assert.ok(!r.togli.includes(nome.toLowerCase()), `la regola ${r.schema} toglie e reimposta ${nome}`);
   assert.ok(regole.length <= 100, 'limite di Cloudflare: 100 regole');
+  // Solo il dominio va su Google: gli indirizzi *.pages.dev hanno noindex.
+  for (const schema of ['https://:progetto.pages.dev/*', 'https://:anteprima.:progetto.pages.dev/*']) {
+    const r = regole.find((x) => x.schema === schema);
+    assert.ok(r, `manca la regola ${schema}`);
+    assert.deepEqual(r.imposta, [['X-Robots-Tag', 'noindex']]);
+  }
 });
 
 test('il widget non contiene script e ha la sua politica di sicurezza', async () => {

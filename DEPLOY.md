@@ -49,7 +49,19 @@ La cartella del progetto è già pronta, con tutto il necessario e con un primo 
 
 **Non** caricare i file trascinandoli nella pagina di GitHub: si perderebbero le cartelle nascoste, come `.github`, e si pubblicherebbero file che devono restare sul tuo computer.
 
-### Su Linux (il tuo computer)
+### Se il computer è già collegato a GitHub con una chiave SSH (il metodo più semplice)
+
+1. Apri https://github.com/new, scrivi `fermitutti` come nome, scegli **Public** e **non** aggiungere README, licenza o `.gitignore`. Premi *Create repository*.
+2. Nel terminale, dentro la cartella del progetto, scrivi (sostituisci `TUO-NOME` con il tuo nome utente GitHub):
+
+```
+git remote add origin git@github.com:TUO-NOME/fermitutti.git
+git push -u origin main
+```
+
+Se usi Claude Code, puoi chiedergli di fare tu questi due comandi dopo aver creato il repository.
+
+### Su Linux, con lo strumento di GitHub
 
 Apri un terminale ed entra nella cartella del progetto, cioè quella che contiene questo file `DEPLOY.md` (comando `cd` seguito dal percorso della cartella). Poi scrivi questi comandi uno alla volta.
 
@@ -139,7 +151,7 @@ Tutte gratuite per i repository pubblici. Apri il repository e vai in *Settings*
    - *Build output directory*: `public`
    - *Root directory*: lascia vuoto
 4. Premi *Save and Deploy* e aspetta un paio di minuti.
-5. Il sito è online su un indirizzo provvisorio, per esempio `fermitutti.pages.dev`. Aprilo e controlla che funzioni.
+5. Cloudflare crea anche un indirizzo tecnico, per esempio `fermitutti.pages.dev`. Aprilo solo per controllare che il sito funzioni e **non condividerlo**: il sito ufficiale è solo il dominio. Google non lo indicizzerà, perché quell'indirizzo risponde con «noindex» e ogni pagina indica il dominio come indirizzo principale; al passo 9 lo farai anche reindirizzare al dominio.
 6. Per non sprecare build: nel progetto apri *Settings › Builds & deployments*, cerca le **preview deployments** (anteprime) e scegli **None** (nessuna anteprima).
 7. Nel progetto vai in *Custom domains › Set up a domain*, scrivi `fermitutti.it` e conferma. Cloudflare crea da solo il record DNS che serve.
 
@@ -161,9 +173,9 @@ Tutte gratuite per i repository pubblici. Apri il repository e vai in *Settings*
 
 In alternativa, nel dominio puoi usare *Rules › Redirect Rules › Create rule* con il modello **Redirect from WWW to Root**: il risultato è lo stesso.
 
-Facoltativo: il sito resta raggiungibile anche all'indirizzo provvisorio `fermitutti.pages.dev`. Per mandare anche quello al dominio vero, aggiungi alla stessa lista di Bulk Redirects una riga con *Source URL* `fermitutti.pages.dev` e *Target URL* `https://fermitutti.it`, con le stesse spunte.
+4. **Anche l'indirizzo tecnico va al dominio.** Aggiungi alla stessa lista di Bulk Redirects una seconda riga con *Source URL* uguale all'indirizzo tecnico del passo 8 (per esempio `fermitutti.pages.dev`) e *Target URL* `https://fermitutti.it`, con le stesse spunte. Così esiste un solo sito, quello sul dominio, ed è quello che Google indicizza.
 
-**Fatto bene se:** aprendo `https://www.fermitutti.it/citta/` finisci su `https://fermitutti.it/citta/`.
+**Fatto bene se:** aprendo `https://www.fermitutti.it/citta/` o `https://fermitutti.pages.dev/citta/` finisci su `https://fermitutti.it/citta/`.
 
 ## Passo 10. HTTPS e TLS
 
@@ -216,7 +228,8 @@ In *DNS › Records* devono esserci **solo**:
 
 - il record del sito creato da Cloudflare Pages per `fermitutti.it` (tipo CNAME o simile, verso `...pages.dev`);
 - il record `A` di `www` del passo 9;
-- i record TXT, MX e CAA del passo 12 (il CAA che hai creato tu; quelli aggiunti da Cloudflare non si vedono nell'elenco).
+- i record TXT, MX e CAA del passo 12 (il CAA che hai creato tu; quelli aggiunti da Cloudflare non si vedono nell'elenco);
+- il record TXT `google-site-verification` del passo 16, quando lo avrai fatto.
 
 Se c'è altro, per esempio vecchi record di OVHcloud, cancellalo. Ogni record che punta a un servizio che non usi è una porta che qualcuno potrebbe aprire.
 
@@ -248,7 +261,22 @@ Se una riga ha ✘:
 
 Chi ha Node.js sul computer può fare lo stesso controllo con `npm run verifica-online -- fermitutti.it`.
 
-## Passo 16 (facoltativo, dopo un mese). HSTS preload
+## Passo 16. Fatti trovare da Google
+
+Google trova i siti nuovi da solo, ma ci mette settimane. Con questi passi lo avvisi subito e controlli come vede il sito.
+
+1. Apri https://search.google.com/search-console con il tuo account Google e premi *Aggiungi proprietà*.
+2. Scegli il tipo **Dominio**, scrivi `fermitutti.it` e premi *Continua*. Google ti mostra un record TXT che inizia con `google-site-verification=`: copialo.
+3. Su Cloudflare, nel dominio, vai in *DNS › Records › Add record*: *Type* `TXT`, *Name* `@`, *Content* il testo copiato. Salva.
+4. Torna su Search Console e premi *Verifica*. Se non funziona subito, riprova dopo qualche minuto.
+5. Nel menu a sinistra apri **Sitemap**, scrivi `https://fermitutti.it/sitemap.xml` e premi *Invia*. La mappa contiene tutte le pagine utili e si aggiorna da sola.
+6. Facoltativo: in alto, nella barra *Controlla URL*, incolla `https://fermitutti.it/` e premi *Richiedi indicizzazione*.
+
+Facoltativo: su https://www.bing.com/webmasters puoi importare il sito direttamente da Search Console; Bing alimenta anche altri motori di ricerca.
+
+Nei giorni seguenti Search Console ti dirà quante pagine sono indicizzate e per quali ricerche compare il sito.
+
+## Passo 17 (facoltativo, dopo un mese). HSTS preload
 
 Quando tutto funziona da almeno un mese, puoi chiedere ai browser di usare **sempre** HTTPS per il tuo dominio, anche alla prima visita.
 

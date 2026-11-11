@@ -25,6 +25,13 @@
 /tema.js
   Cache-Control: public, max-age=31536000, immutable
 
+# Gli indirizzi tecnici di Cloudflare (*.pages.dev e le anteprime) non devono finire su Google:
+# l'unico indirizzo da indicizzare è il dominio. Le pagine hanno comunque il canonical verso il dominio.
+https://:progetto.pages.dev/*
+  X-Robots-Tag: noindex
+https://:anteprima.:progetto.pages.dev/*
+  X-Robots-Tag: noindex
+
 /ics/*
   Content-Type: text/calendar; charset=utf-8
   Cache-Control: public, max-age=900
