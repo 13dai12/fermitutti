@@ -88,18 +88,6 @@ export function attivo(s) {
   return s.stato === 'confermato' || (s.stato === 'differito' && !s.differito_a);
 }
 
-/**
- * Scioperi di un giorno per una zona, divisi tra principali (possono toccare chi viaggia) e altri.
- * I revocati e i rinviati restano tra i principali, con la loro etichetta: chi deve partire deve saperlo.
- */
-export function scioperiDelGiorno(scioperi, giorno, zona) {
-  const delGiorno = ordinaScioperi(scioperi.filter((s) => toccaGiorno(s, giorno) && toccaZona(s, zona)));
-  return {
-    principali: delGiorno.filter((s) => perPasseggeri(s)),
-    altri: delGiorno.filter((s) => !perPasseggeri(s)),
-  };
-}
-
 /** Quanti scioperi attivi per chi viaggia ci sono in un giorno. */
 export function contaAttivi(lista) {
   return lista.filter((s) => attivo(s) && perPasseggeri(s)).length;

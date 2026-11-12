@@ -129,3 +129,24 @@ test('sorveglianza: senza nessuno stato la fonte risulta mai verificata', () => 
   assert.match(leggi(dir, 'stato.json').ultimo_errore.messaggio, /non risulta nessuna verifica riuscita/);
   assert.equal(existsSync(join(dir, 'scioperi.json')), false);
 });
+
+test('sorveglianza: il lavoro delle segnalazioni parte solo dopo un ripristino recente o una volta al giorno', () => {
+  const fileOutput = join(nuovaCartella(), 'output.txt');
+  const prima = process.env.GITHUB_OUTPUT;
+  process.env.GITHUB_OUTPUT = fileOutput;
+  try {
+    const valore = (stato, adesso) => {
+      writeFileSync(fileOutput, '');
+      sorveglia({ dataDir: cartellaConStato(stato), adesso, log: () => {} });
+      return /^fonte_ripristinata=(.*)$/m.exec(readFileSync(fileOutput, 'utf8'))[1];
+    };
+    const regolare = { ultima_verifica_riuscita: oreFa(1), ultima_pubblicazione: oreFa(1), fonte_guasta_dal: null };
+    assert.equal(valore(regolare, ORA), 'false', 'di giorno e senza ripristini non parte');
+    assert.equal(valore({ ...regolare, ultimo_errore: { quando: oreFa(3), messaggio: 'x', risolto_il: oreFa(2) } }, ORA), 'true', 'dopo un ripristino recente parte');
+    assert.equal(valore({ ...regolare, ultimo_errore: { quando: oreFa(30), messaggio: 'x', risolto_il: oreFa(20) } }, ORA), 'false', 'un ripristino vecchio non conta');
+    const notte = new Date('2026-11-12T00:17:00Z');
+    assert.equal(valore({ ultima_verifica_riuscita: '2026-11-11T23:30:00Z', ultima_pubblicazione: '2026-11-11T23:30:00Z', fonte_guasta_dal: null }, notte), 'true', 'una volta al giorno parte comunque');
+  } finally {
+    if (prima === undefined) delete process.env.GITHUB_OUTPUT; else process.env.GITHUB_OUTPUT = prima;
+  }
+});

@@ -527,8 +527,8 @@ ${voci ? `<ul>${voci}</ul>` : `<p class="ok">Nessuno sciopero in calendario nei 
 `;
 }
 
-function paginaTesto(ctx, { percorso, titolo, descrizione, corpo, noindex = false }) {
-  return pagina({ sito: ctx.sito, versione: ctx.versione, percorso, tipoPagina: 'testo', titolo, descrizione, noindex, corpo: `${htmlBriciole([['Home', '/'], [titolo, null]])}\n<article class="testo">\n<h1>${e(titolo)}</h1>\n${corpo}\n</article>` });
+function paginaTesto(ctx, { percorso, titolo, descrizione, corpo, noindex = false, robots = null }) {
+  return pagina({ sito: ctx.sito, versione: ctx.versione, percorso, tipoPagina: 'testo', titolo, descrizione, noindex, robots, corpo: `${htmlBriciole([['Home', '/'], [titolo, null]])}\n<article class="testo">\n<h1>${e(titolo)}</h1>\n${corpo}\n</article>` });
 }
 
 export function paginaComeFunziona(ctx) {
@@ -580,12 +580,10 @@ export function paginaFonti(ctx) {
 export function paginaPrivacy(ctx) {
   const t = ctx.sito.titolare;
   return paginaTesto(ctx, {
-    // Fuori da Google e dalla sitemap: è l'unica pagina con il nome del titolare, che non vuole renderlo più visibile del necessario.
-    percorso: '/privacy/', titolo: 'Privacy', noindex: true,
+    // Fuori da Google, dalla sitemap e dagli archivi del web: è l'unica pagina con il nome del titolare, in fondo e in piccolo.
+    percorso: '/privacy/', titolo: 'Privacy', robots: 'noindex, noarchive',
     descrizione: `Come ${ctx.sito.nome} tratta i dati: nessun cookie, nessun tracciamento, nessun dato personale raccolto.`,
     corpo: `<p class="avviso avviso-ok"><strong>In breve:</strong> non usiamo cookie, non tracciamo chi visita il sito e non raccogliamo dati personali. Non ci sono moduli, iscrizioni o account.</p>
-<h2>Chi è il titolare</h2>
-<p>${e(t.nome)}${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
 <h2>Se ci scrivi</h2>
 <p>Se ci mandi un'email, usiamo il tuo indirizzo e il messaggio solo per risponderti.${t.email.toLowerCase().endsWith('@' + ctx.sito.dominio) ? ' Le email per questo indirizzo passano dal servizio di inoltro di Cloudflare (Email Routing), che le consegna alla casella del titolare.' : ''}</p>
 <h2>Cosa resta sul tuo dispositivo</h2>
@@ -596,6 +594,10 @@ export function paginaPrivacy(ctx) {
 <p>Quando apri un link verso altri siti (per esempio WhatsApp, Google Calendar, le aziende di trasporto o i siti partner), valgono le regole di privacy di quei siti. I link di affiliazione sono segnalati: se li usi, il sito partner può usare i suoi cookie per riconoscere che arrivi da qui.</p>
 <h2>I tuoi diritti</h2>
 <p>Per qualsiasi domanda sui dati personali scrivi a ${e(t.email)}. Puoi anche rivolgerti al Garante per la protezione dei dati personali.</p>
+<section class="gestione" id="gestione" aria-labelledby="gestione-titolo">
+<h2 id="gestione-titolo">Gestione del sito</h2>
+<p>Titolare del trattamento e gestore del sito: ${e(t.nome)}${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
+</section>
 <p class="nota">Ultimo aggiornamento di questa pagina: ${e(dataLunga(ctx.oggi).replace(/^\S+ /, ''))}.</p>`,
   });
 }
@@ -606,7 +608,7 @@ export function paginaNoteLegali(ctx) {
     percorso: '/note-legali/', titolo: 'Note legali',
     descrizione: `Note legali di ${ctx.sito.nome}: fonti dei dati, limiti di responsabilità e link di affiliazione.`,
     corpo: `<h2>Chi gestisce il sito</h2>
-<p>${e(ctx.sito.nome)} è gestito dal titolare indicato nella pagina <a href="/privacy/">Privacy</a>${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
+<p>${e(ctx.sito.nome)} è gestito dal titolare indicato in fondo alla pagina <a href="/privacy/#gestione">Privacy</a>${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
 <h2>Non siamo un sito ufficiale</h2>
 <p>Il sito non è affiliato né collegato al Ministero delle Infrastrutture e dei Trasporti, alla Commissione di garanzia per l'attuazione della legge sullo sciopero nei servizi pubblici essenziali, né alle aziende di trasporto.</p>
 <h2>Da dove vengono i dati</h2>
@@ -625,7 +627,6 @@ export function paginaContatti(ctx) {
     percorso: '/contatti/', titolo: 'Contatti',
     descrizione: `Come contattare ${ctx.sito.nome} per segnalare un errore o fare una domanda.`,
     corpo: `<p>Hai trovato un errore o hai un suggerimento? Scrivici: <strong>${e(ctx.sito.titolare.email)}</strong>.</p>
-<p>Puoi anche segnalare un problema in modo pubblico sul <a href="${urlSicuro(ctx.sito.repository)}" rel="noopener">repository del progetto</a>.</p>
 <p>Non siamo l'azienda di trasporto e non possiamo rispondere su biglietti, rimborsi o orari dei mezzi: per questo contatta direttamente la tua azienda.</p>
 <p>Per segnalazioni di sicurezza: <a href="/.well-known/security.txt">security.txt</a>.</p>`,
   });

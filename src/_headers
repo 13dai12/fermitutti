@@ -35,6 +35,10 @@ https://:progetto.pages.dev/*
 https://:anteprima.:progetto.pages.dev/*
   X-Robots-Tag: noindex
 
+# La pagina Privacy contiene il nome del titolare: fuori dai motori di ricerca e dalle loro copie.
+/privacy/*
+  X-Robots-Tag: noindex, noarchive
+
 /ics/*
   Content-Type: text/calendar; charset=utf-8
   Cache-Control: public, max-age=900

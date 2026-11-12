@@ -39,14 +39,6 @@ export function istanteRoma(iso, ore = 0, minuti = 0) {
   return new Date(t);
 }
 
-/** Scostamento come stringa "+01:00" per una data e ora di Roma. */
-export function scostamentoStringa(iso, ore = 0, minuti = 0) {
-  const min = scostamentoRoma(istanteRoma(iso, ore, minuti));
-  const segno = min < 0 ? '-' : '+';
-  const a = Math.abs(min);
-  return `${segno}${String(Math.floor(a / 60)).padStart(2, '0')}:${String(a % 60).padStart(2, '0')}`;
-}
-
 /** Converte "10/11/2026" in "2026-11-10". Restituisce null se non è una data reale. */
 export function daItaliana(testo) {
   const m = /^\s*(\d{1,2})\/(\d{1,2})\/(\d{4})\s*$/.exec(testo || '');
@@ -89,8 +81,6 @@ export function giornoSettimana(iso) {
 const fmtLunga = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 const fmtMedia = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
 const fmtBreve = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', day: 'numeric', month: 'long' });
-const fmtNumerica = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' });
-const fmtOra = new Intl.DateTimeFormat('it-IT', { timeZone: FUSO, hour: '2-digit', minute: '2-digit' });
 const fmtDataOra = new Intl.DateTimeFormat('it-IT', { timeZone: FUSO, day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 function aDate(iso) {
@@ -103,31 +93,8 @@ export function dataLunga(iso) { return fmtLunga.format(aDate(iso)); }
 export function dataMedia(iso) { return fmtMedia.format(aDate(iso)); }
 /** "10 novembre" */
 export function dataBreve(iso) { return fmtBreve.format(aDate(iso)); }
-/** "10/11/2026" */
-export function dataNumerica(iso) { return fmtNumerica.format(aDate(iso)); }
 /** "10 novembre 2026, 23:14" (ora di Roma) per un istante ISO. */
 export function dataOraRoma(istanteIso) { return fmtDataOra.format(new Date(istanteIso)); }
-export function oraRoma(istanteIso) { return fmtOra.format(new Date(istanteIso)); }
-
-/** Intervallo leggibile: stesso giorno -> "venerdì 20 novembre 2026"; più giorni -> "da venerdì 20 a sabato 21 novembre 2026". */
-export function intervalloLeggibile(inizio, fine) {
-  if (inizio === fine) return dataLunga(inizio);
-  const a = aDate(inizio), b = aDate(fine);
-  if (a.getUTCFullYear() === b.getUTCFullYear() && a.getUTCMonth() === b.getUTCMonth()) {
-    const gInizio = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'long', day: 'numeric' }).format(a);
-    return `da ${gInizio} a ${dataLunga(fine)}`;
-  }
-  return `da ${dataLunga(inizio)} a ${dataLunga(fine)}`;
-}
-
-/** Etichetta relativa: "oggi", "domani", "dopodomani" oppure null. */
-export function etichettaRelativa(iso, oggi) {
-  const d = differenzaGiorni(oggi, iso);
-  if (d === 0) return 'oggi';
-  if (d === 1) return 'domani';
-  if (d === 2) return 'dopodomani';
-  return null;
-}
 
 /** Lunedì della settimana che contiene il giorno indicato. */
 export function lunediDi(iso) {

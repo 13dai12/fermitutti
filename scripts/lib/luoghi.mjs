@@ -23,6 +23,4 @@ export function cittaDaProvincia(provincia) {
   const candidate = CITTA.filter((c) => stessaProvincia(provincia, c.provincia));
   return candidate.length === 1 ? candidate[0] : null;
 }
-export function cittaDaSlug(slug) { return CITTA.find((c) => c.slug === slug) || null; }
-export function regioneDaSlug(slug) { return REGIONI.find((r) => r.slug === slug) || null; }
 export function cittaDellaRegione(regione) { return regione ? CITTA.filter((c) => c.regione === regione.nome) : []; }

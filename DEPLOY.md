@@ -57,7 +57,7 @@ La cartella del progetto è già pronta, con tutto il necessario e con i salvata
 
 1. Apri https://github.com/new e compila così:
    - *Repository name*: `fermitutti`;
-   - visibilità **Public**. Su GitHub i minuti di calcolo sono gratis e illimitati solo per i repository pubblici, e l'aggiornamento automatico ne usa parecchi;
+   - visibilità **Public**: per i repository pubblici GitHub Actions è gratis senza limiti, e la protezione del ramo principale, CodeQL e il blocco dei segreti sono gratuiti;
    - **non** aggiungere README, licenza o `.gitignore`.
 2. Premi *Create repository*.
 3. Manda il codice. Il computer è già collegato a GitHub con una chiave SSH come utente `13dai12`. Nel terminale, dentro la cartella del progetto, scrivi:
@@ -109,14 +109,17 @@ Tutte gratuite per i repository pubblici. Apri il repository e vai in *Settings*
 2. **Analisi di sicurezza.** In *Security › Advanced Security* (in alcune versioni si chiama *Code security*) attiva:
    - **Dependency graph**, **Dependabot alerts** e **Dependabot security updates**;
    - **Secret scanning** e **Push protection**, che bloccano password o chiavi finite per sbaglio nel codice;
-   - **CodeQL analysis › Set up › Default**, che cerca errori di sicurezza nel codice.
+   - **CodeQL analysis › Set up › Default**, che cerca errori di sicurezza nel codice;
+   - **Private vulnerability reporting**, così chi trova un problema te lo segnala in privato.
 3. **Permessi delle Actions.** In *Actions › General*:
    - in *Approval for running fork pull request workflows* scegli **Require approval for all external contributors**: il codice proposto da sconosciuti non gira finché non lo approvi tu;
    - in *Workflow permissions* scegli **Read repository contents and packages permissions**: i workflow chiedono da soli solo i permessi che servono;
    - togli la spunta da **Allow GitHub Actions to create and approve pull requests**;
    - premi *Save*.
-4. **Proposte di modifica da altre persone.** Il repository è pubblico, quindi chiunque può proporre modifiche (*Pull requests*). **Non unire mai proposte di persone che non conosci**, soprattutto se toccano la cartella `.github`, i file `package.json` e `package-lock.json` o la cartella `scripts`: potrebbero servire a prendere il controllo del sito. Le uniche proposte da unire, se il controllo è verde, sono quelle di Dependabot.
-5. **Avvisi via email.** Dalla tua foto in alto a destra vai in *Settings › Notifications*. In *Watching*, *Participating* e *Actions* controlla che sia attiva l'email: così ti arrivano gli avvisi se l'aggiornamento si blocca.
+4. **Funzioni che non servono.** In *General › Features* togli **Wikis** e **Projects**.
+5. **Proposte di modifica da altre persone.** Il repository è pubblico, quindi chiunque può proporre modifiche (*Pull requests*). **Non unire mai proposte di persone che non conosci**, soprattutto se toccano la cartella `.github`, i file `package.json` e `package-lock.json` o la cartella `scripts`: potrebbero servire a prendere il controllo del sito. Le uniche proposte da unire, se il controllo è verde, sono quelle di Dependabot.
+6. **Avvisi via email.** Dalla tua foto in alto a destra vai in *Settings › Notifications*. In *Watching*, *Participating* e *Actions* controlla che sia attiva l'email: così ti arrivano gli avvisi se l'aggiornamento si blocca.
+7. **Email privata.** Nelle impostazioni del tuo account, alla voce *Emails*, attiva **Keep my email addresses private** e **Block command line pushes that expose my email**. Così i commit fatti dal sito di GitHub non mostrano la tua email.
 
 ## Passo 7. Controlla il DNS del dominio
 
@@ -388,7 +391,7 @@ Circa 10 minuti al mese.
 | Servizio | Costo | Limite gratuito | Uso previsto |
 |---|---|---|---|
 | Dominio `.com` (Cloudflare) | Il rinnovo annuale: Cloudflare fa pagare il prezzo del registro, senza ricarichi | | |
-| GitHub (repository pubblico) | 0 | Minuti di Actions illimitati per i repository pubblici | 12 controlli al giorno, meno di un minuto ciascuno |
+| GitHub (repository pubblico) | 0 | Minuti di Actions gratuiti e senza limite per i repository pubblici | 12 controlli al giorno di meno di un minuto, più le prove a ogni modifica |
 | Computer in Italia | 0, oltre alla corrente | | Un aggiornamento ogni 30 minuti, pochi secondi ciascuno |
 | Cloudflare Pages | 0 | 500 build al mese, 20.000 file | Da 120 a 250 build al mese (dati cambiati più una ogni 6 ore); da 350 a circa 800 file |
 | Email Routing di Cloudflare | 0 | | Solo se scegli la strada A del passo 12 |

@@ -75,10 +75,13 @@ test('su Cloudflare, con le variabili, la build parte e il nome compare solo nel
     const conNome = tuttiIFile(uscita).filter((f) => readFileSync(f).includes(NOME)).map((f) => relative(uscita, f)).sort();
     assert.deepEqual(conNome, ['privacy/index.html']);
     const privacy = readFileSync(join(uscita, 'privacy', 'index.html'), 'utf8');
-    assert.match(privacy, /<meta name="robots" content="noindex">/);
+    assert.match(privacy, /<meta name="robots" content="noindex, noarchive">/);
+    assert.ok(privacy.indexOf('Gestione del sito') > 0 && privacy.indexOf('Gestione del sito') < privacy.indexOf(NOME), 'il nome sta in fondo, nella parte Gestione del sito');
     assert.doesNotMatch(readFileSync(join(uscita, 'sitemap.xml'), 'utf8'), /privacy/);
-    assert.doesNotMatch(readFileSync(join(uscita, 'robots.txt'), 'utf8'), /privacy/, 'Google deve poter leggere il noindex');
-    assert.match(readFileSync(join(uscita, 'note-legali', 'index.html'), 'utf8'), /gestito dal titolare indicato nella pagina <a href="\/privacy\/">Privacy<\/a>/);
+    const robots = readFileSync(join(uscita, 'robots.txt'), 'utf8');
+    assert.doesNotMatch(robots.split('\n\n').find((g) => g.startsWith('User-agent: *')), /privacy/, 'Google deve poter leggere il noindex');
+    assert.match(robots, /User-agent: ia_archiver[^]*Disallow: [/]privacy[/]/, 'gli archivi del web non copiano la pagina con il nome');
+    assert.match(readFileSync(join(uscita, 'note-legali', 'index.html'), 'utf8'), /gestito dal titolare indicato in fondo alla pagina <a href="[/]privacy[/]#gestione">Privacy<[/]a>/);
     const conEmail = tuttiIFile(uscita).filter((f) => readFileSync(f).includes(EMAIL)).map((f) => relative(uscita, f)).sort();
     assert.deepEqual(conEmail, ['.well-known/security.txt', 'contatti/index.html', 'note-legali/index.html', 'privacy/index.html']);
     assert.match(readFileSync(join(uscita, '.well-known', 'security.txt'), 'utf8'), /^Contact: mailto:contatti@fermitutti[.]com$/m);

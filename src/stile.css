@@ -238,6 +238,10 @@ details.ufficiale > summary h2 { margin: 0; font-size: 1.15rem; }
 .dettagli dt { font-weight: 700; color: var(--testo-2); }
 .dettagli dd { margin: 0; overflow-wrap: anywhere; }
 
+.gestione { margin-top: 2rem; padding-top: .8rem; border-top: 1px solid var(--bordo); }
+.gestione h2 { margin: 0 0 .3rem; font-size: .95rem; color: var(--testo-2); }
+.gestione p { margin: 0 0 .6rem; font-size: .85rem; color: var(--testo-2); }
+
 /* Pulsanti */
 .bottoni { display: flex; flex-wrap: wrap; gap: .55rem; margin: .8rem 0 1.2rem; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 50px; padding: .6rem 1.15rem; border-radius: 12px; border: 1.5px solid var(--accento); background: var(--accento); color: var(--accento-testo); font: inherit; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; }

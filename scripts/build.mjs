@@ -23,6 +23,7 @@ import { toccaZona, toccaSettore, perPasseggeri } from '../src/js/filtri.mjs';
 import { validaArchivio } from './lib/valida-archivio.mjs';
 import { creaContesto, testiEvento, datiAnteprima } from './lib/contesto.mjs';
 import * as P from './lib/pagine.mjs';
+import { jsSenzaCommenti, cssSenzaCommenti } from './lib/compatta.mjs';
 
 export { validaArchivio };
 
@@ -39,7 +40,6 @@ function segnaposti(sito) {
   controlla('titolare.nome', sito.titolare.nome);
   controlla('titolare.email', sito.titolare.email);
   controlla('emailSicurezza', sito.emailSicurezza);
-  controlla('repository', sito.repository);
   return trovati;
 }
 
@@ -140,11 +140,12 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   for (const c of CITTA) scriviPagina(`/widget/${c.slug}/`, P.paginaWidget(ctx, c), { sitemap: false });
 
   // CSS e JavaScript
-  scrivi(join(uscita, 'stile.css'), readFileSync(join(RADICE, 'src', 'stile.css')));
-  scrivi(join(uscita, 'tema.js'), readFileSync(join(RADICE, 'src', 'tema.js')));
-  scrivi(join(uscita, 'widget', 'stile.css'), readFileSync(join(RADICE, 'src', 'widget.css')));
+  // Al browser arrivano i file senza commenti: meno byte e nessuna nota interna in chiaro.
+  scrivi(join(uscita, 'stile.css'), cssSenzaCommenti(readFileSync(join(RADICE, 'src', 'stile.css'), 'utf8')));
+  scrivi(join(uscita, 'tema.js'), jsSenzaCommenti(readFileSync(join(RADICE, 'src', 'tema.js'), 'utf8')));
+  scrivi(join(uscita, 'widget', 'stile.css'), cssSenzaCommenti(readFileSync(join(RADICE, 'src', 'widget.css'), 'utf8')));
   for (const f of fileJs) {
-    const js = readFileSync(join(RADICE, 'src', 'js', f), 'utf8')
+    const js = jsSenzaCommenti(readFileSync(join(RADICE, 'src', 'js', f), 'utf8'))
       .replace(/from '\.\/([a-z0-9-]+)\.mjs'/g, `from './$1.js?v=${versione}'`)
       .replace(/import\('\.\/([a-z0-9-]+)\.mjs'\)/g, `import('./$1.js?v=${versione}')`);
     scrivi(join(uscita, 'js', f.replace(/\.mjs$/, '.js')), js);
@@ -152,8 +153,11 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   scrivi(join(uscita, 'icona.svg'), readFileSync(join(RADICE, 'src', 'icona.svg')));
   // Carattere del marchio (Atkinson Hyperlegible, licenza OFL), ridotto ai caratteri latini: niente font da servizi esterni.
   for (const f of readdirSync(join(RADICE, 'src', 'caratteri'))) scrivi(join(uscita, 'caratteri', f), readFileSync(join(RADICE, 'src', 'caratteri', f)));
+  scrivi(join(uscita, 'caratteri', 'OFL.txt'), readFileSync(join(RADICE, 'assets', 'fonts', 'OFL.txt')));
   scrivi(join(uscita, '_headers'), intestazioniPerConfigurazione(readFileSync(join(RADICE, 'src', '_headers'), 'utf8'), sito));
-  scrivi(join(uscita, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /widget/\n\nSitemap: ${sito.urlBase}/sitemap.xml\n`);
+  // Gli archivi del web non copiano la pagina Privacy, che contiene il nome del titolare. Google invece deve poterla
+  // leggere per vedere il noindex, quindi il gruppo «*» non la blocca.
+  scrivi(join(uscita, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /widget/\n\nUser-agent: ia_archiver\nUser-agent: archive.org_bot\nDisallow: /widget/\nDisallow: /privacy/\n\nSitemap: ${sito.urlBase}/sitemap.xml\n`);
   const scadenza = new Date(Date.parse(`${oggi}T00:00:00Z`) + 180 * 86400000).toISOString().replace(/\.\d{3}Z$/, '.000Z');
   scrivi(join(uscita, '.well-known', 'security.txt'), `# Segnalazioni di sicurezza per ${sito.dominio} (RFC 9116).\nContact: mailto:${sito.emailSicurezza}\nExpires: ${scadenza}\nPreferred-Languages: it, en\nCanonical: ${sito.urlBase}/.well-known/security.txt\nPolicy: ${sito.urlBase}/note-legali/\n`);
 

@@ -21,8 +21,6 @@ export default {
   // Contatto per segnalazioni di sicurezza (/.well-known/security.txt). Può essere la stessa email.
   emailSicurezza: '[EMAIL DI CONTATTO]',
 
-  // Repository GitHub (serve per i link "segnala un problema" e la pagina di stato).
-  repository: 'https://github.com/13dai12/fermitutti',
 
   // Dopo quante ore senza pubblicazioni il sito mostra l'avviso "dati non aggiornati" (il sito si ripubblica almeno ogni 6 ore).
   oreAvvisoDatiVecchi: 8,
