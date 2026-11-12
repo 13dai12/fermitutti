@@ -242,8 +242,13 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   return { pagine: pagine.length, versione, uscita };
 }
 
+/** Vero solo se questo file è stato avviato come programma (non importato). Percorsi reali, così vale anche da un collegamento. */
+function eProgrammaPrincipale() {
+  try { return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href; } catch { return false; }
+}
+
 // Avviato come programma: si confrontano i percorsi reali, così funziona anche passando da un collegamento simbolico.
-if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+if (eProgrammaPrincipale()) {
   try {
     await build({
       dataDir: process.env.DATA_DIR || undefined,

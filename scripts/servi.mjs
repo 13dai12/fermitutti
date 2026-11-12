@@ -79,7 +79,10 @@ export function avviaServer({ porta = 8080, cartella = 'public' } = {}) {
   return new Promise((risolvi) => server.listen(porta, '127.0.0.1', () => risolvi(server)));
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+function eProgrammaPrincipale() {
+  try { return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href; } catch { return false; }
+}
+if (eProgrammaPrincipale()) {
   const porta = Number(process.argv[2] || 8080);
   await avviaServer({ porta, cartella: process.argv[3] || 'public' });
   console.log(`Sito in prova su http://127.0.0.1:${porta}/ (Ctrl+C per fermare)`);

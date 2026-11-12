@@ -61,7 +61,8 @@ fi
 
 # Prova di costruzione completa con il codice fisso e i dati nuovi: se fallisce non si invia niente.
 PROVA=$(mktemp -d)
-node --input-type=module -e "const { build } = await import(process.argv[1]); await build({ dataDir: process.argv[2], uscita: process.argv[3], log: () => {}, ambiente: {}, pubblicazione: false });" "$CODICE/scripts/build.mjs" "$REPO/data" "$PROVA/public"
+# Il percorso di build.mjs passa da una variabile: se fosse il primo argomento, build.mjs si crederebbe il programma principale.
+FERMITUTTI_BUILD="$CODICE/scripts/build.mjs" node --input-type=module -e "const { build } = await import(process.env.FERMITUTTI_BUILD); await build({ dataDir: process.argv[1], uscita: process.argv[2], log: () => {}, ambiente: {}, pubblicazione: false });" "$REPO/data" "$PROVA/public"
 
 git -c user.name='Fermi Tutti' -c user.email='sito@fermitutti.com' commit --quiet -m "Dati aggiornati: $motivo"
 git push --quiet origin HEAD:main

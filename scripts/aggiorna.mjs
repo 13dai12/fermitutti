@@ -283,8 +283,13 @@ export function sorveglia({ dataDir, adesso = new Date(), oreMassime = ORE_SORVE
   return { ok: false, ...decisione, messaggio, stato };
 }
 
+/** Vero solo se questo file è stato avviato come programma (non importato). Percorsi reali, così vale anche da un collegamento. */
+function eProgrammaPrincipale() {
+  try { return Boolean(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href; } catch { return false; }
+}
+
 // Avviato come programma: si confrontano i percorsi reali, così funziona anche passando da un collegamento simbolico.
-if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+if (eProgrammaPrincipale()) {
   const dataDir = process.env.DATA_DIR || new URL('../data', import.meta.url).pathname;
   // ADESSO serve solo alle prove: fissa l'ora di riferimento.
   const adesso = process.env.ADESSO ? new Date(process.env.ADESSO) : new Date();

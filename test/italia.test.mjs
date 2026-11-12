@@ -47,7 +47,9 @@ test('aggiorna-italia.sh: legge la fonte, prova la build e invia solo i dati, e 
   const inizio = commit();
 
   // 1. Fonte buona: dati nuovi, build di prova, un commit con i soli file dei dati.
-  assert.match(await avvia('ok', '2026-11-11T10:00:00Z'), /Pubblicato: dati cambiati/);
+  const prima1 = await avvia('ok', '2026-11-11T10:00:00Z');
+  assert.match(prima1, /Pubblicato: dati cambiati/);
+  assert.doesNotMatch(prima1, /Build completata/, 'una sola build di prova, silenziosa: build.mjs non deve partire anche da solo');
   const primo = commit();
   assert.notEqual(primo, inizio);
   assert.equal(git('-C', nudo, 'log', '-1', '--format=%an <%ae>|%s', 'main'), 'Fermi Tutti <sito@fermitutti.com>|Dati aggiornati: dati cambiati');
