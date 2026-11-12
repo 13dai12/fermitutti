@@ -4,6 +4,7 @@ import { oggiRoma, dataMedia, dataOraRoma } from './date.mjs';
 import { costruisciElenchi } from './elenchi.mjs';
 import { schedaModello, testoProclamazioni } from './schede.mjs';
 import { hrefSicuro } from './filtri.mjs';
+import { controlloRecente } from './stato.mjs';
 
 const pagina = document.body.dataset.pagina || '';
 let datiScioperi = null;
@@ -88,14 +89,25 @@ function aggiornaTempi() {
   }
 }
 
+function mostraOraControllo(iso) {
+  for (const t of document.querySelectorAll('time[data-controllo]')) {
+    t.setAttribute('datetime', iso);
+    t.textContent = dataOraRoma(iso) + (t.hasAttribute('data-relativo') ? ` (${tempoFa(iso)})` : '');
+  }
+}
+
 async function controllaFreschezza() {
+  // Le due richieste partono insieme; /api/stato può mancare (server locale, funzione ferma) senza conseguenze.
+  const vivoInArrivo = caricaJson('/api/stato').catch(() => null);
   let stato;
   try { stato = (await caricaJson('/dati/stato.json')); } catch { return; }
+  const recente = controlloRecente(await vivoInArrivo, stato);
+  if (recente) mostraOraControllo(recente);
   const avviso = document.getElementById('avviso-dati');
   const testo = document.getElementById('avviso-dati-testo');
   if (!avviso || !testo) return;
   const ore = Number(stato.ore_avviso) || 8;
-  const ultima = stato.ultima_pubblicazione || stato.ultima_verifica_riuscita;
+  const ultima = recente || stato.ultima_pubblicazione || stato.ultima_verifica_riuscita;
   const vecchio = ultima && (Date.now() - Date.parse(ultima)) / 3600000 > ore;
   if (stato.fonte_guasta_dal) {
     testo.textContent = `la fonte ufficiale non risponde dal ${dataOraRoma(stato.fonte_guasta_dal)}. Vedi i dati dell'ultimo controllo riuscito${stato.ultima_verifica_riuscita ? ` (${dataOraRoma(stato.ultima_verifica_riuscita)})` : ''}: verifica con la tua azienda di trasporto.`;

@@ -45,6 +45,13 @@ test('aggiorna-italia.sh: legge la fonte, prova la build e invia solo i dati, e 
   })).stdout;
   const commit = () => git('-C', nudo, 'rev-parse', 'main');
   const inizio = commit();
+  // L'etichetta «stato»: un commit senza genitori con il solo stato.json, che Cloudflare non costruisce.
+  const oraControllo = () => {
+    assert.equal(git('-C', nudo, 'ls-tree', '--name-only', 'refs/tags/stato'), 'stato.json');
+    assert.equal(git('-C', nudo, 'rev-list', '--count', 'refs/tags/stato'), '1');
+    assert.match(git('-C', nudo, 'log', '-1', '--format=%s', 'refs/tags/stato'), /^\[CF-Pages-Skip\] /);
+    return JSON.parse(git('-C', nudo, 'show', 'refs/tags/stato:stato.json'));
+  };
 
   // 1. Fonte buona: dati nuovi, build di prova, un commit con i soli file dei dati.
   const prima1 = await avvia('ok', '2026-11-11T10:00:00Z');
@@ -54,10 +61,14 @@ test('aggiorna-italia.sh: legge la fonte, prova la build e invia solo i dati, e 
   assert.notEqual(primo, inizio);
   assert.equal(git('-C', nudo, 'log', '-1', '--format=%an <%ae>|%s', 'main'), 'Fermi Tutti <sito@fermitutti.com>|Dati aggiornati: dati cambiati');
   assert.deepEqual(git('-C', nudo, 'show', '--format=', '--name-only', 'main').split('\n').sort(), ['data/scioperi.json', 'data/stato.json']);
+  assert.equal(oraControllo().ultima_verifica_riuscita, '2026-11-11T10:00:00.000Z');
 
-  // 2. Mezz'ora dopo, stessi dati: nessun commit.
+  // 2. Mezz'ora dopo, stessi dati: nessun commit su main, ma l'ora del controllo arriva lo stesso sull'etichetta.
   assert.match(await avvia('ok', '2026-11-11T10:30:00Z'), /Niente da pubblicare/);
   assert.equal(commit(), primo);
+  const ora2 = oraControllo();
+  assert.equal(ora2.ultima_verifica_riuscita, '2026-11-11T10:30:00.000Z');
+  assert.equal(ora2.ultima_modifica_dati, '2026-11-11T10:00:00.000Z', 'i dati sono quelli già pubblicati');
 
   // 3. Fonte guasta: si pubblica solo lo stato, i dati degli scioperi restano quelli buoni.
   assert.match(await avvia('errore500', '2026-11-11T11:00:00Z'), /Pubblicato: fonte guasta/);
@@ -65,4 +76,8 @@ test('aggiorna-italia.sh: legge la fonte, prova la build e invia solo i dati, e 
   const stato = JSON.parse(git('-C', nudo, 'show', 'main:data/stato.json'));
   assert.equal(stato.fonte_guasta_dal, '2026-11-11T11:00:00.000Z');
   assert.match(stato.ultimo_errore.messaggio, /HTTP 500/);
+  const ora3 = oraControllo();
+  assert.equal(ora3.fonte_guasta_dal, '2026-11-11T11:00:00.000Z');
+  // Un controllo fallito non porta avanti l'ora: si riparte dallo stato pubblicato su main (quello delle 10:00).
+  assert.ok(ora3.ultima_verifica_riuscita < '2026-11-11T11:00:00.000Z', 'un controllo fallito non sposta in avanti l\'ora');
 });

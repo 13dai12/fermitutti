@@ -10,7 +10,7 @@ Questa guida è per chi non ha mai usato GitHub. Segui i passi nell'ordine, senz
 Le parole che incontrerai:
 
 - **GitHub** è il sito che conserva il codice del sito e ogni due ore controlla che l'aggiornamento degli scioperi funzioni.
-- **Il computer in Italia** è un computer acceso a casa tua, con Linux, che ogni 30 minuti legge il calendario del Ministero e manda i dati nuovi su GitHub. Serve perché il Ministero accetta solo connessioni dall'Italia.
+- **Il computer in Italia** è un computer acceso a casa tua, con Linux, che ogni 30 minuti legge il calendario del Ministero e manda su GitHub i dati nuovi e l'ora del controllo, che il sito mostra senza doversi ripubblicare. Serve perché il Ministero accetta solo connessioni dall'Italia.
 - **Cloudflare** è il servizio dove hai comprato il dominio. Pubblica anche il sito e lo protegge.
 - **DNS** è l'elenco che dice a Internet dove si trova il sito e chi può usare il dominio per le email.
 - **Repository** è la cartella del progetto su GitHub.
@@ -394,6 +394,7 @@ Circa 10 minuti al mese.
 | GitHub (repository pubblico) | 0 | Minuti di Actions gratuiti e senza limite per i repository pubblici | 12 controlli al giorno di meno di un minuto, più le prove a ogni modifica |
 | Computer in Italia | 0, oltre alla corrente | | Un aggiornamento ogni 30 minuti, pochi secondi ciascuno |
 | Cloudflare Pages | 0 | 500 build al mese, 20.000 file | Da 120 a 250 build al mese (dati cambiati più una ogni 6 ore); da 350 a circa 800 file |
+| Funzione di Cloudflare per l'ora del controllo (Workers Free) | 0 | 100.000 richieste al giorno; oltre, per quel giorno la pagina mostra l'ora dell'ultima pubblicazione. Il piano gratuito non addebita mai costi | Una richiesta per pagina visitata. Si pubblica da sola con il sito: niente da impostare |
 | Email Routing di Cloudflare | 0 | | Solo se scegli la strada A del passo 12 |
 
 ## Provare il sito sul proprio computer (facoltativo)

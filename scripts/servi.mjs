@@ -6,6 +6,7 @@ import { createServer } from 'node:http';
 import { readFileSync, existsSync, statSync, realpathSync } from 'node:fs';
 import { join, normalize, extname, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { statoLeggero } from '../functions/api/stato.js';
 
 const TIPI = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -62,6 +63,14 @@ export function avviaServer({ porta = 8080, cartella = 'public' } = {}) {
     let percorso;
     try { percorso = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { res.writeHead(400); res.end(); return; }
     if (/[\0\\]/.test(percorso) || percorso.split('/').includes('..')) { res.writeHead(400); res.end(); return; }
+    // Al posto della funzione di Cloudflare (functions/api/stato.js), senza GitHub: l'ora è quella dei dati generati.
+    if (percorso === '/api/stato') {
+      const f = join(radiceAssoluta, 'dati', 'stato.json');
+      const corpo = existsSync(f) ? statoLeggero(readFileSync(f, 'utf8')) : null;
+      res.writeHead(corpo ? 200 : 503, { 'content-type': TIPI['.json'], 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' });
+      res.end(JSON.stringify(corpo ?? {}));
+      return;
+    }
     let file = resolve(radiceAssoluta, '.' + percorso);
     if (file !== radiceAssoluta && !file.startsWith(radiceAssoluta + sep)) { res.writeHead(400); res.end(); return; }
     if (existsSync(file) && statSync(file).isDirectory()) {

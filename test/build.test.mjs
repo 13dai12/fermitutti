@@ -33,6 +33,12 @@ test('la build produce tutte le pagine e i file attesi', async () => {
     assert.ok(existsSync(join(uscita, p)), p);
   }
   if (CI_SONO_SEGNAPOSTI) assert.ok(messaggi.some((m) => /segnaposto ancora da compilare/.test(m)), 'avviso sui segnaposto');
+  // La funzione dell'ora del controllo gira solo sul suo indirizzo: il resto del sito resta fatto di file statici.
+  assert.deepEqual(JSON.parse(readFileSync(join(uscita, '_routes.json'), 'utf8')), { version: 1, include: ['/api/stato'], exclude: [] });
+  assert.ok(existsSync(join(uscita, 'js', 'stato.js')));
+  for (const p of ['index.html', 'citta/milano/index.html', 'stato/index.html']) {
+    assert.match(readFileSync(join(uscita, p), 'utf8'), /<time datetime="[^"]+"[^>]* data-controllo>/, `ora del controllo aggiornabile in ${p}`);
+  }
   const png = readFileSync(join(uscita, 'og', 'predefinita.png'));
   assert.equal(png.subarray(1, 4).toString(), 'PNG');
   assert.equal(png.readUInt32BE(16), 1200);

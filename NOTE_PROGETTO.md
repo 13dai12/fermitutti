@@ -28,6 +28,7 @@ Serve Node.js 22 o più recente.
 | `scripts/aggiorna-italia.sh` | Lo script che il timer del computer in Italia avvia ogni 30 minuti |
 | `scripts/build.mjs`, `scripts/lib/` | Generazione del sito: pagine, calendari, immagini, file serviti senza commenti |
 | `src/` | CSS, intestazioni (`_headers`), caratteri e JavaScript del browser (`src/js/`, condiviso con la build) |
+| `functions/api/stato.js` | L'unica funzione di Cloudflare: passa al browser l'ora dell'ultimo controllo, presa dall'etichetta `stato` su GitHub |
 | `test/` | Prove automatiche (`node --test`) |
 | `.github/workflows/` | Sorveglianza dell'aggiornamento, verifica del codice, controllo online |
 
@@ -146,6 +147,18 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
 - **Avviso «dati non aggiornati»:** compare dopo 8 ore senza pubblicazioni, cioè 6 più un margine per i ritardi di GitHub.
 - **Perché:** con una pubblicazione ogni 30 minuti si arriverebbe a 1.440 build al mese, ben oltre il limite. Con il battito il sito può invece dire onestamente da quanto i dati non si aggiornano.
 
+### Ora dell'ultimo controllo ogni 30 minuti, senza build (12 novembre 2026)
+- **Problema:** la pagina diceva «Ultimo controllo della fonte ufficiale: 04:57» alle 9:30, mentre il computer aveva controllato il Ministero ogni 30 minuti. Era l'ora dell'ultima pubblicazione, non dell'ultimo controllo. Il proprietario vuole vedere l'ora vera, ogni mezz'ora, senza consumare build e senza toccare il pannello di Cloudflare.
+- **Decisione:**
+  - dopo ogni controllo `scripts/aggiorna-italia.sh` invia `data/stato.json` sull'etichetta (tag) `stato`, come commit senza genitori con quel solo file, con push forzato. Il messaggio inizia con `[CF-Pages-Skip]`;
+  - `functions/api/stato.js`, l'unica funzione di Cloudflare Pages, legge quel file da `raw.githubusercontent.com` (copia di 60 secondi nella cache di Cloudflare) e restituisce solo tre date validate: `ultima_verifica_riuscita`, `ultima_modifica_dati`, `fonte_guasta_dal`;
+  - `public/_routes.json`, scritto dalla build, fa partire la funzione solo su `/api/stato`. Tutto il resto resta file statico e non conta nel limite delle funzioni;
+  - il browser (`controlloRecente` in `src/js/stato.mjs`) sostituisce l'ora negli elementi `time[data-controllo]` solo se il controllo è più recente di quello pubblicato, la fonte funziona e `ultima_modifica_dati` è uguale a quella del sito. Così non mostra mai «controllato alle 9:07» accanto a dati più vecchi, per esempio nei minuti in cui Cloudflare ricostruisce. Lo stesso controllo, se recente, evita l'avviso «dati non aggiornati».
+- **Perché un'etichetta e non un ramo:** Cloudflare Pages costruisce i commit sui rami, compresi i rami di anteprima, attivi di default. La documentazione non dice se le build saltate con `[CF-Pages-Skip]` contano nel limite delle 500. Le etichette non vengono costruite; la sigla resta come seconda protezione. Con un commit senza genitori e il push forzato la storia del repository non cresce. I workflow di GitHub non partono, perché quel commit non contiene `.github/`.
+- **Perché una funzione e non una lettura diretta da GitHub nel browser:** così l'indirizzo IP dei visitatori non arriva a GitHub, e la politica di sicurezza resta `connect-src 'self'`.
+- **Limiti:** 100.000 richieste al giorno nel piano gratuito di Workers, che non può addebitare costi. Se la funzione o GitHub non rispondono, la pagina mostra l'ora dell'ultima pubblicazione come prima. Se la fonte si guasta, lo script riparte dallo stato pubblicato su `main`: i controlli riusciti mai pubblicati vanno persi e l'etichetta può tornare indietro di qualche mezz'ora. È innocuo, perché con la fonte guasta il browser ignora l'ora nuova.
+- **In locale** `scripts/servi.mjs` risponde a `/api/stato` con le date di `public/dati/stato.json`, senza collegarsi a GitHub.
+
 ### Le date si calcolano anche nel browser
 - **Decisione:** l'HTML statico è costruito con la data di Roma al momento della build e contiene tutto, quindi è leggibile anche senza JavaScript e da Google. JavaScript ricalcola «oggi», «domani» e «prossimi giorni» con l'orologio del telefono (fuso Europe/Rome), ma solo se la data è cambiata o se l'utente ha scelto una città.
 - **Perché:** è corretto anche se una build salta, e non provoca spostamenti della pagina, che peggiorerebbero l'esperienza e il punteggio di Lighthouse.
@@ -262,7 +275,7 @@ Nessun sito è invulnerabile. Questo è costruito in modo da eliminare per costr
 
 ### 1. Superficie minima
 
-- **Solo file statici.** Nessun server, nessun database, nessun codice che gira quando qualcuno visita il sito. Non ci sono pagine di accesso da forzare né dati da rubare sul server.
+- **Solo file statici, con un'eccezione.** Nessun server, nessun database. Non ci sono pagine di accesso da forzare né dati da rubare sul server. L'unico codice che gira quando qualcuno visita il sito è `functions/api/stato.js`, solo su `/api/stato`, approvato dal proprietario il 12 novembre 2026 per mostrare l'ora dell'ultimo controllo ogni 30 minuti. Non legge niente della richiesta, non ha segreti, non scrive nulla e restituisce soltanto tre date validate, prese da un file pubblico del repository. Le regole di `_headers` non valgono per le funzioni: le intestazioni di sicurezza le imposta la funzione stessa.
 - **Nessun modulo che invia dati, nessun account, nessun dato personale raccolto.** La città scelta e il tema restano nel browser (`localStorage`). Le domande all'assistente non escono dal dispositivo.
 - **Nessun cookie e nessun tracciamento.** Le statistiche di Cloudflare sono spente; si possono accendere solo in modo esplicito, vedi `DEPLOY.md`.
 - **Nessuno script, font o foglio di stile da siti esterni.** Il font usato per le immagini di anteprima è incluso nel repository (licenza OFL) e serve solo durante la build.
@@ -350,7 +363,7 @@ La verifica in due passaggi su email, GitHub e Cloudflare, che è anche il regis
 Il server del Ministero accetta solo connessioni dall'Italia, quindi i dati li legge un computer in Italia con un timer di systemd dell'utente (`scripts/aggiorna-italia.sh`). Le regole:
 
 - **Codice fisso.** Il timer esegue una copia del codice presa dall'ultimo commit locale al momento dell'installazione, con le sole dipendenze bloccate della build. Il codice che arriva da GitHub non viene mai eseguito sul computer. Chi riuscisse a modificare il repository non potrebbe quindi far girare niente lì.
-- **Solo i dati.** Nella copia del repository usata dal timer cambiano e si inviano soltanto `data/scioperi.json` e `data/stato.json`, con la firma «Fermi Tutti». Prima di inviare si costruisce il sito per prova. I dati che arrivano da GitHub passano dagli stessi controlli dell'archivio.
+- **Solo i dati.** Nella copia del repository usata dal timer cambiano e si inviano soltanto `data/scioperi.json` e `data/stato.json`, con la firma «Fermi Tutti», più l'etichetta `stato` con l'ora dell'ultimo controllo. L'etichetta si invia solo dopo che i dati, se andavano pubblicati, sono arrivati su GitHub. Prima di inviare si costruisce il sito per prova. I dati che arrivano da GitHub passano dagli stessi controlli dell'archivio.
 - **Rete di casa.** Se GitHub non risponde lo script si ferma senza toccare niente, così un guasto della rete di casa non viene scambiato per un guasto della fonte.
 - **Chiave SSH.** Il timer usa la chiave SSH già presente sul computer. Chi entrasse nel computer potrebbe usarla per modificare il repository: il computer va tenuto aggiornato e protetto come ogni dispositivo personale.
 - **Sorveglianza.** GitHub controlla ogni due ore lo stato pubblicato. Se da più di 9 ore non arriva una verifica riuscita, il sito mostra l'avviso ai visitatori e il proprietario riceve una segnalazione. Il sito quindi non può restare fermo in silenzio.

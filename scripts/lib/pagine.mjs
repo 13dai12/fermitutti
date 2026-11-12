@@ -146,7 +146,8 @@ function htmlBriciole(voci) {
 function aggiornatoTesto(ctx) {
   const t = ctx.stato.ultima_verifica_riuscita;
   // Senza "X minuti fa" aggiunto da JavaScript: allungherebbe il paragrafo dopo il caricamento e sposterebbe la pagina.
-  return t ? `Ultimo controllo della fonte ufficiale: <time datetime="${e(t)}">${e(dataOraRoma(t))}</time>.` : '';
+  // data-controllo: JavaScript la sostituisce con l'ora del controllo più recente, che arriva ogni 30 minuti da /api/stato.
+  return t ? `Ultimo controllo della fonte ufficiale: <time datetime="${e(t)}" data-controllo>${e(dataOraRoma(t))}</time>.` : '';
 }
 
 // ---------- Pagine ----------
@@ -635,7 +636,7 @@ export function paginaContatti(ctx) {
 export function paginaStato(ctx) {
   const st = ctx.stato;
   const riga = (k, v, attr = '') => `<tr><th scope="row">${e(k)}</th><td${attr}>${v}</td></tr>`;
-  const tempo = (iso) => (iso ? `<time datetime="${e(iso)}" data-relativo>${e(dataOraRoma(iso))}</time>` : 'mai');
+  const tempo = (iso, extra = '') => (iso ? `<time datetime="${e(iso)}" data-relativo${extra}>${e(dataOraRoma(iso))}</time>` : 'mai');
   const fonte = st.fonte_guasta_dal
     ? `<p class="avviso avviso-errore">La fonte ufficiale non risponde, o manda dati anomali, dal ${tempo(st.fonte_guasta_dal)}. Il sito mostra i dati dell'ultima verifica riuscita e li aggiornerà appena la fonte tornerà a funzionare.</p>`
     : '<p class="avviso avviso-ok">La fonte ufficiale funziona regolarmente.</p>';
@@ -644,7 +645,7 @@ export function paginaStato(ctx) {
     descrizione: 'Quando abbiamo controllato per l\'ultima volta il calendario ufficiale degli scioperi e se la fonte funziona.',
     corpo: `<div id="stato-fonte">${fonte}</div>
 <table class="tabella" id="tabella-stato"><tbody>
-${riga('Ultimo controllo riuscito della fonte', tempo(st.ultima_verifica_riuscita), ' data-campo="ultima_verifica_riuscita"')}
+${riga('Ultimo controllo riuscito della fonte', tempo(st.ultima_verifica_riuscita, ' data-controllo'), ' data-campo="ultima_verifica_riuscita"')}
 ${riga('Ultima modifica dei dati', tempo(st.ultima_modifica_dati), ' data-campo="ultima_modifica_dati"')}
 ${riga('Ultima pubblicazione del sito', tempo(st.ultima_pubblicazione), ' data-campo="ultima_pubblicazione"')}
 ${riga('Data di aggiornamento indicata dal Ministero', e(st.fonte_aggiornata_al || 'non indicata'))}
@@ -652,7 +653,7 @@ ${riga('Scioperi in programma nel calendario ufficiale', e(st.scioperi_nel_feed 
 ${st.ultimo_errore ? riga('Ultimo problema', `${e(st.ultimo_errore.messaggio)} (${tempo(st.ultimo_errore.quando)}${st.ultimo_errore.risolto_il ? `, risolto ${tempo(st.ultimo_errore.risolto_il)}` : ''})`) : ''}
 </tbody></table>
 <h2>Come lavoriamo</h2>
-<p>Il calendario ufficiale viene controllato ogni 30 minuti. Il sito viene ripubblicato quando i dati cambiano, ogni giorno dopo la mezzanotte e comunque almeno ogni 6 ore. Se la fonte si guasta, non pubblichiamo dati nuovi finché non torna a funzionare, e il gestore riceve un avviso.</p>
+<p>Il calendario ufficiale viene controllato ogni 30 minuti e l'ora dell'ultimo controllo si aggiorna a ogni giro. Il sito viene ripubblicato quando i dati cambiano, ogni giorno dopo la mezzanotte e comunque almeno ogni 6 ore. Se la fonte si guasta, non pubblichiamo dati nuovi finché non torna a funzionare, e il gestore riceve un avviso.</p>
 <p>Se il controllo è fermo da più di ${e(ctx.sito.oreAvvisoDatiVecchi)} ore, in alto nelle pagine compare un avviso.</p>`,
   });
 }

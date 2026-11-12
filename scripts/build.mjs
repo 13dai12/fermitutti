@@ -155,6 +155,9 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   for (const f of readdirSync(join(RADICE, 'src', 'caratteri'))) scrivi(join(uscita, 'caratteri', f), readFileSync(join(RADICE, 'src', 'caratteri', f)));
   scrivi(join(uscita, 'caratteri', 'OFL.txt'), readFileSync(join(RADICE, 'assets', 'fonts', 'OFL.txt')));
   scrivi(join(uscita, '_headers'), intestazioniPerConfigurazione(readFileSync(join(RADICE, 'src', '_headers'), 'utf8'), sito));
+  // L'unica funzione (functions/api/stato.js) gira solo sul suo indirizzo: tutte le altre richieste restano file statici
+  // e non contano nel limite giornaliero delle funzioni.
+  scrivi(join(uscita, '_routes.json'), `${JSON.stringify({ version: 1, include: ['/api/stato'], exclude: [] })}\n`);
   // Gli archivi del web non copiano la pagina Privacy, che contiene il nome del titolare. Google invece deve poterla
   // leggere per vedere il noindex, quindi il gruppo «*» non la blocca.
   scrivi(join(uscita, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /widget/\n\nUser-agent: ia_archiver\nUser-agent: archive.org_bot\nDisallow: /widget/\nDisallow: /privacy/\n\nSitemap: ${sito.urlBase}/sitemap.xml\n`);
