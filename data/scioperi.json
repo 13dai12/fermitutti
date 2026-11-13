@@ -1,6 +1,6 @@
 {
  "versione": 1,
- "aggiornato_il": "2026-11-13T09:38:39.858Z",
+ "aggiornato_il": "2026-11-13T14:08:39.927Z",
  "fonte": {
   "url": "https://scioperi.mit.gov.it/mit2/public/scioperi/rss",
   "aggiornato_al": "13/11/2026"
@@ -40,7 +40,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -74,7 +74,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -113,7 +113,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -152,7 +152,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -191,7 +191,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -230,7 +230,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -269,7 +269,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -308,7 +308,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -344,17 +344,23 @@
    "esclude_trasporti": false,
    "sindacati": "CGIL",
    "categoria": "SCIOPERO GENERALE SETTORI PUBBLICI E PRIVATI ANCHE IN APPALTO E STRUMENTALI",
-   "note": "ADESIONE OS CSS - *ESCLUSI SETTORI TRASPORTO AEREO, FERROVIARIO, TRASPORTO MERCI SU ROTAIA, E VARIE SOCC. TPL",
+   "note": "ADESIONE OS CSS - *ESCLUSI SETTORI TRASPORTO AEREO, FERROVIARIO, TRASPORTO MERCI SU ROTAIA, E VARIE SOCC. TPL ( SOLO PERSONALE FERROVIARIO )",
    "proclamazione": "2026-10-19",
    "ricezione": "2026-10-19",
    "slug": "2026-11-20-generale-nazionale-cgil",
    "stato": "confermato",
-   "sequence": 1,
+   "sequence": 2,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
-   "modificato_il": "2026-11-11T17:04:21.450Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
+   "modificato_il": "2026-11-13T14:08:39.927Z",
    "rimosso_il": null,
-   "storia": []
+   "storia": [
+    {
+     "quando": "2026-11-13T14:08:39.927Z",
+     "tipo": "modificato",
+     "testo": "Aggiornati dal Ministero: note."
+    }
+   ]
   },
   {
    "id": "8633",
@@ -385,7 +391,7 @@
    "stato": "confermato",
    "sequence": 1,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T17:04:21.450Z",
    "rimosso_il": null,
    "storia": []
@@ -433,7 +439,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -469,7 +475,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -504,7 +510,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -543,7 +549,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -582,7 +588,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -621,7 +627,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -660,7 +666,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -697,7 +703,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -745,7 +751,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -784,7 +790,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -823,7 +829,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-13T09:38:39.858Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-13T09:38:39.858Z",
    "rimosso_il": null,
    "storia": []
@@ -862,7 +868,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -901,7 +907,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -935,7 +941,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T16:07:40.211Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-12T16:07:40.211Z",
    "rimosso_il": null,
    "storia": []
@@ -974,7 +980,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1013,7 +1019,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1052,7 +1058,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T14:38:39.885Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-12T14:38:39.885Z",
    "rimosso_il": null,
    "storia": []
@@ -1091,7 +1097,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1130,7 +1136,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1169,7 +1175,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1208,7 +1214,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1247,7 +1253,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1286,7 +1292,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-13T09:38:39.858Z",
+   "visto_ultimo": "2026-11-13T14:08:39.927Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
