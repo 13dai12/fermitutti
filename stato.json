@@ -1,0 +1,17 @@
+{
+ "ultima_verifica_riuscita": "2026-11-14T16:07:40.207Z",
+ "ultimo_tentativo": "2026-11-14T16:07:40.207Z",
+ "ultima_modifica_dati": "2026-11-13T23:08:39.873Z",
+ "ultima_pubblicazione": "2026-11-14T11:38:39.862Z",
+ "fonte_guasta_dal": null,
+ "ultimo_errore": {
+  "quando": "2026-11-11T20:57:31.195Z",
+  "messaggio": "fonte non raggiungibile: fetch failed",
+  "risolto_il": "2026-11-11T23:09:29.665Z"
+ },
+ "fonte_aggiornata_al": "14/11/2026",
+ "impronta_feed": "be6bc7ef9860639e",
+ "scioperi_in_archivio": 33,
+ "scioperi_nel_feed": 31,
+ "avvisi": []
+}
