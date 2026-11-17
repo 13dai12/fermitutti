@@ -1,8 +1,8 @@
 {
- "ultima_verifica_riuscita": "2026-11-17T11:38:47.955Z",
- "ultimo_tentativo": "2026-11-17T11:38:47.955Z",
- "ultima_modifica_dati": "2026-11-16T23:07:48.007Z",
- "ultima_pubblicazione": "2026-11-17T11:38:47.955Z",
+ "ultima_verifica_riuscita": "2026-11-17T12:07:47.981Z",
+ "ultimo_tentativo": "2026-11-17T12:07:47.981Z",
+ "ultima_modifica_dati": "2026-11-17T12:07:47.981Z",
+ "ultima_pubblicazione": "2026-11-17T12:07:47.981Z",
  "fonte_guasta_dal": null,
  "ultimo_errore": {
   "quando": "2026-11-11T20:57:31.195Z",
@@ -10,7 +10,7 @@
   "risolto_il": "2026-11-11T23:09:29.665Z"
  },
  "fonte_aggiornata_al": "17/11/2026",
- "impronta_feed": "35f2b9f0374fe652",
+ "impronta_feed": "83d09e0b5161a33f",
  "scioperi_in_archivio": 35,
  "scioperi_nel_feed": 28,
  "avvisi": []
