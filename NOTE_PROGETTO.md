@@ -87,6 +87,7 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
 ### Licenza dei dati
 - Le note legali del sito del Ministero (lette tramite Wayback Machine, perché `www.mit.gov.it` ha una catena di certificati incompleta che fa fallire curl) dicono che i contenuti sono in **CC BY 3.0 IT** «salvo ove diversamente indicato».
 - **Decisione:** citare sempre la fonte con link, non usare loghi né stemmi, dichiarare che i dati sono rielaborati.
+- **Niente collegamenti sottintesi (18 novembre 2026):** la licenza (art. 4.b) chiede di citare l'autore ma vieta di «affermare o fare intendere un qualsiasi collegamento» con lui, o che ci «sponsorizzi o avalli». La frase in fondo alle pagine diceva «non è collegato al Ministero» subito prima di «i dati vengono dal Ministero»: all'utente è sembrata una contraddizione. Ora dice «sito indipendente, non del Ministero» e «riprende i dati pubblici». Le note legali spiegano che usare i dati pubblicati per tutti non vuol dire essere gestiti, approvati o controllati da chi li pubblica.
 
 ### Scuola e pubblico impiego: non inclusi
 - **Valutazione:** il «Cruscotto degli scioperi nel pubblico impiego» della Funzione Pubblica (`crusc-gepas.perlapa.gov.it`) è un'applicazione Angular. Le sue API (`gepas-api.perlapa.gov.it/api/Public/Scioperi/...`) non sono documentate, rispondono 400 a richieste semplici e sono limitate via CORS all'applicazione stessa. Non ci sono un feed né condizioni d'uso.

@@ -102,7 +102,7 @@ ${navigazione(p.percorso)}
 ${p.corpo}
 </main>
 <footer class="pie">
-<p><strong>${e(sito.nome)}</strong> non è un sito ufficiale e non è collegato al Ministero né alla Commissione di garanzia scioperi. I dati vengono dal <a href="https://scioperi.mit.gov.it/mit2/public/scioperi" rel="noopener">calendario degli scioperi del Ministero delle Infrastrutture e dei Trasporti</a> e possono cambiare: prima di partire verifica sempre con la tua azienda di trasporto.</p>
+<p><strong>${e(sito.nome)}</strong> è un sito indipendente, non del Ministero né della Commissione di garanzia scioperi. Riprende i dati pubblici del <a href="https://scioperi.mit.gov.it/mit2/public/scioperi" rel="noopener">calendario degli scioperi del Ministero delle Infrastrutture e dei Trasporti</a>, che possono cambiare: prima di partire verifica sempre con la tua azienda di trasporto.</p>
 <ul class="pie-link">
 <li><a href="/settore/">Scioperi per settore</a></li>
 <li><a href="/come-funziona/">Come funziona</a></li>

@@ -611,7 +611,7 @@ export function paginaNoteLegali(ctx) {
     corpo: `<h2>Chi gestisce il sito</h2>
 <p>${e(ctx.sito.nome)} è gestito dal titolare indicato in fondo alla pagina <a href="/privacy/#gestione">Privacy</a>${t.partitaIva ? `, partita IVA ${e(t.partitaIva)}` : ''}${t.indirizzo ? `, ${e(t.indirizzo)}` : ''}. Contatto: ${e(t.email)}.</p>
 <h2>Non siamo un sito ufficiale</h2>
-<p>Il sito non è affiliato né collegato al Ministero delle Infrastrutture e dei Trasporti, alla Commissione di garanzia per l'attuazione della legge sullo sciopero nei servizi pubblici essenziali, né alle aziende di trasporto.</p>
+<p>Il sito è indipendente: non è affiliato né collegato al Ministero delle Infrastrutture e dei Trasporti, alla Commissione di garanzia per l'attuazione della legge sullo sciopero nei servizi pubblici essenziali, né alle aziende di trasporto. Usiamo le informazioni che questi enti e queste aziende pubblicano per tutti, ma nessuno di loro gestisce il sito, lo approva o ne controlla i contenuti.</p>
 <h2>Da dove vengono i dati</h2>
 <p>Gli scioperi vengono dal <a href="${MIT_PAGINA}" rel="noopener">calendario ufficiale degli scioperi del Ministero delle Infrastrutture e dei Trasporti</a>, pubblicato con licenza Creative Commons Attribuzione 3.0 Italia. Le fasce garantite vengono dai siti ufficiali delle aziende, indicati nella pagina <a href="/fonti/">Fonti</a>.</p>
 <h2>Le informazioni possono cambiare</h2>
