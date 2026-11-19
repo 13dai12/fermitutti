@@ -1,16 +1,16 @@
 {
- "ultima_verifica_riuscita": "2026-11-19T18:07:47.972Z",
- "ultimo_tentativo": "2026-11-19T18:07:47.972Z",
+ "ultima_verifica_riuscita": "2026-11-19T23:07:47.917Z",
+ "ultimo_tentativo": "2026-11-19T23:07:47.917Z",
  "ultima_modifica_dati": "2026-11-19T12:07:47.942Z",
- "ultima_pubblicazione": "2026-11-19T18:07:47.972Z",
+ "ultima_pubblicazione": "2026-11-19T23:07:47.917Z",
  "fonte_guasta_dal": null,
  "ultimo_errore": {
   "quando": "2026-11-11T20:57:31.195Z",
   "messaggio": "fonte non raggiungibile: fetch failed",
   "risolto_il": "2026-11-11T23:09:29.665Z"
  },
- "fonte_aggiornata_al": "19/11/2026",
- "impronta_feed": "aa335a6cc4d15901",
+ "fonte_aggiornata_al": "20/11/2026",
+ "impronta_feed": "e38407e6b65de531",
  "scioperi_in_archivio": 37,
  "scioperi_nel_feed": 29,
  "avvisi": []
