@@ -6,6 +6,7 @@ import { validaElementi } from '../scripts/lib/valida.mjs';
 import { normalizza } from '../scripts/lib/normalizza.mjs';
 import { unisci, archivioVuoto } from '../scripts/lib/archivio.mjs';
 import { compatto } from '../scripts/lib/presenta.mjs';
+import { perAssistente } from '../scripts/lib/fasce.mjs';
 
 export const FEED_REALE = readFileSync(new URL('./fixtures/feed-reale.xml', import.meta.url), 'utf8');
 
@@ -57,9 +58,7 @@ export function baseDiProva() {
   const leggi = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url), 'utf8'));
   const luoghi = leggi('../data/luoghi.json');
   const settori = Object.entries(leggi('../data/settori.json')).filter(([k]) => !k.startsWith('_')).map(([, s]) => ({ slug: s.slug, nome: s.nome, breve: s.breve }));
-  const fasce = leggi('../data/fasce_garanzia.json').fasce.filter((v) => v.mostra !== false).map((v) => ({
-    tipo: v.tipo, citta: v.citta || null, regione: v.regione || (v.ambito !== 'nazionale' ? v.ambito : null), azienda: v.azienda,
-    fasce: v.fasce, citazione: v.fasce_testo, fonte: v.fonte_url, avvisi: v.pagina_scioperi_url, origine: v.origine, avviso_del: v.avviso_del, verificato_il: v.verificato_il, nota: v.note || null,
-  }));
+  // Le stesse fasce che la build scrive in public/dati/base.json.
+  const fasce = perAssistente();
   return { luoghi: { regioni: luoghi.regioni, citta: luoghi.citta }, settori, assistente: leggi('../data/assistente.json'), fasce };
 }

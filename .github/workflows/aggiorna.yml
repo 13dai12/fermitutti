@@ -101,7 +101,8 @@ jobs:
   segnala:
     name: Avvisa il proprietario se qualcosa non va
     needs: [aggiorna, prova-build]
-    # Parte solo quando c'è qualcosa da aprire o da chiudere: errore, fonte guasta o tornata, oppure dopo una prova di build.
+    # Parte a ogni controllo: apre una segnalazione se qualcosa non va e, quando tutto funziona (fonte_ripristinata), chiude
+    # quelle rimaste aperte. GitHub esegue solo 2 o 3 controlli al giorno, quindi non si aspetta un'ora precisa per chiuderle.
     if: >-
       always() && (needs.aggiorna.result != 'success' || needs.aggiorna.outputs.esito == 'guasta'
       || needs.aggiorna.outputs.fonte_ripristinata == 'true'

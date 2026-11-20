@@ -64,6 +64,14 @@ test('fasce garantite: il file dati è valido e i link sono https', () => {
   assert.throws(() => validaFasce([{ id: 'x', tipo: 'aereo', fonte_url: 'https://x.it', fasce: [{ giorni: 'tutti', dalle: '06:00', alle: '09:00' }], fasce_testo: null, verificato_il: '2026-11-11' }]), /citazione/);
 });
 
+test('fasce garantite: un avviso di un singolo sciopero ha sempre la data e la pagina stabile degli avvisi', () => {
+  const avviso = { id: 'x', tipo: 'aereo', origine: 'avviso', avviso_del: '2026-11-20', fonte_url: 'https://x.it/avvisi/sciopero-20-novembre', pagina_scioperi_url: 'https://x.it/avvisi', fasce: [], verificato_il: '2026-11-20' };
+  assert.equal(validaFasce([avviso]), true);
+  assert.throws(() => validaFasce([{ ...avviso, pagina_scioperi_url: avviso.fonte_url }]), /pagina stabile/, 'lo stesso link dell\'avviso sparirebbe con lui');
+  assert.throws(() => validaFasce([{ ...avviso, pagina_scioperi_url: null }]), /pagina stabile/);
+  assert.throws(() => validaFasce([{ ...avviso, avviso_del: null }]), /avviso_del/);
+});
+
 test('intestazioni di sicurezza (_headers)', () => {
   const regole = leggiHeaders(readFileSync(new URL('../src/_headers', import.meta.url), 'utf8'));
   const h = intestazioniPer(regole, '/');

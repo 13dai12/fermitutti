@@ -6,7 +6,7 @@ import { costruisciElenchi, contaTesto } from '../../src/js/elenchi.mjs';
 import { titoloPagina, luogoTesto, leggibile, orarioTesto, elencoSettoriTesto } from './presenta.mjs';
 import { infoSettore } from './normalizza.mjs';
 import { cittaDaProvincia, cittaDellaRegione, regioneDaNome } from './luoghi.mjs';
-import { fascePerSciopero, htmlFasce, ferroviariePer, tplPerCitta, aeree, tplTutte, TUTTE as TUTTE_FASCE, testoFasce } from './fasce.mjs';
+import { fascePerSciopero, htmlFasce, ferroviariePer, tplPerCitta, aeree, tplTutte, TUTTE as TUTTE_FASCE, testoFasce, linkFonte } from './fasce.mjs';
 import { htmlDirittiVolo, htmlAlternative, htmlPubblicita, LINK_UE_DIRITTI_AEREI } from './affiliati.mjs';
 
 const MIT_PAGINA = 'https://scioperi.mit.gov.it/mit2/public/scioperi';
@@ -563,7 +563,13 @@ export function paginaComeFunziona(ctx) {
 }
 
 export function paginaFonti(ctx) {
-  const righe = TUTTE_FASCE.filter((v) => v.mostra !== false).map((v) => `<tr><td>${e(v.azienda)}${v.citta ? ` (${e(v.citta)})` : ''}</td><td>${v.fasce_testo ? e(testoFasce(v) || 'vedi citazione') : 'non trovate'}</td><td>${v.fonte_url ? `<a href="${urlSicuro(v.fonte_url)}" rel="noopener">${e(v.fonte_titolo || 'fonte')}</a>` : (v.pagina_scioperi_url ? `<a href="${urlSicuro(v.pagina_scioperi_url)}" rel="noopener">avvisi dell'azienda</a>` : '')}</td><td>${e(v.verificato_il)}</td></tr>`).join('');
+  // Gli avvisi dei singoli scioperi spariscono presto: per quelli si linka la pagina stabile degli avvisi (linkFonte).
+  const fonte = (v) => {
+    if (v.origine === 'avviso' && v.avviso_del && v.pagina_scioperi_url) return `avviso per lo sciopero di ${e(dataLunga(v.avviso_del))} (<a href="${urlSicuro(linkFonte(v))}" rel="noopener">pagina degli avvisi dell'azienda</a>)`;
+    if (v.fonte_url) return `<a href="${urlSicuro(v.fonte_url)}" rel="noopener">${e(v.fonte_titolo || 'fonte')}</a>`;
+    return v.pagina_scioperi_url ? `<a href="${urlSicuro(v.pagina_scioperi_url)}" rel="noopener">avvisi dell'azienda</a>` : '';
+  };
+  const righe = TUTTE_FASCE.filter((v) => v.mostra !== false).map((v) => `<tr><td>${e(v.azienda)}${v.citta ? ` (${e(v.citta)})` : ''}</td><td>${v.fasce_testo ? e(testoFasce(v) || 'vedi citazione') : 'non trovate'}</td><td>${fonte(v)}</td><td>${e(v.verificato_il)}</td></tr>`).join('');
   return paginaTesto(ctx, {
     percorso: '/fonti/', titolo: 'Fonti dei dati',
     descrizione: 'Le fonti ufficiali usate dal sito: il calendario degli scioperi del Ministero dei Trasporti e le pagine delle aziende di trasporto per le fasce garantite.',

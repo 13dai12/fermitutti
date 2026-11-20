@@ -261,11 +261,10 @@ export function sorveglia({ dataDir, adesso = new Date(), oreMassime = ORE_SORVE
     }
     const riassunto = `ultima verifica riuscita ${Math.floor(ore * 10) / 10} ore fa`;
     log(`Aggiornamento regolare: ${riassunto}.`);
-    // Il lavoro che apre e chiude le segnalazioni parte solo se può servire: nelle 6 ore dopo un ripristino, e una volta
-    // al giorno (il controllo delle 00 UTC) per chiudere quelle rimaste aperte. Così si risparmiano minuti di GitHub Actions.
-    const risolto = statoPrecedente.ultimo_errore?.risolto_il ? new Date(statoPrecedente.ultimo_errore.risolto_il) : null;
-    const daChiudere = Boolean(risolto && (adesso - risolto) / 3600000 <= 6) || adesso.getUTCHours() === 0;
-    emettiOutput({ esito: 'ok', pubblica: false, motivo: 'aggiornamento regolare', dati_cambiati: false, urgente: false, fonte_ripristinata: daChiudere, riassunto });
+    // A ogni controllo regolare parte anche il lavoro che chiude le segnalazioni rimaste aperte. Prima partiva solo nelle
+    // 6 ore dopo un ripristino e alle 00 UTC, ma GitHub esegue solo 2 o 3 dei 12 controlli programmati al giorno (misurato
+    // dal 12 al 20 novembre 2026), quindi una segnalazione già risolta poteva restare aperta per giorni.
+    emettiOutput({ esito: 'ok', pubblica: false, motivo: 'aggiornamento regolare', dati_cambiati: false, urgente: false, fonte_ripristinata: true, riassunto });
     return { ok: true, pubblica: false, motivo: 'aggiornamento regolare' };
   }
   const quando = Number.isFinite(ore) ? `l'ultima verifica riuscita della fonte è di ${Math.floor(ore)} ore fa` : 'non risulta nessuna verifica riuscita della fonte';

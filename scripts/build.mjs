@@ -16,7 +16,7 @@ import configAffiliati from '../config/affiliati.mjs';
 import { oggiRoma, dataLunga } from './lib/date.mjs';
 import { CITTA, REGIONI } from './lib/luoghi.mjs';
 import { titoloScheda } from './lib/presenta.mjs';
-import { validaFasce, TUTTE as FASCE } from './lib/fasce.mjs';
+import { validaFasce, perAssistente, TUTTE as FASCE } from './lib/fasce.mjs';
 import { preparaAffiliati } from './lib/affiliati.mjs';
 import { evento, calendario } from './lib/ics.mjs';
 import { toccaZona, toccaSettore, perPasseggeri } from '../src/js/filtri.mjs';
@@ -178,10 +178,7 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   };
   scrivi(join(uscita, 'dati', 'scioperi.json'), JSON.stringify({ stato: statoPubblico, scioperi: compatti }));
   scrivi(join(uscita, 'dati', 'stato.json'), JSON.stringify(statoPubblico));
-  const fascePerAssistente = FASCE.filter((v) => v.mostra !== false).map((v) => ({
-    tipo: v.tipo, citta: v.citta || null, regione: v.regione || (v.ambito !== 'nazionale' ? v.ambito : null), azienda: v.azienda,
-    fasce: v.fasce, citazione: v.fasce_testo, fonte: v.fonte_url, avvisi: v.pagina_scioperi_url, origine: v.origine, avviso_del: v.avviso_del, verificato_il: v.verificato_il, nota: v.note || null,
-  }));
+  const fascePerAssistente = perAssistente(FASCE);
   scrivi(join(uscita, 'dati', 'base.json'), JSON.stringify({
     luoghi: { regioni: luoghi.regioni, citta: luoghi.citta },
     settori: settori.map((s) => ({ slug: s.slug, nome: s.nome, breve: s.breve })),

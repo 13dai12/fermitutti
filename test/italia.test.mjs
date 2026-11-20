@@ -81,3 +81,30 @@ test('aggiorna-italia.sh: legge la fonte, prova la build e invia solo i dati, e 
   // Un controllo fallito non porta avanti l'ora: si riparte dallo stato pubblicato su main (quello delle 10:00).
   assert.ok(ora3.ultima_verifica_riuscita < '2026-11-11T11:00:00.000Z', 'un controllo fallito non sposta in avanti l\'ora');
 });
+
+test('aggiorna-italia.sh: senza internet riprova, poi si ferma con un messaggio chiaro e senza toccare niente', async () => {
+  // Il 20 novembre 2026 il computer è rimasto senza internet per tre ore e mezza: git diceva soltanto «Impossibile leggere
+  // dal repository remoto». Qui il server di GitHub è un nome che non esiste (.invalid è riservato e non si risolve mai).
+  const conGetent = (() => { try { execFileSync('sh', ['-c', 'command -v getent']); return true; } catch { return false; } })();
+  for (const remoto of ['ssh://git@fermitutti-prova.invalid/repo.git', 'git@fermitutti-prova.invalid:repo.git']) {
+    const base = mkdtempSync(join(cartella, 'senza-rete-'));
+    symlinkSync(RADICE, join(base, 'codice'));
+    const repo = join(base, 'repo');
+    git('init', '--quiet', '--initial-branch=main', repo);
+    git('-C', repo, 'remote', 'add', 'origin', remoto);
+    const errore = await esegui('sh', [SCRIPT], {
+      encoding: 'utf8',
+      env: { ...process.env, FERMITUTTI_BASE: base, FERMITUTTI_ATTESA_RETE: '0', FONTE_URL: `${fonte.url}/rss?scenario=ok`, FONTE_HTML_URL: '' },
+    }).then(() => null, (e) => e);
+    assert.ok(errore, `con ${remoto} lo script deve fermarsi`);
+    if (conGetent) {
+      assert.equal(errore.code, 75, 'codice 75: nessuna connessione a internet');
+      assert.match(errore.stderr, /Nessuna connessione a internet: questo computer non trova fermitutti-prova[.]invalid[.]/);
+    } else {
+      assert.equal(errore.code, 1);
+      assert.match(errore.stderr, /GitHub non risponde/);
+    }
+    assert.match(errore.stderr, /non ho toccato i dati/i);
+    assert.equal(git('-C', repo, 'status', '--porcelain'), '', 'nessun file creato o modificato');
+  }
+});

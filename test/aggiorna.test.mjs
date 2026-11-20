@@ -130,7 +130,8 @@ test('sorveglianza: senza nessuno stato la fonte risulta mai verificata', () => 
   assert.equal(existsSync(join(dir, 'scioperi.json')), false);
 });
 
-test('sorveglianza: il lavoro delle segnalazioni parte solo dopo un ripristino recente o una volta al giorno', () => {
+test('sorveglianza: a ogni controllo regolare si chiudono le segnalazioni rimaste aperte, anche se il ripristino è vecchio', () => {
+  // GitHub esegue solo 2 o 3 dei 12 controlli programmati al giorno: aspettare un'ora precisa voleva dire aspettare giorni.
   const fileOutput = join(nuovaCartella(), 'output.txt');
   const prima = process.env.GITHUB_OUTPUT;
   process.env.GITHUB_OUTPUT = fileOutput;
@@ -138,14 +139,12 @@ test('sorveglianza: il lavoro delle segnalazioni parte solo dopo un ripristino r
     const valore = (stato, adesso) => {
       writeFileSync(fileOutput, '');
       sorveglia({ dataDir: cartellaConStato(stato), adesso, log: () => {} });
-      return /^fonte_ripristinata=(.*)$/m.exec(readFileSync(fileOutput, 'utf8'))[1];
+      return /^fonte_ripristinata=(.*)$/m.exec(readFileSync(fileOutput, 'utf8'))?.[1] ?? null;
     };
     const regolare = { ultima_verifica_riuscita: oreFa(1), ultima_pubblicazione: oreFa(1), fonte_guasta_dal: null };
-    assert.equal(valore(regolare, ORA), 'false', 'di giorno e senza ripristini non parte');
-    assert.equal(valore({ ...regolare, ultimo_errore: { quando: oreFa(3), messaggio: 'x', risolto_il: oreFa(2) } }, ORA), 'true', 'dopo un ripristino recente parte');
-    assert.equal(valore({ ...regolare, ultimo_errore: { quando: oreFa(30), messaggio: 'x', risolto_il: oreFa(20) } }, ORA), 'false', 'un ripristino vecchio non conta');
-    const notte = new Date('2026-11-12T00:17:00Z');
-    assert.equal(valore({ ultima_verifica_riuscita: '2026-11-11T23:30:00Z', ultima_pubblicazione: '2026-11-11T23:30:00Z', fonte_guasta_dal: null }, notte), 'true', 'una volta al giorno parte comunque');
+    assert.equal(valore(regolare, ORA), 'true', 'di giorno e senza ripristini recenti');
+    assert.equal(valore({ ...regolare, ultimo_errore: { quando: oreFa(30), messaggio: 'x', risolto_il: oreFa(20) } }, ORA), 'true', 'anche dopo un ripristino di 20 ore fa');
+    assert.equal(valore({ ...regolare, fonte_guasta_dal: oreFa(1), ultimo_errore: { quando: oreFa(1), messaggio: 'HTTP 500' } }, ORA), null, 'con la fonte guasta non si chiude niente');
   } finally {
     if (prima === undefined) delete process.env.GITHUB_OUTPUT; else process.env.GITHUB_OUTPUT = prima;
   }

@@ -2,7 +2,7 @@
 
 Questo file è la memoria del progetto. Contiene una voce per ogni decisione o lezione, sempre con il perché. Va letto all'inizio di ogni sessione di lavoro. Le voci esistenti si aggiornano: non si duplicano.
 
-Ultimo aggiornamento: 12 novembre 2026. La guida per il proprietario è `DEPLOY.md`; tutto il resto, sicurezza compresa, è qui.
+Ultimo aggiornamento: 20 novembre 2026. La guida per il proprietario è `DEPLOY.md`; tutto il resto, sicurezza compresa, è qui.
 
 ## Comandi e struttura
 
@@ -18,6 +18,8 @@ Serve Node.js 22 o più recente.
 | `npm run servi` | Serve `public/` su http://127.0.0.1:8080 con le intestazioni di `_headers` |
 | `npm run screenshot` | Schermate a 360 px e desktop con Chromium, controllando console e CSP |
 | `npm run verifica-online -- fermitutti.com` | Controlli dopo la pubblicazione: HTTPS, intestazioni, DNS, calendari |
+| `npm run stato` | Sul computer in Italia: come sta l'aggiornamento automatico, in parole semplici e con cosa fare |
+| `npm run controlla-fonti` | Link alle fonti delle fasce garantite che non funzionano più e fasce prese da avvisi vecchi |
 
 | Cartella o file | Contenuto |
 |---|---|
@@ -107,7 +109,11 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
   - per ATM e NET Monza l'avviso dice quando il servizio **non** è garantito: ho tenuto solo la citazione, senza ricavare orari «per differenza»;
   - Firenze usa l'avviso di Autolinee Toscane per Livorno, Lucca e Massa-Carrara, che dichiara «modalità di attuazione uniche su tutto il territorio regionale».
 - **Senza fasce verificabili:** Bologna (TPER: pagine 403 o 404), Brescia (403 anche con curl), Parma (TEP: avvisi rimossi), Novara (SUN), Napoli ANM (sito tutto in JavaScript), Cagliari (CTM, avvisi caricati in JavaScript), Foggia (ATAF), Italo (pubblica solo elenchi di treni per singolo sciopero). Esclusi Reggio Calabria (ATAM: HTTPS con certificato non valido) e Cosenza (AMACO non raggiungibile, in liquidazione).
-- **Da rifare una volta l'anno:** le aziende cambiano pagine; il campo `verificato_il` aiuta. Le voci con origine `avviso` sono quelle che invecchiano prima.
+- **Da rifare una volta l'anno:** le aziende cambiano pagine; il campo `verificato_il` aiuta. Le voci con origine `avviso` sono quelle che invecchiano prima. `npm run controlla-fonti` elenca i link rotti, gli avvisi con più di 6 mesi e le voci verificate più di un anno fa.
+- **Gli avvisi spariscono in pochi giorni (20 novembre 2026):** tre link alle fonti davano 404 (NET Monza, ATB Bergamo, AMTAB Bari): le aziende tolgono l'avviso di un singolo sciopero poco dopo lo sciopero, a volte entro una settimana. Nessuno dei tre era nella Wayback Machine. Inoltre l'avviso ATB di ottobre (fasce 6-8:30 e 12:30-16, linee gestite da Arriva) era superato da quello per il 20 novembre (6:15-9:15 e 12:30-15:30, rete ATB e tranvia TEB): voce aggiornata con la citazione testuale.
+  - **Decisione** (`linkFonte` in `scripts/lib/fasce.mjs`): per le voci con origine `avviso` il sito nomina l'avviso nel testo (titolo e data dello sciopero) e linka la pagina stabile con tutti gli avvisi dell'azienda (`pagina_scioperi_url`), anche nella pagina Fonti e nell'assistente. Il link preciso resta nel file dei dati per chi ricontrolla le citazioni. `validaFasce` rifiuta un avviso senza `avviso_del` o con `pagina_scioperi_url` uguale al link dell'avviso, e una prova controlla che nessuna pagina generata linki un avviso.
+  - **Perché:** un link rotto accanto a una citazione fa sembrare inventato il dato; la pagina degli avvisi serve comunque di più a chi deve partire, perché lì trova l'avviso del prossimo sciopero.
+  - **Da aggiornare** (avvisi con più di 6 mesi al 20 novembre 2026): Verona ATV, Padova e Salerno Busitalia, Catania AMTS, Taranto Kyma, Sassari ATP.
 
 ## Architettura
 
@@ -116,6 +122,7 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
 - **Decisione:** i dati li legge un computer in Italia (`scripts/aggiorna-italia.sh`, avviato ogni 30 minuti da un timer di systemd dell'utente, installato da `scripts/installa-aggiornamento-italia.sh`). GitHub fa solo da sorveglianza (`node scripts/aggiorna.mjs --sorveglia`, ogni due ore): se il computer vede la fonte guasta, o se da più di 9 ore (`ORE_SORVEGLIANZA`) non arriva una verifica riuscita, segna l'avviso sul sito e apre una segnalazione; quando i dati tornano, la chiude.
 - **Perché:** è gratis e non aggiunge server. Non si aggira il blocco con VPN o proxy: si legge da dove il Ministero permette di leggere. Le alternative sempre accese, cioè un Raspberry Pi a casa o una macchina gratuita in Italia, usano lo stesso script.
 - **Sicurezza del computer:** il timer esegue una copia fissa del codice (`~/.local/share/fermitutti/codice`), presa dall'ultimo commit locale al momento dell'installazione, con le sole dipendenze bloccate della build. Il codice che arriva da GitHub non viene eseguito. Nella copia del repository (`~/.local/share/fermitutti/repo`) cambiano e si inviano solo `data/scioperi.json` e `data/stato.json`, dopo una build di prova completa. Se `git fetch` fallisce lo script si ferma senza toccare niente, così un guasto della rete di casa non diventa una «fonte guasta».
+- **Rete assente (20 novembre 2026):** dalle 17:08 alle 20:37 tutti i giri sono falliti con «Could not resolve hostname github.com»: alle 16:59 si era staccato il cavo di rete e l'adattatore USB collegato dopo prendeva un indirizzo locale senza uscita su internet (NetworkManager in stato `CONNECTED_SITE`). Lo script ha fatto la cosa giusta, ma git diceva «Assicurati di disporre dei privilegi d'accesso corretti e che il repository esista», che fa pensare a un guasto del sito. Ora `git fetch` si riprova due volte (dopo 60 e 120 secondi, utile anche al risveglio dalla sospensione, quando `Persistent=true` fa partire subito il timer e la rete non c'è ancora). Se il nome del server non si risolve nemmeno (`getent hosts`), lo script dice «Nessuna connessione a internet» ed esce con il codice 75; per gli altri errori mostra il messaggio di git ed esce con 1. Anche un invio fallito a metà ha il suo messaggio. `npm run stato` (`scripts/stato.mjs`) legge l'esito dell'ultimo giro dal registro, attraverso l'`InvocationID` del servizio, e lo spiega.
 - **Se un giorno il Ministero apre l'accesso dall'estero** basta tornare al vecchio workflow: in `.github/workflows/aggiorna.yml` togliere `--sorveglia` e riportare l'orario a ogni 30 minuti.
 
 ### GitHub Actions più Cloudflare Pages, collegati via Git
@@ -125,7 +132,7 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
   - `_headers` permette le intestazioni di sicurezza, che GitHub Pages non permette;
   - nei repository pubblici i minuti di Actions sono gratuiti, e la protezione del ramo principale, CodeQL e il blocco dei segreti sono gratis solo lì;
   - ogni commit è anche «attività», quindi GitHub non disattiva il workflow dopo 60 giorni.
-- **Sorgente pubblico, ma con meno dettagli in giro (12 novembre 2026):** il proprietario ha valutato il repository privato e ha deciso di lasciarlo pubblico, che con l'account gratuito tiene tutte le protezioni di GitHub. Il sito non linka più il repository. Al browser JavaScript e CSS arrivano senza commenti (`scripts/lib/compatta.mjs`, prudente: toglie solo righe intere e nel dubbio non tocca il file). Il lavoro che apre e chiude le segnalazioni parte solo dopo un ripristino recente e una volta al giorno, per non sprecare esecuzioni.
+- **Sorgente pubblico, ma con meno dettagli in giro (12 novembre 2026):** il proprietario ha valutato il repository privato e ha deciso di lasciarlo pubblico, che con l'account gratuito tiene tutte le protezioni di GitHub. Il sito non linka più il repository. Al browser JavaScript e CSS arrivano senza commenti (`scripts/lib/compatta.mjs`, prudente: toglie solo righe intere e nel dubbio non tocca il file). Il lavoro che apre e chiude le segnalazioni parte a ogni controllo della sorveglianza. Fino al 20 novembre 2026 partiva solo nelle 6 ore dopo un ripristino e alle 00 UTC, per risparmiare esecuzioni; ma dal 12 al 20 novembre GitHub ha eseguito solo 25 dei circa 100 controlli programmati ogni due ore, con buchi fino a 12 ore, e uno solo cadeva tra le 00 e l'01 UTC: una segnalazione già risolta poteva restare aperta per giorni.
 
 ### Dominio `fermitutti.com` su Cloudflare
 - **Decisione:** `fermitutti.com`, registrato su Cloudflare l'11 novembre 2026. Cloudflare non vende i `.it`. Dominio, DNS e sito stanno nello stesso account.
@@ -367,7 +374,7 @@ Il server del Ministero accetta solo connessioni dall'Italia, quindi i dati li l
 - **Solo i dati.** Nella copia del repository usata dal timer cambiano e si inviano soltanto `data/scioperi.json` e `data/stato.json`, con la firma «Fermi Tutti», più l'etichetta `stato` con l'ora dell'ultimo controllo. L'etichetta si invia solo dopo che i dati, se andavano pubblicati, sono arrivati su GitHub. Prima di inviare si costruisce il sito per prova. I dati che arrivano da GitHub passano dagli stessi controlli dell'archivio.
 - **Rete di casa.** Se GitHub non risponde lo script si ferma senza toccare niente, così un guasto della rete di casa non viene scambiato per un guasto della fonte.
 - **Chiave SSH.** Il timer usa la chiave SSH già presente sul computer. Chi entrasse nel computer potrebbe usarla per modificare il repository: il computer va tenuto aggiornato e protetto come ogni dispositivo personale.
-- **Sorveglianza.** GitHub controlla ogni due ore lo stato pubblicato. Se da più di 9 ore non arriva una verifica riuscita, il sito mostra l'avviso ai visitatori e il proprietario riceve una segnalazione. Il sito quindi non può restare fermo in silenzio.
+- **Sorveglianza.** GitHub controlla lo stato pubblicato: il controllo è programmato ogni due ore, ma GitHub ne esegue di solito 2 o 3 al giorno. Se da più di 9 ore non arriva una verifica riuscita, il sito mostra l'avviso ai visitatori e il proprietario riceve una segnalazione, quindi con qualche ora di ritardo in più rispetto al previsto. Indipendentemente da GitHub, il browser dei visitatori mostra l'avviso «dati non aggiornati» dopo 8 ore senza pubblicazioni. Il sito quindi non può restare fermo in silenzio.
 
 ### Come è stato verificato
 

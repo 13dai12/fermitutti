@@ -2,6 +2,7 @@
 # Installa l'aggiornamento automatico degli scioperi su questo computer, che deve trovarsi in Italia.
 # Crea una copia fissa del codice, una copia del repository per i dati e un timer di systemd che parte ogni 30 minuti.
 # Rilancialo dopo ogni modifica al codice: è l'unico modo in cui cambia il codice eseguito dal timer.
+# Per sapere come sta:       npm run stato   (dalla cartella del progetto; spiega in parole semplici)
 # Per vedere cosa ha fatto:  journalctl --user-unit fermitutti-aggiorna -n 30
 # Per toglierlo:             systemctl --user disable --now fermitutti-aggiorna.timer
 set -eu
@@ -71,3 +72,4 @@ journalctl --user-unit fermitutti-aggiorna -n 12 --no-pager -o cat || true
 echo
 echo "Fatto. Codice alla versione $(cat "$BASE/codice/VERSIONE")."
 systemctl --user list-timers fermitutti-aggiorna.timer --no-pager || true
+echo "Per controllare in qualsiasi momento come sta l'aggiornamento, dalla cartella del progetto: npm run stato"

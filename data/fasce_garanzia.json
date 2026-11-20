@@ -278,7 +278,7 @@
    "avviso_del": "2026-10-03",
    "fonte_url": "https://www.amt.genova.it/amt/sciopero-del-trasporto-pubblico-sabato-3-ottobre-2026-2/",
    "fonte_titolo": "Sciopero del Trasporto Pubblico sabato 3 ottobre 2026",
-   "pagina_scioperi_url": "https://www.amt.genova.it/amt/sciopero-del-trasporto-pubblico-sabato-3-ottobre-2026-2/",
+   "pagina_scioperi_url": "https://www.amt.genova.it/amt/-/notizie/",
    "verificato_il": "2026-11-11",
    "stato_verifica": "verificato",
    "note": "Fasce del trasporto urbano; il servizio provinciale ha orari diversi."
@@ -306,7 +306,7 @@
    "avviso_del": "2026-10-30",
    "fonte_url": "https://actv.avmspa.it/it/content/avmactv-informa-sciopero-generale-nazionale-24h-30-ottobre-2026",
    "fonte_titolo": "AVM/Actv informa: sciopero generale nazionale 24h - 30 ottobre 2026",
-   "pagina_scioperi_url": "https://actv.avmspa.it/it/content/avmactv-informa-sciopero-generale-nazionale-24h-30-ottobre-2026",
+   "pagina_scioperi_url": "https://actv.avmspa.it/it/news",
    "verificato_il": "2026-11-11",
    "stato_verifica": "verificato",
    "note": "Valgono per bus e tram; per la navigazione sono previsti solo collegamenti minimi."
@@ -401,27 +401,27 @@
    "citta": "Bergamo",
    "regione": "Lombardia",
    "azienda": "ATB",
-   "fasce_testo": "Il servizio sarà garantito nelle fasce protette dalle ore 6.00 alle ore 8.30 e dalle ore 12.30 alle ore 16.00.",
+   "fasce_testo": "Saranno garantite le seguenti fasce di garanzia: dalle ore 06.15 alle ore 09.15 e dalle ore 12.30 alle ore 15.30.",
    "fasce": [
     {
      "giorni": "tutti",
-     "dalle": "06:00",
-     "alle": "08:30"
+     "dalle": "06:15",
+     "alle": "09:15"
     },
     {
      "giorni": "tutti",
      "dalle": "12:30",
-     "alle": "16:00"
+     "alle": "15:30"
     }
    ],
    "origine": "avviso",
-   "avviso_del": "2026-10-16",
-   "fonte_url": "https://www.atb.bergamo.it/avvisi/sciopero-arriva-italia-venerdi-16-ottobre",
-   "fonte_titolo": "SCIOPERO ARRIVA ITALIA VENERDÌ 16 OTTOBRE",
-   "pagina_scioperi_url": "https://www.atb.bergamo.it/avvisi/sciopero-arriva-italia-venerdi-16-ottobre",
-   "verificato_il": "2026-11-11",
+   "avviso_del": "2026-11-20",
+   "fonte_url": "https://www.atb.bergamo.it/avvisi/venerdi-20-novembre-proclamato-sciopero-nazionale-da-cgil",
+   "fonte_titolo": "VENERDÌ 20 NOVEMBRE PROCLAMATO SCIOPERO NAZIONALE DA CGIL",
+   "pagina_scioperi_url": "https://www.atb.bergamo.it/avvisi",
+   "verificato_il": "2026-11-20",
    "stato_verifica": "verificato",
-   "note": "L'avviso riguardava le linee ATB gestite da Arriva; per altri scioperi le fasce possono essere diverse."
+   "note": "L'avviso riguarda la rete ATB e la tranvia T1 Bergamo-Albino di TEB; per altri scioperi le fasce possono essere diverse."
   },
   {
    "id": "modena-seta",

@@ -10,6 +10,8 @@
   },
   "scripts": {
     "aggiorna": "node scripts/aggiorna.mjs",
+    "stato": "node scripts/stato.mjs",
+    "controlla-fonti": "node scripts/controlla-fonti.mjs",
     "build": "node scripts/build.mjs",
     "test": "node --test \"test/**/*.test.mjs\"",
     "servi": "node scripts/servi.mjs",

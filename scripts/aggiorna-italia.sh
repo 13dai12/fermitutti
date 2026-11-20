@@ -17,17 +17,52 @@ set -eu
 BASE="${FERMITUTTI_BASE:-$HOME/.local/share/fermitutti}"
 CODICE="$BASE/codice"
 REPO="$BASE/repo"
+# Secondi di attesa tra un tentativo e l'altro di raggiungere GitHub (60, poi 120). Le prove li mettono a zero.
+ATTESA_RETE="${FERMITUTTI_ATTESA_RETE:-60}"
 ESITO=$(mktemp)
+ERRORI_GIT=$(mktemp)
 PROVA=""
 pulisci() {
-  rm -f "$ESITO"
+  rm -f "$ESITO" "$ERRORI_GIT"
   if [ -n "$PROVA" ]; then rm -rf "$PROVA"; fi
 }
 trap pulisci EXIT
 
+# Nome del server del repository remoto (github.com), per capire se manca proprio la rete. Vuoto per un percorso locale.
+server_remoto() {
+  indirizzo=$(git remote get-url origin)
+  case "$indirizzo" in
+    *://*) indirizzo=${indirizzo#*://}; indirizzo=${indirizzo#*@}; indirizzo=${indirizzo%%[:/]*} ;;
+    *@*:*) indirizzo=${indirizzo#*@}; indirizzo=${indirizzo%%:*} ;;
+    *) indirizzo="" ;;
+  esac
+  printf '%s' "$indirizzo"
+}
+
+# Vero se questo computer non riesce nemmeno a trovare l'indirizzo del server: la connessione a internet manca.
+rete_assente() {
+  server=$(server_remoto)
+  [ -n "$server" ] && command -v getent >/dev/null 2>&1 && ! getent hosts "$server" >/dev/null 2>&1
+}
+
 cd "$REPO"
 # Se GitHub non risponde ci si ferma qui senza toccare niente: è un problema di rete di questo computer, non della fonte.
-git fetch --quiet origin main
+# Dopo una sospensione o un cambio di rete la connessione può tornare con qualche minuto di ritardo: si riprova due volte.
+# Codice di uscita 75 = nessuna connessione a internet (lo legge anche «npm run stato»).
+tentativo=1
+until git fetch --quiet origin main 2>"$ERRORI_GIT"; do
+  if [ "$tentativo" -ge 3 ]; then
+    if rete_assente; then
+      echo "Nessuna connessione a internet: questo computer non trova $(server_remoto). Non ho controllato niente e non ho toccato i dati. Riprovo da solo al prossimo giro, tra mezz'ora." >&2
+      exit 75
+    fi
+    echo "GitHub non risponde o non accetta la chiave SSH di questo computer. Non ho toccato i dati. Messaggio di git:" >&2
+    cat "$ERRORI_GIT" >&2
+    exit 1
+  fi
+  sleep $((ATTESA_RETE * tentativo))
+  tentativo=$((tentativo + 1))
+done
 git reset --quiet --hard origin/main
 
 set +e
@@ -62,7 +97,11 @@ pubblica_dati() {
   FERMITUTTI_BUILD="$CODICE/scripts/build.mjs" node --input-type=module -e "const { build } = await import(process.env.FERMITUTTI_BUILD); await build({ dataDir: process.argv[1], uscita: process.argv[2], log: () => {}, ambiente: {}, pubblicazione: false });" "$REPO/data" "$PROVA/public"
 
   git -c user.name='Fermi Tutti' -c user.email='sito@fermitutti.com' commit --quiet -m "Dati aggiornati: $motivo"
-  git push --quiet origin HEAD:main
+  # Se l'invio non riesce (rete caduta proprio adesso) non si perde niente: il prossimo giro riparte da GitHub e rifà tutto.
+  if ! git push --quiet origin HEAD:main; then
+    echo "Invio a GitHub non riuscito: riprovo da solo al prossimo giro." >&2
+    exit 1
+  fi
   echo "Pubblicato: $motivo."
 }
 

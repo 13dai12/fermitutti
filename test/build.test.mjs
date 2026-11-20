@@ -67,6 +67,21 @@ test('ogni link interno porta a un file esistente; niente script o stili in line
   assert.deepEqual(rotti, []);
 });
 
+test('gli avvisi dei singoli scioperi non si linkano: si linka la pagina stabile con gli avvisi dell\'azienda', async () => {
+  // Il 20 novembre 2026 tre avvisi usati come fonte non c'erano più (errore 404): i visitatori trovavano link rotti.
+  const { uscita } = await buildDiProva();
+  const avvisi = JSON.parse(readFileSync(new URL('../data/fasce_garanzia.json', import.meta.url), 'utf8')).fasce
+    .filter((v) => v.origine === 'avviso' && v.mostra !== false);
+  assert.ok(avvisi.length > 5);
+  const testi = tuttiIFile(uscita).filter((f) => f.endsWith('.html') || f.endsWith('.json')).map((f) => [relative(uscita, f), readFileSync(f, 'utf8')]);
+  for (const v of avvisi) {
+    for (const [nome, t] of testi) assert.ok(!t.includes(v.fonte_url), `${nome}: link all'avviso di ${v.id}, che sparirà`);
+  }
+  const bergamo = readFileSync(join(uscita, 'citta', 'bergamo', 'index.html'), 'utf8');
+  assert.match(bergamo, /href="https:[/][/]www[.]atb[.]bergamo[.]it[/]avvisi"/);
+  assert.match(bergamo, /avviso dell'azienda «VENERDÌ 20 NOVEMBRE PROCLAMATO SCIOPERO NAZIONALE DA CGIL» per lo sciopero di venerdì 20 novembre 2026/);
+});
+
 test('ogni pagina ha titolo, descrizione, canonical, lingua e un solo h1', async () => {
   const { uscita } = await buildDiProva();
   const pagine = tuttiIFile(uscita).filter((f) => f.endsWith('.html') && !f.includes('/widget/'));

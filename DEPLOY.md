@@ -361,27 +361,34 @@ Il sito permetterà così solo lo script di Cloudflare, e la pagina della privac
 
 Il sito non pubblica mai dati che sembrano sbagliati. In alto nelle pagine compare un avviso se la fonte non risponde o se i dati hanno più di 8 ore. Quando qualcosa non va, su GitHub si apre una **segnalazione** (scheda *Issues*) e ti arriva un'email.
 
-Il primo posto dove guardare è il computer in Italia. Nel terminale:
+Il primo posto dove guardare è il computer in Italia. Nel terminale, dalla cartella del progetto:
+
+```
+npm run stato
+```
+
+Ti dice in parole semplici se il timer è acceso, com'è andato l'ultimo giro, quando il Ministero è stato controllato l'ultima volta, cosa vedono i visitatori del sito e cosa fare. Per leggere il registro completo:
 
 ```
 journalctl --user-unit fermitutti-aggiorna -n 30
 ```
 
+- **«Nessuna connessione a internet: questo computer non trova github.com».** Il computer era senza rete (per esempio cavo staccato o router spento). Lo script ha riprovato due volte, poi si è fermato senza toccare niente. Quando la connessione torna, il giro successivo (ogni mezz'ora) riparte da solo: non serve fare niente. Il 20 novembre 2026 è successo per tre ore e mezza.
 - **«Gli scioperi non si aggiornano».**
-  - Se il computer in Italia era spento o senza rete, riaccendilo: entro mezz'ora l'aggiornamento riparte e la segnalazione si chiude da sola entro due ore.
+  - Se il computer in Italia era spento o senza rete, riaccendilo: entro mezz'ora l'aggiornamento riparte e la segnalazione si chiude da sola al controllo successivo di GitHub, di solito entro qualche ora.
   - Se il registro del computer dice **«fonte non raggiungibile»**, il sito del Ministero è giù o lento. Di solito si risolve da solo. Se dura più di un giorno, apri https://scioperi.mit.gov.it/mit2/public/scioperi nel browser. Se lì funziona, probabilmente il Ministero ha cambiato il formato dei dati e serve una modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, partendo da `NOTE_PROGETTO.md`.
   - Se il registro dice **«numero di scioperi crollato»**, **«cresciuto in modo anomalo»** o **«troppi scioperi nuovi»**, controlla a mano sul sito del Ministero. Se il numero è davvero cambiato così, nel terminale scrivi `ACCETTA_VARIAZIONE=1 sh ~/.local/share/fermitutti/aggiorna-italia.sh`.
   - Se il registro dice **«i dati nuovi non si possono pubblicare»**, un dato del Ministero è scritto in un modo che il sito non sa ancora gestire. Il sito resta com'era. Serve una piccola modifica al codice: chiedi a uno sviluppatore oppure a Claude Code, incollando il messaggio.
 - **«Il controllo automatico si è fermato».** Apri il link nella segnalazione e guarda il punto rosso. Se l'errore si ripete, serve uno sviluppatore.
 - **«La build del sito non funziona con i dati nuovi».** Cloudflare continua a mostrare l'ultima versione buona. Serve uno sviluppatore. Su Cloudflare, nel progetto, la scheda *Deployments* mostra il messaggio d'errore.
-- **Nessuna segnalazione, ma il sito dice che i dati sono vecchi.** Controlla il timer con `systemctl --user list-timers fermitutti-aggiorna.timer`. Se non compare, rilancia l'installazione del passo 14. Su GitHub apri *Actions › Sorveglia gli aggiornamenti*: se vedi «This scheduled workflow is disabled», premi **Enable workflow**.
+- **Nessuna segnalazione, ma il sito dice che i dati sono vecchi.** Lancia `npm run stato`. Se dice che il timer non è installato o è spento, rilancia l'installazione del passo 14. Su GitHub apri *Actions › Sorveglia gli aggiornamenti*: se vedi «This scheduled workflow is disabled», premi **Enable workflow**.
 
 ## Manutenzione ordinaria
 
 Circa 10 minuti al mese.
 
 - **Aggiornamenti delle dipendenze.** Dependabot apre delle proposte (scheda *Pull requests*). Se il controllo «Verifica» è verde, premi *Merge pull request*. Se è rosso, non unire e chiedi a uno sviluppatore. Meglio aspettare qualche giorno dall'uscita della nuova versione prima di unire.
-- **Fasce garantite.** Una volta l'anno ricontrolla i link in `data/fasce_garanzia.json`: le aziende cambiano pagine e regole. Ogni voce ha la data di verifica.
+- **Fasce garantite.** Ogni qualche mese, dalla cartella del progetto, lancia `npm run controlla-fonti`: ti dice quali link alle pagine delle aziende non funzionano più e quali fasce vengono da avvisi vecchi, da aggiornare in `data/fasce_garanzia.json`. Le aziende cambiano spesso pagine e regole; ogni voce ha la data di verifica.
 - **Codice sul computer in Italia.** Dopo ogni modifica al codice, comprese le proposte di Dependabot che unisci, nella cartella del progetto scrivi `git pull` e poi `sh scripts/installa-aggiornamento-italia.sh`.
 - **Dominio.** Il rinnovo è automatico, ma controlla che la carta di pagamento su Cloudflare sia valida. Se un rinnovo non riesce, Cloudflare ti scrive e riprova.
 - **Search Console.** Una volta al mese guarda se ci sono avvisi o errori.
@@ -391,7 +398,7 @@ Circa 10 minuti al mese.
 | Servizio | Costo | Limite gratuito | Uso previsto |
 |---|---|---|---|
 | Dominio `.com` (Cloudflare) | Il rinnovo annuale: Cloudflare fa pagare il prezzo del registro, senza ricarichi | | |
-| GitHub (repository pubblico) | 0 | Minuti di Actions gratuiti e senza limite per i repository pubblici | 12 controlli al giorno di meno di un minuto, più le prove a ogni modifica |
+| GitHub (repository pubblico) | 0 | Minuti di Actions gratuiti e senza limite per i repository pubblici | Un controllo programmato ogni 2 ore, di meno di un minuto (GitHub di solito ne esegue solo 2 o 3 al giorno), più le prove a ogni modifica |
 | Computer in Italia | 0, oltre alla corrente | | Un aggiornamento ogni 30 minuti, pochi secondi ciascuno |
 | Cloudflare Pages | 0 | 500 build al mese, 20.000 file | Da 120 a 250 build al mese (dati cambiati più una ogni 6 ore); da 350 a circa 800 file |
 | Funzione di Cloudflare per l'ora del controllo (Workers Free) | 0 | 100.000 richieste al giorno; oltre, per quel giorno la pagina mostra l'ora dell'ultima pubblicazione. Il piano gratuito non addebita mai costi | Una richiesta per pagina visitata. Si pubblica da sola con il sito: niente da impostare |

@@ -26,6 +26,11 @@ export function validaFasce(voci = dati.fasce) {
       if (!['feriali', 'festivi', 'tutti', 'sabato'].includes(f.giorni)) errori.push(`${v.id}: giorni non validi "${f.giorni}"`);
     }
     if ((v.fasce || []).length && !v.fasce_testo) errori.push(`${v.id}: ci sono orari ma manca la citazione della fonte`);
+    // L'avviso di un singolo sciopero sparisce presto dal sito dell'azienda: serve anche la pagina stabile con tutti gli avvisi.
+    if (v.origine === 'avviso') {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(v.avviso_del || '')) errori.push(`${v.id}: manca la data dello sciopero dell'avviso (avviso_del)`);
+      if (!v.pagina_scioperi_url || v.pagina_scioperi_url === v.fonte_url) errori.push(`${v.id}: per un avviso serve in pagina_scioperi_url la pagina stabile con tutti gli avvisi dell'azienda`);
+    }
     if (v.tipo === 'tpl' && !citta.has(v.citta)) errori.push(`${v.id}: città "${v.citta}" non presente in data/luoghi.json`);
     if (v.fasce_testo && v.fasce_testo.length > 500) errori.push(`${v.id}: citazione troppo lunga`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(v.verificato_il || '')) errori.push(`${v.id}: manca la data di verifica`);
@@ -145,10 +150,23 @@ export function fasceInUnaRiga(s) {
   return voci.slice(0, 3).map((v) => `${v.azienda}: ${testoFasce(v)}`).join(' | ') + ". Verifica sempre l'avviso dell'azienda.";
 }
 
-function origineTesto(v) {
-  if (v.origine === 'avviso' && v.avviso_del) return `avviso dell'azienda per lo sciopero di ${dataLunga(v.avviso_del)}`;
-  if (v.origine === 'regola') return 'regole pubblicate dall\'azienda';
-  return null;
+/**
+ * Il link da mostrare come fonte. Gli avvisi dei singoli scioperi spariscono dai siti delle aziende dopo pochi giorni
+ * (il 20 novembre 2026 tre avvisi su tre usati dal sito non c'erano più), quindi per le voci nate da un avviso si linka
+ * la pagina stabile con tutti gli avvisi dell'azienda e l'avviso si nomina nel testo. Il link preciso resta in
+ * data/fasce_garanzia.json per chi ricontrolla le citazioni.
+ */
+export function linkFonte(v) {
+  if (v.origine === 'avviso') return v.pagina_scioperi_url || null;
+  return v.fonte_url || v.pagina_scioperi_url || null;
+}
+
+/** Le fasce come le riceve l'assistente nel browser (public/dati/base.json). */
+export function perAssistente(voci = TUTTE) {
+  return voci.filter((v) => v.mostra !== false).map((v) => ({
+    tipo: v.tipo, citta: v.citta || null, regione: v.regione || (v.ambito !== 'nazionale' ? v.ambito : null), azienda: v.azienda,
+    fasce: v.fasce, citazione: v.fasce_testo, fonte: linkFonte(v), avvisi: v.pagina_scioperi_url, origine: v.origine, avviso_del: v.avviso_del, verificato_il: v.verificato_il, nota: v.note || null,
+  }));
 }
 
 function htmlVoce(v) {
@@ -159,13 +177,20 @@ function htmlVoce(v) {
   if (!v.fasce_testo) {
     return `<li><strong>${e(nome)}</strong>: ${v.note ? e(v.note) : 'non abbiamo trovato una pagina ufficiale con le fasce garantite.'} Controlla gli ${linkAvvisi || 'avvisi dell\'azienda'}.</li>`;
   }
-  const origine = origineTesto(v);
-  const fonte = v.fonte_url ? `<a href="${urlSicuro(v.fonte_url)}" rel="noopener">${e(v.fonte_titolo || 'fonte ufficiale')}</a>` : e(v.fonte_titolo || '');
+  let fonte;
+  if (v.origine === 'avviso' && v.avviso_del) {
+    const titolo = v.fonte_titolo ? ` «${e(v.fonte_titolo)}»` : '';
+    fonte = `Fonte: avviso dell'azienda${titolo} per lo sciopero di ${e(dataLunga(v.avviso_del))}; ${e(verificato)}.${v.note ? ` ${e(v.note)}` : ''} Le aziende tolgono gli avvisi dopo pochi giorni: per i prossimi scioperi guarda gli ${linkAvvisi || 'avvisi dell\'azienda'}.`;
+  } else {
+    const link = v.fonte_url ? `<a href="${urlSicuro(v.fonte_url)}" rel="noopener">${e(v.fonte_titolo || 'fonte ufficiale')}</a>` : e(v.fonte_titolo || '');
+    const origine = v.origine === 'regola' ? ', regole pubblicate dall\'azienda' : '';
+    fonte = `Fonte: ${link}${e(origine)}; ${e(verificato)}.${linkAvvisi ? ` Controlla anche gli ${linkAvvisi}.` : ''}${v.note ? ` ${e(v.note)}` : ''}`;
+  }
   const orari = t ? `${e(t)}.` : 'orari nel testo qui sotto.';
   return `<li><strong>${e(nome)}</strong>: ${orari}
 <details class="fonte-fasce"><summary>Testo ufficiale e fonte</summary>
 <blockquote class="citazione">«${e(v.fasce_testo)}»</blockquote>
-<p class="fonte">Fonte: ${fonte}${origine ? `, ${e(origine)}` : ''}; ${e(verificato)}.${linkAvvisi ? ` Controlla anche gli ${linkAvvisi}.` : ''}${v.note ? ` ${e(v.note)}` : ''}</p>
+<p class="fonte">${fonte}</p>
 </details></li>`;
 }
 
