@@ -1,15 +1,16 @@
 {
- "ultima_verifica_riuscita": "2026-11-20T23:07:47.966Z",
- "ultimo_tentativo": "2026-11-20T23:07:47.966Z",
+ "ultima_verifica_riuscita": "2026-11-21T18:07:48.051Z",
+ "ultimo_tentativo": "2026-11-21T18:07:48.051Z",
  "ultima_modifica_dati": "2026-11-20T23:07:47.966Z",
- "ultima_pubblicazione": "2026-11-21T12:47:29.150Z",
- "fonte_guasta_dal": "2026-11-21T12:47:29.150Z",
+ "ultima_pubblicazione": "2026-11-21T18:07:48.051Z",
+ "fonte_guasta_dal": null,
  "ultimo_errore": {
   "quando": "2026-11-21T12:47:29.150Z",
-  "messaggio": "l'ultima verifica riuscita della fonte è di 13 ore fa: il computer in Italia che aggiorna i dati è spento o bloccato, oppure il calendario del Ministero non risponde"
+  "messaggio": "l'ultima verifica riuscita della fonte è di 13 ore fa: il computer in Italia che aggiorna i dati è spento o bloccato, oppure il calendario del Ministero non risponde",
+  "risolto_il": "2026-11-21T18:07:48.051Z"
  },
  "fonte_aggiornata_al": "21/11/2026",
- "impronta_feed": "7b5ea309e48ff898",
+ "impronta_feed": "873c6574148f3f9c",
  "scioperi_in_archivio": 37,
  "scioperi_nel_feed": 26,
  "avvisi": []
