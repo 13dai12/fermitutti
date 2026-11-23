@@ -1,6 +1,6 @@
 {
  "versione": 1,
- "aggiornato_il": "2026-11-22T23:07:47.869Z",
+ "aggiornato_il": "2026-11-23T09:07:47.908Z",
  "fonte": {
   "url": "https://scioperi.mit.gov.it/mit2/public/scioperi/rss",
   "aggiornato_al": "23/11/2026"
@@ -762,7 +762,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-18T16:38:47.929Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-18T16:38:47.929Z",
    "rimosso_il": null,
    "storia": []
@@ -800,7 +800,7 @@
    "stato": "confermato",
    "sequence": 2,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-20T09:08:47.962Z",
    "rimosso_il": null,
    "storia": [
@@ -859,7 +859,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -898,7 +898,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -937,7 +937,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-13T09:38:39.858Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-13T09:38:39.858Z",
    "rimosso_il": null,
    "storia": []
@@ -976,7 +976,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-16T10:37:39.919Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-16T10:37:39.919Z",
    "rimosso_il": null,
    "storia": []
@@ -1015,7 +1015,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1054,7 +1054,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1088,7 +1088,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T16:07:40.211Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-12T16:07:40.211Z",
    "rimosso_il": null,
    "storia": []
@@ -1127,7 +1127,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1166,8 +1166,76 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8650",
+   "inizio": "2026-12-17",
+   "fine": "2026-12-17",
+   "giorno_da": "2026-12-17",
+   "giorno_a": "2026-12-17",
+   "settore": "Appalti ferroviari",
+   "settore_slug": "servizi-ferroviari",
+   "rilevanza": "Nazionale",
+   "regione": "Italia",
+   "provincia": null,
+   "zona_tipo": "nazionale",
+   "zona_nome": "Italia",
+   "modalita": "MEZZO TURNO PER OGNI TURNO DI LAVORO",
+   "orario": null,
+   "coinvolti": [
+    "servizi-ferroviari"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "FILT-CGIL/FIT-CISL/UILT-UIL/UGL/ORSA FERROVIE",
+   "categoria": "PERSONALE AZIENDE GAM E PS SERVIZI ( CONSORZIO STABILE IMPERO )",
+   "note": "",
+   "proclamazione": "2026-11-21",
+   "ricezione": "2026-11-21",
+   "slug": "2026-12-17-servizi-ferroviari-nazionale-gam-ps",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-23T09:07:47.908Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
+   "modificato_il": "2026-11-23T09:07:47.908Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8651",
+   "inizio": "2026-12-17",
+   "fine": "2026-12-17",
+   "giorno_da": "2026-12-17",
+   "giorno_a": "2026-12-17",
+   "settore": "Appalti ferroviari",
+   "settore_slug": "servizi-ferroviari",
+   "rilevanza": "Nazionale",
+   "regione": "Italia",
+   "provincia": null,
+   "zona_tipo": "nazionale",
+   "zona_nome": "Italia",
+   "modalita": "MEZZO TURNO PER OGNI TURNO DI LAVORO",
+   "orario": null,
+   "coinvolti": [
+    "servizi-ferroviari"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "FILT-CGIL/FIT-CISL/UILT-UIL/UGL/ORSA FERROVIE",
+   "categoria": "PERSONALE AZIENDE GAM E PS SERVIZI ( CONSORZIO STABILE IMPERO )",
+   "note": "",
+   "proclamazione": "2026-11-21",
+   "ricezione": "2026-11-21",
+   "slug": "2026-12-17-servizi-ferroviari-nazionale-gam-ps-2",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-23T09:07:47.908Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
+   "modificato_il": "2026-11-23T09:07:47.908Z",
    "rimosso_il": null,
    "storia": []
   },
@@ -1205,7 +1273,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-18T12:07:48.015Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-18T12:07:48.015Z",
    "rimosso_il": null,
    "storia": []
@@ -1244,7 +1312,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T14:38:39.885Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-12T14:38:39.885Z",
    "rimosso_il": null,
    "storia": []
@@ -1283,7 +1351,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1322,7 +1390,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1361,7 +1429,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1400,7 +1468,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1439,7 +1507,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1478,7 +1546,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-22T23:07:47.869Z",
+   "visto_ultimo": "2026-11-23T09:07:47.908Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
