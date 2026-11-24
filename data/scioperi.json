@@ -1,6 +1,6 @@
 {
  "versione": 1,
- "aggiornato_il": "2026-11-24T08:37:48.242Z",
+ "aggiornato_il": "2026-11-24T09:08:38.159Z",
  "fonte": {
   "url": "https://scioperi.mit.gov.it/mit2/public/scioperi/rss",
   "aggiornato_al": "24/11/2026"
@@ -807,7 +807,7 @@
    "stato": "confermato",
    "sequence": 2,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-20T09:08:47.962Z",
    "rimosso_il": null,
    "storia": [
@@ -866,7 +866,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -905,7 +905,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -944,7 +944,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-13T09:38:39.858Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-13T09:38:39.858Z",
    "rimosso_il": null,
    "storia": []
@@ -983,7 +983,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-16T10:37:39.919Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-16T10:37:39.919Z",
    "rimosso_il": null,
    "storia": []
@@ -1022,7 +1022,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1061,7 +1061,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1095,7 +1095,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T16:07:40.211Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-12T16:07:40.211Z",
    "rimosso_il": null,
    "storia": []
@@ -1134,7 +1134,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1173,7 +1173,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-24T08:37:48.242Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-24T08:37:48.242Z",
    "rimosso_il": null,
    "storia": []
@@ -1212,7 +1212,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-24T08:37:48.242Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-24T08:37:48.242Z",
    "rimosso_il": null,
    "storia": []
@@ -1251,8 +1251,47 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8662",
+   "inizio": "2026-12-16",
+   "fine": "2026-12-16",
+   "giorno_da": "2026-12-16",
+   "giorno_a": "2026-12-16",
+   "settore": "Trasporto pubblico locale",
+   "settore_slug": "bus-metro",
+   "rilevanza": "Locale",
+   "regione": "Campania",
+   "provincia": "Napoli",
+   "zona_tipo": "provincia",
+   "zona_nome": "Napoli",
+   "modalita": "24 ORE",
+   "orario": {
+    "tipo": "giornata",
+    "dalle": null,
+    "alle": null,
+    "giornoFine": "2026-12-16"
+   },
+   "coinvolti": [
+    "bus-metro"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "OSR FILT-CGIL/FIT-CISL/UILT-UIL/UGL/FAISA-CISAL",
+   "categoria": "PERSONALE SOC. AIR CAMPANIA DI NAPOLI",
+   "note": "",
+   "proclamazione": "2026-11-23",
+   "ricezione": "2026-11-23",
+   "slug": "2026-12-16-bus-metro-napoli-air-campania",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-24T09:08:38.159Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
+   "modificato_il": "2026-11-24T09:08:38.159Z",
    "rimosso_il": null,
    "storia": []
   },
@@ -1325,7 +1364,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-23T09:07:47.908Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-23T09:07:47.908Z",
    "rimosso_il": null,
    "storia": []
@@ -1364,7 +1403,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-18T12:07:48.015Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-18T12:07:48.015Z",
    "rimosso_il": null,
    "storia": []
@@ -1403,7 +1442,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-23T17:08:07.019Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-23T17:08:07.019Z",
    "rimosso_il": null,
    "storia": [],
@@ -1444,7 +1483,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T14:38:39.885Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-12T14:38:39.885Z",
    "rimosso_il": null,
    "storia": []
@@ -1483,7 +1522,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1522,7 +1561,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1561,7 +1600,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1600,7 +1639,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1639,7 +1678,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1678,8 +1717,86 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8660",
+   "inizio": "2027-01-15",
+   "fine": "2027-01-15",
+   "giorno_da": "2027-01-15",
+   "giorno_a": "2027-01-15",
+   "settore": "Trasporto pubblico locale",
+   "settore_slug": "bus-metro",
+   "rilevanza": "Locale",
+   "regione": "Campania",
+   "provincia": "Napoli",
+   "zona_tipo": "provincia",
+   "zona_nome": "Napoli",
+   "modalita": "4 ORE: DALLE 11.00 ALLE 15.00",
+   "orario": {
+    "tipo": "orario",
+    "dalle": "11:00",
+    "alle": "15:00",
+    "giornoFine": "2027-01-15"
+   },
+   "coinvolti": [
+    "bus-metro"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "OSR FILT-CGIL/FIT-CISL/UILT-UIL/UGL-FNA/FAISA-CISAL",
+   "categoria": "PERSONALE SOC. ANM DI NAPOLI",
+   "note": "",
+   "proclamazione": "2026-11-11",
+   "ricezione": "2026-11-11",
+   "slug": "2027-01-15-bus-metro-napoli-anm-napoli",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-24T09:08:38.159Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
+   "modificato_il": "2026-11-24T09:08:38.159Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8661",
+   "inizio": "2027-01-15",
+   "fine": "2027-01-15",
+   "giorno_da": "2027-01-15",
+   "giorno_a": "2027-01-15",
+   "settore": "Trasporto pubblico locale",
+   "settore_slug": "bus-metro",
+   "rilevanza": "Locale",
+   "regione": "Campania",
+   "provincia": "Napoli",
+   "zona_tipo": "provincia",
+   "zona_nome": "Napoli",
+   "modalita": "4 ORE: DALLE 11.00 ALLE 15.00",
+   "orario": {
+    "tipo": "orario",
+    "dalle": "11:00",
+    "alle": "15:00",
+    "giornoFine": "2027-01-15"
+   },
+   "coinvolti": [
+    "bus-metro"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "OSR FILT-CGIL/FIT-CISL/UILT-UIL/UGL-FNA/FAISA-CISAL",
+   "categoria": "PERSONALE SOC. ANM DI NAPOLI",
+   "note": "",
+   "proclamazione": "2026-11-11",
+   "ricezione": "2026-11-11",
+   "slug": "2027-01-15-bus-metro-napoli-anm-napoli-2",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-24T09:08:38.159Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
+   "modificato_il": "2026-11-24T09:08:38.159Z",
    "rimosso_il": null,
    "storia": []
   },
@@ -1715,7 +1832,7 @@
    "stato": "confermato",
    "sequence": 1,
    "visto_prima": "2026-11-23T14:38:47.985Z",
-   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T09:08:38.159Z",
    "modificato_il": "2026-11-23T15:38:48.295Z",
    "rimosso_il": null,
    "storia": [
