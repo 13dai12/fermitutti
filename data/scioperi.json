@@ -1,9 +1,9 @@
 {
  "versione": 1,
- "aggiornato_il": "2026-11-23T17:08:07.019Z",
+ "aggiornato_il": "2026-11-24T08:37:48.242Z",
  "fonte": {
   "url": "https://scioperi.mit.gov.it/mit2/public/scioperi/rss",
-  "aggiornato_al": "23/11/2026"
+  "aggiornato_al": "24/11/2026"
  },
  "scioperi": [
   {
@@ -807,7 +807,7 @@
    "stato": "confermato",
    "sequence": 2,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-20T09:08:47.962Z",
    "rimosso_il": null,
    "storia": [
@@ -866,7 +866,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -905,7 +905,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -944,7 +944,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-13T09:38:39.858Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-13T09:38:39.858Z",
    "rimosso_il": null,
    "storia": []
@@ -983,7 +983,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-16T10:37:39.919Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-16T10:37:39.919Z",
    "rimosso_il": null,
    "storia": []
@@ -1022,7 +1022,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1061,7 +1061,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1095,7 +1095,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T16:07:40.211Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-12T16:07:40.211Z",
    "rimosso_il": null,
    "storia": []
@@ -1134,8 +1134,86 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8658",
+   "inizio": "2026-12-16",
+   "fine": "2026-12-17",
+   "giorno_da": "2026-12-16",
+   "giorno_a": "2026-12-17",
+   "settore": "Ferroviario",
+   "settore_slug": "treni",
+   "rilevanza": "Nazionale",
+   "regione": "Italia",
+   "provincia": null,
+   "zona_tipo": "nazionale",
+   "zona_nome": "Italia",
+   "modalita": "23 ORE: DALLE 3.00 DEL 16/12 ALLE 2.00 DEL 17/12",
+   "orario": {
+    "tipo": "orario",
+    "dalle": "03:00",
+    "alle": "02:00",
+    "giornoFine": "2026-12-17"
+   },
+   "coinvolti": [
+    "treni"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "UILT-UIL",
+   "categoria": "PERSONALE OPERATIVO EQUIPAGGI SOC. ITALO NTV",
+   "note": "",
+   "proclamazione": "2026-11-22",
+   "ricezione": "2026-11-22",
+   "slug": "2026-12-16-treni-nazionale-operativo-equipaggi",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "modificato_il": "2026-11-24T08:37:48.242Z",
+   "rimosso_il": null,
+   "storia": []
+  },
+  {
+   "id": "8659",
+   "inizio": "2026-12-16",
+   "fine": "2026-12-16",
+   "giorno_da": "2026-12-16",
+   "giorno_a": "2026-12-16",
+   "settore": "Ferroviario",
+   "settore_slug": "treni",
+   "rilevanza": "Nazionale",
+   "regione": "Italia",
+   "provincia": null,
+   "zona_tipo": "nazionale",
+   "zona_nome": "Italia",
+   "modalita": "8 ORE: DALLE 9.01 ALLE 16.59",
+   "orario": {
+    "tipo": "orario",
+    "dalle": "09:01",
+    "alle": "16:59",
+    "giornoFine": "2026-12-16"
+   },
+   "coinvolti": [
+    "treni"
+   ],
+   "esclusi": [],
+   "esclude_trasporti": false,
+   "sindacati": "FILT-CGIL/FIT-CISL/UGL FERROVIERI",
+   "categoria": "PERSONALE SOC. ITALO NTV",
+   "note": "",
+   "proclamazione": "2026-11-22",
+   "ricezione": "2026-11-22",
+   "slug": "2026-12-16-treni-nazionale-italo-ntv",
+   "stato": "confermato",
+   "sequence": 0,
+   "visto_prima": "2026-11-24T08:37:48.242Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
+   "modificato_il": "2026-11-24T08:37:48.242Z",
    "rimosso_il": null,
    "storia": []
   },
@@ -1173,7 +1251,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1204,13 +1282,19 @@
    "proclamazione": "2026-11-21",
    "ricezione": "2026-11-21",
    "slug": "2026-12-17-servizi-ferroviari-nazionale-gam-ps",
-   "stato": "confermato",
-   "sequence": 0,
+   "stato": "revocato",
+   "sequence": 1,
    "visto_prima": "2026-11-23T09:07:47.908Z",
    "visto_ultimo": "2026-11-23T17:08:07.019Z",
-   "modificato_il": "2026-11-23T09:07:47.908Z",
-   "rimosso_il": null,
-   "storia": []
+   "modificato_il": "2026-11-24T08:37:48.242Z",
+   "rimosso_il": "2026-11-24T08:37:48.242Z",
+   "storia": [
+    {
+     "quando": "2026-11-24T08:37:48.242Z",
+     "tipo": "revocato",
+     "testo": "Non è più presente nel calendario ufficiale del Ministero."
+    }
+   ]
   },
   {
    "id": "8651",
@@ -1241,7 +1325,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-23T09:07:47.908Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-23T09:07:47.908Z",
    "rimosso_il": null,
    "storia": []
@@ -1280,7 +1364,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-18T12:07:48.015Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-18T12:07:48.015Z",
    "rimosso_il": null,
    "storia": []
@@ -1319,7 +1403,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-23T17:08:07.019Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-23T17:08:07.019Z",
    "rimosso_il": null,
    "storia": [],
@@ -1360,7 +1444,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-12T14:38:39.885Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-12T14:38:39.885Z",
    "rimosso_il": null,
    "storia": []
@@ -1399,7 +1483,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1438,7 +1522,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1477,7 +1561,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1516,7 +1600,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1555,7 +1639,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1594,7 +1678,7 @@
    "stato": "confermato",
    "sequence": 0,
    "visto_prima": "2026-11-11T16:44:16.938Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-11T16:44:16.938Z",
    "rimosso_il": null,
    "storia": []
@@ -1631,7 +1715,7 @@
    "stato": "confermato",
    "sequence": 1,
    "visto_prima": "2026-11-23T14:38:47.985Z",
-   "visto_ultimo": "2026-11-23T17:08:07.019Z",
+   "visto_ultimo": "2026-11-24T08:37:48.242Z",
    "modificato_il": "2026-11-23T15:38:48.295Z",
    "rimosso_il": null,
    "storia": [
