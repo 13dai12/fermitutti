@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "ical.js": "2.2.1",
-    "puppeteer-core": "25.17.0"
+    "puppeteer-core": "25.18.1"
   }
 }
