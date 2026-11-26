@@ -90,6 +90,8 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   if (!/^https?:\/\/[a-z0-9.-]+(:\d+)?$/i.test(sito.urlBase)) throw new Error(`urlBase non valido: ${sito.urlBase}`);
   if (!sito.urlBase.startsWith('https://') && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(sito.urlBase)) throw new Error('urlBase deve iniziare con https://');
   const aff = preparaAffiliati(configAffiliati);
+  // Il codice AdSense va nella testata di ogni pagina (meta tag di verifica), che riceve solo l'oggetto del sito.
+  sito.adsense = aff.adsense;
   validaFasce();
   const archivio = leggiJson(join(dataDir, 'scioperi.json'));
   validaArchivio(archivio);
@@ -161,6 +163,8 @@ export async function build({ dataDir = join(RADICE, 'data'), uscita = join(RADI
   // Gli archivi del web non copiano la pagina Privacy, che contiene il nome del titolare. Google invece deve poterla
   // leggere per vedere il noindex, quindi il gruppo «*» non la blocca.
   scrivi(join(uscita, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /widget/\n\nUser-agent: ia_archiver\nUser-agent: archive.org_bot\nDisallow: /widget/\nDisallow: /privacy/\n\nSitemap: ${sito.urlBase}/sitemap.xml\n`);
+  // ads.txt dice chi può vendere gli spazi del sito: solo l'account AdSense del titolare, nel formato indicato da Google.
+  if (aff.adsense) scrivi(join(uscita, 'ads.txt'), `google.com, ${aff.adsense.replace(/^ca-/, '')}, DIRECT, f08c47fec0942fa0\n`);
   const scadenza = new Date(Date.parse(`${oggi}T00:00:00Z`) + 180 * 86400000).toISOString().replace(/\.\d{3}Z$/, '.000Z');
   scrivi(join(uscita, '.well-known', 'security.txt'), `# Segnalazioni di sicurezza per ${sito.dominio} (RFC 9116).\nContact: mailto:${sito.emailSicurezza}\nExpires: ${scadenza}\nPreferred-Languages: it, en\nCanonical: ${sito.urlBase}/.well-known/security.txt\nPolicy: ${sito.urlBase}/note-legali/\n`);
 

@@ -8,7 +8,7 @@ import { evento, calendario } from './ics.mjs';
 import { svgAnteprima, xmlValido } from './og.mjs';
 import { CITTA } from './luoghi.mjs';
 
-const SENZA_AFFILIAZIONI = { airhelp: null, flixbus: null, noleggio: null, pubblicita: false };
+const SENZA_AFFILIAZIONI = { airhelp: null, flixbus: null, noleggio: null, pubblicita: false, adsense: null };
 
 export function provaCostruzione(archivio, { oggi, stato = {} }) {
   validaArchivio(archivio);

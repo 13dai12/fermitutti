@@ -18,7 +18,7 @@ function dominioAmmesso(url, domini) {
 /** Legge e controlla la configurazione. Restituisce i link pronti (o null se spenti). */
 export function preparaAffiliati(cfg = {}) {
   const errori = [];
-  const out = { airhelp: null, flixbus: null, noleggio: null, pubblicita: Boolean(cfg.pubblicita?.attiva) };
+  const out = { airhelp: null, flixbus: null, noleggio: null, pubblicita: Boolean(cfg.pubblicita?.attiva), adsense: null };
   const ah = String(cfg.airhelp?.link ?? '').trim();
   if (ah) {
     if (dominioAmmesso(ah, DOMINI.airhelp)) out.airhelp = ah;
@@ -37,6 +37,12 @@ export function preparaAffiliati(cfg = {}) {
     if (!dominioAmmesso(nl, DOMINI.noleggio)) errori.push(`noleggioAuto.link deve essere https e su uno di questi domini: ${DOMINI.noleggio.join(', ')}`);
     else if (!nn || nn.length > 40 || /[<>"]/.test(nn)) errori.push('noleggioAuto.nome è obbligatorio (massimo 40 caratteri, senza simboli < > ")');
     else out.noleggio = { url: nl, nome: nn };
+  }
+  // Codice dell'account AdSense: finisce nel meta tag di verifica di ogni pagina e in ads.txt, quindi solo nel formato di Google.
+  const ide = String(cfg.pubblicita?.idEditore ?? '').trim();
+  if (ide) {
+    if (/^ca-pub-\d{16}$/.test(ide)) out.adsense = ide;
+    else errori.push('pubblicita.idEditore deve essere ca-pub- seguito da 16 cifre, come nel codice che dà AdSense');
   }
   if (errori.length) throw new Error(`config/affiliati.mjs non valido:\n- ${errori.join('\n- ')}`);
   return out;

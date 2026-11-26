@@ -25,8 +25,11 @@ export default {
   },
 
   // 4) PUBBLICITÀ: solo uno spazio predisposto e spento. Per attivarla serve una piattaforma di consenso
-  //    certificata da Google (vedi DEPLOY.md). Non cambiare questo valore senza aver letto quella sezione.
+  //    certificata da Google (vedi DEPLOY.md). Non cambiare "attiva" senza aver letto quella sezione.
+  //    idEditore è il codice dell'account AdSense (ca-pub- e 16 cifre, non è segreto). Da solo collega il sito ad AdSense:
+  //    mette in ogni pagina il meta tag di verifica e crea /ads.txt. Non mostra annunci e non carica script di Google.
   pubblicita: {
     attiva: false,
+    idEditore: 'ca-pub-9058241342960701',
   },
 };

@@ -6,6 +6,7 @@ import { join, relative } from 'node:path';
 import { buildDiProva } from './costruisci.mjs';
 import { archivioDiProva } from './aiuto.mjs';
 import { BASE, letterale, CI_SONO_SEGNAPOSTI } from './dominio.mjs';
+import configAffiliati from '../config/affiliati.mjs';
 
 const B = letterale(BASE);
 
@@ -17,6 +18,29 @@ function tuttiIFile(dir) {
   }
   return out;
 }
+
+test('AdSense: codice di verifica nelle pagine e ads.txt giusto, ma nessuno script pubblicitario', async () => {
+  const { uscita } = await buildDiProva();
+  const id = String(configAffiliati.pubblicita?.idEditore ?? '').trim();
+  if (!id) {
+    assert.ok(!existsSync(join(uscita, 'ads.txt')));
+    assert.doesNotMatch(readFileSync(join(uscita, 'index.html'), 'utf8'), /google-adsense-account/);
+    return;
+  }
+  const meta = `<meta name="google-adsense-account" content="${id}">`;
+  for (const p of ['index.html', 'citta/milano/index.html', 'privacy/index.html', '404.html']) {
+    const t = readFileSync(join(uscita, p), 'utf8');
+    assert.equal(t.slice(0, t.indexOf('</head>')).split(meta).length - 1, 1, `${p}: codice di verifica una volta, nella testata`);
+  }
+  // Il widget va dentro altri siti: lì il codice non serve.
+  assert.doesNotMatch(readFileSync(join(uscita, 'widget', 'milano', 'index.html'), 'utf8'), /google-adsense-account/);
+  assert.equal(readFileSync(join(uscita, 'ads.txt'), 'utf8'), `google.com, ${id.replace(/^ca-/, '')}, DIRECT, f08c47fec0942fa0\n`);
+  if (!configAffiliati.pubblicita?.attiva) {
+    for (const f of tuttiIFile(uscita).filter((x) => /\.(html|js)$/.test(x))) {
+      assert.doesNotMatch(readFileSync(f, 'utf8'), /adsbygoogle|googlesyndication|doubleclick/, `${relative(uscita, f)}: nessuno script pubblicitario finché la pubblicità è spenta`);
+    }
+  }
+});
 
 test('la build produce tutte le pagine e i file attesi', async () => {
   const { uscita, messaggi } = await buildDiProva();

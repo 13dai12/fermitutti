@@ -226,6 +226,7 @@ I dati degli scioperi sono del Ministero delle Infrastrutture e dei Trasporti (l
 - **Decisione:** tutto in `config/affiliati.mjs`, spento finché i codici sono vuoti. I link sono costruiti dal codice verso domini fissi e validati: una configurazione sbagliata ferma la build.
 - **Testo «potrebbero spettarti da 250 a 600 euro»:** solo se nella categoria ufficiale compare il nome di una compagnia aerea e non ENAV, Techno Sky, handling, pulizie, sicurezza o controllori.
 - **Perché:** il regolamento UE 261/2004 dà la compensazione quando sciopera il personale della compagnia, di solito non quando scioperano i controllori di volo; non si promettono soldi. Per FlixBus il programma ufficiale passa da Awin (inserzionista «Flixbus IT», id 110876).
+- **AdSense (26 novembre 2026):** il titolare ha scelto AdSense e niente pubblicità a pagamento per farsi trovare. `pubblicita.idEditore` aggiunge il meta tag di verifica alle pagine create da `pagina()` (non al widget) e crea `/ads.txt`. Finché `pubblicita.attiva` è false non c'è nessuno script di Google, e una prova lo controlla. Dopo l'approvazione servono il banner della CMP di Google, la privacy aggiornata e la politica di sicurezza adatta: Google indica una CSP con nonce.
 
 ### Licenza del codice
 - **Decisione:** nessun file di licenza, e `"license": "UNLICENSED"` in `package.json`.

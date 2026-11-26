@@ -348,6 +348,8 @@ I guadagni da affiliazione vanno dichiarati: chiedi a un commercialista come far
 
 C'è solo uno spazio predisposto e spento (`pubblicita.attiva: false` in `config/affiliati.mjs`). **Non attivarlo da solo.** Per mostrare pubblicità di Google ai visitatori europei serve una **piattaforma di gestione del consenso certificata da Google** (un banner dei cookie conforme alle regole IAB TCF). Bisogna anche aggiornare la privacy e permettere gli script pubblicitari nella politica di sicurezza (`src/_headers`). È un lavoro da fare con uno sviluppatore.
 
+**Account AdSense collegato (26 novembre 2026).** In `config/affiliati.mjs` c'è `pubblicita.idEditore`, il codice dell'account AdSense (`ca-pub-` seguito da 16 cifre, non è segreto). Da solo non mostra annunci e non carica script di Google. Fa due cose: mette in ogni pagina il meta tag di verifica (`google-adsense-account`) e crea `/ads.txt`. Se il codice è scritto male, la build si ferma. Dopo la pubblicazione, in AdSense spunta la casella, premi *Verifica* e poi *Richiedi revisione*. Alla domanda sulla piattaforma per il consenso scegli *CMP di Google*. Gli annunci restano spenti finché Google non approva il sito e finché non sono pronti il banner del consenso, la privacy e la politica di sicurezza.
+
 ## Statistiche senza cookie (facoltative, spente)
 
 1. Su Cloudflare apri il progetto Pages, scheda *Metrics*, e attiva **Web Analytics**.

@@ -113,11 +113,13 @@ test('il widget non contiene script e ha la sua politica di sicurezza', async ()
 
 test('affiliazioni: spente senza codici, validate quando ci sono', () => {
   const spente = preparaAffiliati({ airhelp: { link: '' }, flixbus: { awinAffid: '' }, noleggioAuto: { link: '' }, pubblicita: { attiva: false } });
-  assert.deepEqual(spente, { airhelp: null, flixbus: null, noleggio: null, pubblicita: false });
+  assert.deepEqual(spente, { airhelp: null, flixbus: null, noleggio: null, pubblicita: false, adsense: null });
+  assert.equal(preparaAffiliati({ pubblicita: { attiva: false, idEditore: ' ca-pub-9058241342960701 ' } }).adsense, 'ca-pub-9058241342960701');
   const accese = preparaAffiliati({ airhelp: { link: 'https://www.airhelp.com/it/?a_aid=123' }, flixbus: { awinAffid: '12345', awinMid: '110876' }, noleggioAuto: { link: 'https://www.discovercars.com/?a_aid=x', nome: 'Discover Cars' } });
   assert.equal(accese.flixbus, 'https://www.awin1.com/cread.php?awinmid=110876&awinaffid=12345&ued=https%3A%2F%2Fwww.flixbus.it%2F');
   for (const cattivo of [{ airhelp: { link: 'javascript:alert(1)' } }, { airhelp: { link: 'http://www.airhelp.com/' } }, { airhelp: { link: 'https://airhelp.com.evil.example/' } },
-    { flixbus: { awinAffid: '12a', awinMid: '110876' } }, { noleggioAuto: { link: 'https://evil.example/', nome: 'X' } }, { noleggioAuto: { link: 'https://www.rentalcars.com/', nome: '<b>' } }]) {
+    { flixbus: { awinAffid: '12a', awinMid: '110876' } }, { noleggioAuto: { link: 'https://evil.example/', nome: 'X' } }, { noleggioAuto: { link: 'https://www.rentalcars.com/', nome: '<b>' } },
+    { pubblicita: { idEditore: 'pub-9058241342960701' } }, { pubblicita: { idEditore: 'ca-pub-905824134296070' } }, { pubblicita: { idEditore: 'ca-pub-9058241342960701"><script>' } }]) {
     assert.throws(() => preparaAffiliati(cattivo), /non valido/, JSON.stringify(cattivo));
   }
 });
